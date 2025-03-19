@@ -4,7 +4,7 @@
 if [ "$1" == "-r" ]; then
     cd build
     make
-    cp nanotekspice ..
+    cp arcade ..
     exit 0
 fi
 
@@ -26,7 +26,7 @@ cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_D
 cmake --build .
 
 # Move the nts file to the parent directory
-mv nanotekspice ..
+mv arcade ..
 
 # Navigate back to the parent directory
 cd ..
