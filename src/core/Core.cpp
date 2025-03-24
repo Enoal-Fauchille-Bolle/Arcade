@@ -24,7 +24,9 @@ Core::~Core()
 void Core::run()
 {
     std::cerr << "Core run" << std::endl;
-    
+    while (running) {
+        
+    }
 }
 
 

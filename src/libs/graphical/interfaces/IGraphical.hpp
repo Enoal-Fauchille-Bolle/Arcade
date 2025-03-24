@@ -9,19 +9,37 @@
     #define IGRAPHICAL_HPP_
 
     #include <string>
+    #include <map>
+
+    struct rawEvent {
+        std::string type;
+        std::string key;
+        int x;
+        int y;
+    };
+
+    struct renderObject {
+        int x;
+        int y;
+        int width;
+        int height;
+        int rotate;
+        std::string sprite;
+    };
 
 class IGraphical {
     public:
+        IGraphical() = default;
         virtual ~IGraphical() = default;
 
-        virtual error init(void) = 0;
-        virtual void fini(void) = 0;
-        virtual rawEvent pollEvent(void) = 0;
-        virtual void clear(void) = 0;
+        virtual std::vector<rawEvent> pollEvent(void) = 0;
+
         virtual void drawObject(renderObject) = 0;
-        virtual void drawText(struct { std::string text; props }) = 0;
-        virtual void drawDynamicObject(renderObject) = 0;
+        virtual void drawText(renderObject) = 0;
+
+        virtual void clear(void) = 0;
         virtual void display(void) = 0;
+
         virtual std::string getName(void) = 0;
 
     protected:

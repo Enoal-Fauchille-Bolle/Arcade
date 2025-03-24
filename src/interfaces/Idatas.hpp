@@ -17,16 +17,6 @@ struct Event {
     int y;
 };
 
-struct Entity {
-    std::string name;
-    int x;
-    int y;
-    int width;
-    int height;
-    int rotate;
-    map<std::string, std::string> sprites;
-};
-
 struct GameData {
     std::string user;
     std::string lib;
@@ -42,7 +32,7 @@ class IDatas {
         virtual std::vector<Entity> getEntities(void) = 0;
         virtual void sendEntities(std::vector<Entity> entities) = 0;
         virtual void ClearEntites(std::vector<Entity> entities) = 0;
-        
+
         virtual void sendScore(int score) = 0;
         virtual int getScore(void) = 0;
         virtual std::string getLibName(void) = 0;

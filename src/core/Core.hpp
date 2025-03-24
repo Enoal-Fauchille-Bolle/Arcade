@@ -12,8 +12,9 @@
     #include <dlfcn.h>
     #include <filesystem>
     #include <memory>
-    #include "Arcade/src/libs/game/interfaces/IGame.hpp"
-    #include "Arcade/src/libs/graphical/interfaces/IGraphical.hpp"
+    #include <vector>
+    #include "../libs/game/interfaces/IGame.hpp"
+    #include "../libs/graphical/interfaces/IGraphical.hpp"
 
 class Core {
     public:
@@ -32,6 +33,7 @@ class Core {
 
         std::unique_ptr<IGraphical>* _graphical;
         std::unique_ptr<IGame>* _game;
+        bool running = true;
 
 };
 

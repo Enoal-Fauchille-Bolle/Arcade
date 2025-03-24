@@ -10,17 +10,44 @@
 
     #include <string>
 
+    enum shape {
+        RECTANGLE,
+        CIRCLE,
+        TEXT
+    };
+
+    struct Entity {
+        shape type;
+        int x;
+        int y;
+        int width;
+        int height;
+        int rotate;
+        std::map<std::string, std::string> sprites;
+    };
+
+    struct event {
+        std::string type;
+        std::string key;
+        int x;
+        int y;
+    };
+
 class IGame {
     public:
+        IGame() = default;
         virtual ~IGame() = default;
-    
-        virtual error initGame(State) = 0; // Constructor of the game with a status in parameter
-        virtual void endGame() = 0; // Destructor of the game
-        virtual State stopGame() = 0; // Stop the game and return the status
-        virtual event handleEvent(event) = 0; // Handle the event
-        virtual error updateGame(deltaTime) = 0; // Update the game
-        virtual [entity] renderGame() = 0; // Render the game
-        virtual std::string getName() = 0; // Return the name of the game
+
+        virtual bool isGameOver(void) = 0;
+        virtual std::pair<float, std::string> getScore(void) = 0;
+
+        virtual void isGameEnd(void) = 0;
+        virtual std::string getNewLib(void) = 0;
+
+        virtual void handleEvent(std::vector<event>) = 0;
+        virtual std::map<std::string, Entity> renderGame() = 0;
+
+        virtual std::string getName(void) = 0;
 
     protected:
     private:
