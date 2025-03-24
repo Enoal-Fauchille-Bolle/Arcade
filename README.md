@@ -82,10 +82,10 @@ To create a new game or graphics library, implement a dynamic library (`.so`) th
 
 - Tom FELDKAMP : [github/Azertoxe](https://github.com/Azertoxe)
 - Evan MAHE : [github/Mahe-Ean](https://github.com/Mahe-Evan)
-- Enoal FAUCHILLE-BOLLE : [github/Enoal-Fauchille-Bolle] (https://github.com/Enoal-Fauchille-Bolle)
+- Enoal FAUCHILLE-BOLLE : [github/Enoal-Fauchille-Bolle](https://github.com/Enoal-Fauchille-Bolle)
 
 CO project:
 
-- Renaud MANET : renaud.manet@epitech.eu
+- Renaud MANET : <renaud.manet@epitech.eu>
 
 ---
