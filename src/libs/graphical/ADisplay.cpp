@@ -5,13 +5,13 @@
 ** Abstract class for graphical libraries
 */
 
-#include "AGraphical.hpp"
+#include "ADisplay.hpp"
 
-AGraphical::AGraphical(const std::string &name) : _name(name)
+ADisplay::ADisplay(const std::string &name) : _name(name)
 {
 }
 
-std::string AGraphical::getName(void)
+std::string ADisplay::getName(void)
 {
     return _name;
 }

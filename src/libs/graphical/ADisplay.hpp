@@ -5,17 +5,17 @@
 ** Abstract class for graphical libraries
 */
 
-#ifndef AGRAPHICAL_HPP_
-    #define AGRAPHICAL_HPP_
+#ifndef ADISPLAY_HPP_
+    #define ADISPLAY_HPP_
 
-    #include "IGraphical.hpp"
+    #include "IDisplay.hpp"
     #include <string>
     #include <vector>
 
-class AGraphical : public IGraphical {
+class ADisplay : public IGraphical {
     public:
-        AGraphical(const std::string &name);
-        virtual ~AGraphical() = default;
+    ADisplay(const std::string &name);
+        virtual ~ADisplay() = default;
 
         virtual std::vector<rawEvent> pollEvent(void) = 0;
 
@@ -35,4 +35,4 @@ class AGraphical : public IGraphical {
     private:
 };
 
-#endif /* !AGRAPHICAL_HPP_ */
+#endif /* !ADISPLAY_HPP_ */
