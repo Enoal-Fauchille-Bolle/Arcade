@@ -76,16 +76,16 @@ Run the program by specifying the initial graphics library:
 
 ## Adding New Games or Graphics Libraries
 
-To create a new game or graphics library, implement a dynamic library (`.so`) that follows the Arcade interface specifications. More details can be found in the project documentation.
+To create a new game or graphics library, implement a dynamic library (`.so`) that follows the Arcade interface specifications. More details can be found in the project documentation (in the /doc directory)
 
 ## Contributors
 
 - Tom FELDKAMP : [github/Azertoxe](https://github.com/Azertoxe)
-- _(Add your friends here)_
+- Evan MAHE : [github/Mahe-Ean](https://github.com/Mahe-Evan)
+- Enoal FAUCHILLE-BOLLE : [github/Enoal-Fauchille-Bolle] (https://github.com/Enoal-Fauchille-Bolle)
 
 CO project:
 
-- _(les autre)_
-- _(other one)_
+- Renaud MANET : renaud.manet@epitech.eu
 
 ---
