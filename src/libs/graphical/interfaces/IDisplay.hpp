@@ -29,13 +29,11 @@
 
 class IGraphical {
     public:
-        IGraphical() = default;
         virtual ~IGraphical() = default;
 
         virtual std::vector<rawEvent> pollEvent(void) = 0;
 
         virtual void drawObject(renderObject) = 0;
-        virtual void drawText(renderObject) = 0;
 
         virtual void clear(void) = 0;
         virtual void display(void) = 0;
