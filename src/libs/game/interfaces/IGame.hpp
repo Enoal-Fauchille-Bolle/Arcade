@@ -41,7 +41,7 @@ class IGame {
         virtual bool isGameOver(void) = 0;
         virtual std::pair<float, std::string> getScore(void) = 0;
 
-        virtual void isGameEnd(void) = 0;
+        virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
         virtual void handleEvent(std::vector<event>) = 0;
