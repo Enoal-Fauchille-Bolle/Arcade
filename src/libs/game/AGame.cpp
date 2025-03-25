@@ -7,10 +7,6 @@
 
 #include "AGame.hpp"
 
-AGame::AGame(const std::string &name) : _name(name), _isOver(false)
-{
-}
-
 bool AGame::isGameOver(void)
 {
     return _isOver;

@@ -92,11 +92,6 @@ void libSFML::display(void)
     _window.display();
 }
 
-std::string libSFML::getName(void)
-{
-    return _name;
-}
-
 extern "C" libSFML *createLib(void)
 {
     return new libSFML();

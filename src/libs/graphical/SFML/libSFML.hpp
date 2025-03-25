@@ -23,8 +23,6 @@ class libSFML : public ADisplay {
         void clear(void) final;
         void display(void) final;
 
-        std::string getName(void) final;
-
     protected:
         void drawRectangle(renderObject obj);
         void drawCircle(renderObject obj);

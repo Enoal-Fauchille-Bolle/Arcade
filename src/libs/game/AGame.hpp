@@ -12,17 +12,16 @@
     #include <string>
     #include <vector>
 
-    #include "IGame.hpp"
+    #include "./interfaces/IGame.hpp"
 
 class AGame : public IGame {
     public:
-        AGame(const std::string &name);
         virtual ~AGame() = default;
 
         bool isGameOver(void) override;
         virtual std::pair<float, std::string> getScore(void) = 0;
 
-        virtual void isGameEnd(void) = 0;
+        virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
         virtual void handleEvent(std::vector<event>) = 0;
