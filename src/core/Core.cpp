@@ -43,6 +43,7 @@ void Core::run()
                 renderObject obj;
                 obj.x = val.x;
                 obj.y = val.y;
+                obj.type = val.type;
                 obj.width = val.width;
                 obj.height = val.height;
                 obj.rotate = val.rotate;

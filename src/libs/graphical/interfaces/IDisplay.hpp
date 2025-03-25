@@ -11,6 +11,8 @@
     #include <string>
     #include <map>
 
+    #include "../../IType.hpp"
+
     struct rawEvent {
         std::string type;
         std::string key;
@@ -24,6 +26,7 @@
         int width;
         int height;
         int rotate;
+        shape type;
         std::string sprite;
     };
 

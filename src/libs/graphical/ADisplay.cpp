@@ -7,10 +7,6 @@
 
 #include "ADisplay.hpp"
 
-ADisplay::ADisplay(const std::string &name) : _name(name)
-{
-}
-
 std::string ADisplay::getName(void)
 {
     return _name;

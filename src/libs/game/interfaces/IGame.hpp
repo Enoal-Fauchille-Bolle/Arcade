@@ -9,12 +9,7 @@
     #define IGAME_HPP_
 
     #include <string>
-
-    enum shape {
-        RECTANGLE,
-        CIRCLE,
-        TEXT
-    };
+    #include "../../IType.hpp"
 
     struct Entity {
         shape type;

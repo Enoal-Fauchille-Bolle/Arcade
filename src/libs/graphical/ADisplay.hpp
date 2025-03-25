@@ -14,13 +14,11 @@
 
 class ADisplay : public IGraphical {
     public:
-    ADisplay(const std::string &name);
         virtual ~ADisplay() = default;
 
         virtual std::vector<rawEvent> pollEvent(void) = 0;
 
         virtual void drawObject(renderObject) = 0;
-        virtual void drawText(renderObject) = 0;
 
         virtual void clear(void) = 0;
         virtual void display(void) = 0;
