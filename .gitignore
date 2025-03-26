@@ -6,6 +6,7 @@ out/
 
 # Ignore C++ specific files
 *.o
+*.d
 *.obj
 *.exe
 *.dll
