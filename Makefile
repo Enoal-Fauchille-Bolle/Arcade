@@ -28,12 +28,10 @@ MISC = ./sources/miscellaneous/
 TESTS = ./tests/
 
 # Sources
-MAIN = src/main.cpp
-SRC = \
-
-
+MAIN = $(SRCDIR)main.cpp
 
 CORE_SRC = \
+		$(SRCDIR)core/Core.cpp	\
 
 NCURSES_SRC = \
 
@@ -61,22 +59,20 @@ CFLAGS += $(ERROR) -I$(INCLUDES) -g -std=c++14 -fPIE
 # Pre Compilation
 CC := g++
 
-OBJ = $(SRC:.cpp=.o)
-
 NCURSES_OBJ = $(NCURSES_SRC:.cpp=.o)
 SDL_OBJ = $(SDL_SRC:.cpp=.o)
 SFML_OBJ = $(SFML_SRC:.cpp=.o)
 MINESWEEPER_OBJ = $(MINESWEEPER_SRC:.cpp=.o)
 SNAKE_OBJ = $(SNAKE_SRC:.cpp=.o)
 
-DEP = $(SRC:.cpp=.d) \
-	$(CORE_SRC:.cpp=.o)	\
-	$(NCURSES_SRC:.cpp=.d)	\
-	$(SDL_SRC:.cpp=.d)	\
+DEP	=	$(CORE_SRC:.cpp=.o)	\
+		$(NCURSES_SRC:.cpp=.d)	\
+		$(SDL_SRC:.cpp=.d)	\
+		$(SFML_SRC:.cpp=.d)	\
 	$(SFML_SRC:.cpp=.d)	\
-	$(MINESWEEPER_SRC:.cpp=.d)	\
-	$(SNAKE_SRC:.cpp=.d)	\
-	$(MAIN:.cpp=.d)
+		$(MINESWEEPER_SRC:.cpp=.d)	\
+		$(SNAKE_SRC:.cpp=.d)	\
+		$(MAIN:.cpp=.d)
 
 CORE_OBJ = $(CORE_SRC:.cpp=.o)
 
@@ -115,8 +111,8 @@ minesweeper: $(MINESWEEPER_OBJ)
 games: snake minesweeper
 
 
-core: $(OBJ) $(MAIN:.cpp=.o) $(LIB_)
-	$(CC) -o $(NAME) $(OBJ) $(MAIN:.cpp=.o) $(FLAGS)
+core: $(CORE_OBJ) $(MAIN:.cpp=.o) $(LIB_)
+	$(CC) -o $(NAME) $(CORE_OBJ) $(MAIN:.cpp=.o) $(FLAGS)
 
 $(NAME): core games graphical
 
