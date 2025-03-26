@@ -11,4 +11,4 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../lib)
 add_subdirectory(src/core)
 
 add_subdirectory(src/libs/game)
-add_subdirectory(src/libs/graphical)
+add_subdirectory(src/libs/display)

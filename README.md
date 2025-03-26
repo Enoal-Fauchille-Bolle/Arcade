@@ -2,7 +2,7 @@
 
 ## Overview
 
-Arcade is a gaming platform that allows users to play various classic games while keeping track of their scores. It supports dynamic loading of both games and graphical libraries, enabling seamless switching between different interfaces and games at runtime.
+Arcade is a gaming platform that allows users to play various classic games while keeping track of their scores. It supports dynamic loading of both games and display libraries, enabling seamless switching between different interfaces and games at runtime.
 
 ## Repository
 
@@ -27,7 +27,7 @@ Commit need to be format as follow its a mix of gitmoji and conventional
 - **Multiple Graphics Libraries**: Supports nCurses, SDL2, and at least one additional graphics library.
 - **Multiple Games**: Includes at least two games such as Snake, Minesweeper, or Pacman.
 - **Score Tracking**: Keeps records of player scores.
-- **Runtime Library Switching**: Change the graphical library and game while the program is running.
+- **Runtime Library Switching**: Change the display library and game while the program is running.
 
 ## Installation & Build
 
@@ -50,7 +50,7 @@ Commit need to be format as follow its a mix of gitmoji and conventional
 This will generate:
 
 - The main `arcade` executable.
-- At least three graphical libraries (`*.so` files in `./lib/`).
+- At least three display libraries (`*.so` files in `./lib/`).
 - At least two game libraries (`*.so` files in `./lib/`).
 
 ## Usage

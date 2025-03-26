@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** Arcade
 ** File description:
-** Interface to get and send data between games and graphical
+** Interface to get and send data between games and display
 */
 
 #ifndef IDATAS_HPP_

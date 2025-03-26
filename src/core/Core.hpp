@@ -25,13 +25,13 @@ class Core {
         void run();
 
     private:
-        int load_graphical(std::string path);
+        int load_display(std::string path);
         int load_game(std::string path);
 
-        int delete_graphical();
+        int delete_display();
         int delete_game();
 
-        std::unique_ptr<IDisplay> _graphical;
+        std::unique_ptr<IDisplay> _display;
         std::unique_ptr<IGame> _game;
         bool running = true;
 

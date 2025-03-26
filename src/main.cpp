@@ -19,7 +19,7 @@ static void print_help()
     std::cout << "USAGE" << std::endl;
     std::cout << "\t./arcade lib" << std::endl;
     std::cout << "DESCRIPTION" << std::endl;
-    std::cout << "\tpath\tPath to the graphical library" << std::endl;
+    std::cout << "\tpath\tPath to the display library" << std::endl;
 }
 
 int main(int ac, char **av)

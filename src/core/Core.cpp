@@ -14,7 +14,7 @@ Core::Core(std::string path)
     std::cerr << "Path: " << path << std::endl;
 
     running = true;
-    load_graphical(path);
+    load_display(path);
 }
 
 Core::~Core()
@@ -34,12 +34,12 @@ void Core::run()
             delete_game();
             load_game(newLib);
         }
-        std::vector<rawEvent> events = _graphical->pollEvent();
+        std::vector<rawEvent> events = _display->pollEvent();
         std::vector<event> g_events = std::vector<event>();
         _game->handleEvent(g_events);
         std::map<std::string, Entity> entities = _game->renderGame();
         if (entities.size() > 0) {
-            _graphical->clear();
+            _display->clear();
             for (const auto& pair : entities) {
                 const Entity& val = pair.second;
                 renderObject obj;
@@ -49,26 +49,26 @@ void Core::run()
                 obj.width = val.width;
                 obj.height = val.height;
                 obj.rotate = val.rotate;
-                obj.sprite = val.sprites.find(_graphical->getName())->second;
-                _graphical->drawObject(obj);
+                obj.sprite = val.sprites.find(_display->getName())->second;
+                _display->drawObject(obj);
             }
         }
-        _graphical->display();
+        _display->display();
     }
 }
 
 
-int Core::load_graphical(std::string path)
+int Core::load_display(std::string path)
 {
-    std::cerr << "Core load_graphical" << std::endl;
+    std::cerr << "Core load_display" << std::endl;
 
     try {
         DLLoader<IDisplay> loader(path);
         IDisplay* module = loader.getInstance();
-        _graphical = std::unique_ptr<IDisplay>(module);
+        _display = std::unique_ptr<IDisplay>(module);
         return 0;
     } catch (const std::exception& e) {
-        std::cerr << "Error loading graphical library: " << e.what() << std::endl;
+        std::cerr << "Error loading display library: " << e.what() << std::endl;
         return 1;
     }
 }
@@ -88,9 +88,9 @@ int Core::load_game(std::string path)
     }
 }
 
-int Core::delete_graphical()
+int Core::delete_display()
 {
-    std::cerr << "Core delete_graphical" << std::endl;
+    std::cerr << "Core delete_display" << std::endl;
     return 0;
 }
 

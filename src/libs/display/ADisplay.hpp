@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** Arcade
 ** File description:
-** Abstract class for graphical libraries
+** Abstract class for display libraries
 */
 
 #ifndef ADISPLAY_HPP_
