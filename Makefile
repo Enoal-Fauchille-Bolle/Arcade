@@ -41,6 +41,8 @@ SFML_SRC = \
 		$(SRCDIR)libs/display/SFML/libSFML.cpp	\
 
 SDL_SRC = \
+		$(SRCDIR)libs/display/SDL/SDL.cpp	\
+		$(SRCDIR)libs/display/SDL/libSDL.cpp	\
 
 MENU_SRC = \
 		$(SRCDIR)libs/game/Menu/Menu.cpp	\
