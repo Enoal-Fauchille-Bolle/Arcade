@@ -9,6 +9,7 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <vector>
+#include <cstring>
 #include "core/Core.hpp"
 
 
@@ -25,7 +26,7 @@ int main(int ac, char **av)
 {
     if (ac != 2)
         return 84;
-    if (av[1] == "-h" || av[1] == "--help")
+    if (strcmp(av[1], "-h") == 0 || strcmp(av[1], "--help") == 0)
         print_help();
     else {
         const std::string path = av[1];
