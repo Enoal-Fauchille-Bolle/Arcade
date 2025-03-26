@@ -18,6 +18,7 @@
         int width;
         int height;
         int rotate;
+        int RGB[3];
         std::map<std::string, std::string> sprites;
     };
 

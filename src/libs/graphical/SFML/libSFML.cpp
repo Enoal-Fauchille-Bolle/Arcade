@@ -10,7 +10,7 @@
 libSFML::libSFML()
 {
     _name = "SFML";
-    _window.create(sf::VideoMode(800, 600), "Arcade");
+    _window.create(sf::VideoMode(1024, 768), "Arcade");
 }
 
 libSFML::~libSFML()
@@ -54,6 +54,7 @@ void libSFML::drawObject(renderObject obj)
 void libSFML::drawRectangle(renderObject obj)
 {
     sf::RectangleShape rectangle(sf::Vector2f(obj.width, obj.height));
+    rectangle.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
     rectangle.setPosition(obj.x, obj.y);
     _window.draw(rectangle);
 }

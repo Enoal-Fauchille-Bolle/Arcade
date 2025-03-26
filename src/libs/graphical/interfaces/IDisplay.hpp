@@ -26,6 +26,7 @@
         int width;
         int height;
         int rotate;
+        int RGB[3];
         shape type;
         std::string sprite;
     };
