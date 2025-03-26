@@ -83,6 +83,7 @@ DEP	=	$(CORE_SRC:.cpp=.d)	\
 CORE_OBJ = $(CORE_SRC:.cpp=.o)
 
 # Libraries
+ROOT_LIBS = ./lib/
 LIBS = ./libs/
 LLIBS = -L$(LIBS)
 LIB_ = #$(LIBS)put a path to a library here
@@ -98,30 +99,30 @@ all: $(NAME)
 
 ncurses: $(NCURSES_OBJ)
 	$(CC) -o $(NCURSES_NAME) $< $(LDFLAGS)
-	mv $(NCURSES_NAME) ./lib/
+	mv $(NCURSES_NAME) $(ROOT_LIBS)
 
 sdl: $(SDL_OBJ)
 	$(CC) -o $(SDL_NAME) $< $(LDFLAGS)
-	mv $(SDL_NAME) ./lib/
+	mv $(SDL_NAME) $(ROOT_LIBS)
 
 sfml: $(SFML_OBJ)
 	$(CC) -o $(SFML_NAME) $< $(LDFLAGS)
-	mv $(SFML_NAME) ./lib/
+	mv $(SFML_NAME) $(ROOT_LIBS)
 
 graphical: ncurses sdl sfml
 
 
 menu: $(MENU_OBJ)
 	$(CC) -o $(MENU_NAME) $< $(LDFLAGS)
-	mv $(MENU_NAME) ./lib/
+	mv $(MENU_NAME) $(ROOT_LIBS)
 
 snake: $(SNAKE_OBJ)
 	$(CC) -o $(SNAKE_NAME) $< $(LDFLAGS)
-	mv $(SNAKE_NAME) ./lib/
+	mv $(SNAKE_NAME) $(ROOT_LIBS)
 
 minesweeper: $(MINESWEEPER_OBJ)
 	$(CC) -o $(MINESWEEPER_NAME) $< $(LDFLAGS)
-	mv $(MINESWEEPER_NAME) ./lib/
+	mv $(MINESWEEPER_NAME) $(ROOT_LIBS)
 
 games: menu snake minesweeper
 
@@ -156,13 +157,13 @@ libclean: clean
 
 fclean: libclean
 	rm -f $(NAME)
-	rm -f $(NCURSES_NAME)
-	rm -f $(SDL_NAME)
-	rm -f $(SFML_NAME)
-	rm -f $(MENU_NAME)
-	rm -f $(MINESWEEPER_NAME)
-	rm -f $(SNAKE_NAME)
-	rm -f $(TESTS_NAME)
+	rm -f $(ROOT_LIBS)$(NCURSES_NAME)
+	rm -f $(ROOT_LIBS)$(SDL_NAME)
+	rm -f $(ROOT_LIBS)$(SFML_NAME)
+	rm -f $(ROOT_LIBS)$(MENU_NAME)
+	rm -f $(ROOT_LIBS)$(MINESWEEPER_NAME)
+	rm -f $(ROOT_LIBS)$(SNAKE_NAME)
+	rm -f $(ROOT_LIBS)$(TESTS_NAME)
 	find -name "lib*.a" -delete
 
 re: fclean all
