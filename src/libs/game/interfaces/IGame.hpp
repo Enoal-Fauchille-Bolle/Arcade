@@ -23,8 +23,8 @@
     };
 
     struct event {
-        std::string type;
-        std::string key;
+        eventType type;
+        eventKey key;
         int x;
         int y;
     };

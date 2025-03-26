@@ -23,18 +23,18 @@ std::vector<rawEvent> libSFML::pollEvent(void)
     sf::Event event;
 
     while (_window.pollEvent(event)) {
-        rawEvent e;
-        e.type = "KEYBOARD";
-        e.key = "";
-        e.x = 0;
-        e.y = 0;
-        if (event.type == sf::Event::Closed) {
-            e.type = "CLOSE";
-        }
-        if (event.type == sf::Event::KeyPressed) {
-            e.key = std::to_string(event.key.code);
-        }
-        events.push_back(e);
+        // rawEvent e;
+        // e.type = "KEYBOARD";
+        // e.key = "";
+        // e.x = 0;
+        // e.y = 0;
+        // if (event.type == sf::Event::Closed) {
+        //     e.type = "CLOSE";
+        // }
+        // if (event.type == sf::Event::KeyPressed) {
+        //     e.key = std::to_string(event.key.code);
+        // }
+        // events.push_back(e);
     }
     return events;
 }
