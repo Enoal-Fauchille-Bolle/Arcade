@@ -1,4 +1,5 @@
 # Ignore build artifacts
+arcade
 build/
 bin/
 obj/
