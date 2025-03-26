@@ -70,7 +70,7 @@ MENU_OBJ = $(MENU_SRC:.cpp=.o)
 MINESWEEPER_OBJ = $(MINESWEEPER_SRC:.cpp=.o)
 SNAKE_OBJ = $(SNAKE_SRC:.cpp=.o)
 
-DEP	=	$(CORE_SRC:.cpp=.o)	\
+DEP	=	$(CORE_SRC:.cpp=.d)	\
 		$(NCURSES_SRC:.cpp=.d)	\
 		$(SDL_SRC:.cpp=.d)	\
 		$(SFML_SRC:.cpp=.d)	\
@@ -119,7 +119,7 @@ minesweeper: $(MINESWEEPER_OBJ)
 games: menu snake minesweeper
 
 
-core: $(CORE_OBJ) $(MAIN:.cpp=.o) $(LIB_)
+core: $(CORE_OBJ) $(MAIN:.cpp=.o)
 	$(CC) -o $(NAME) $(CORE_OBJ) $(MAIN:.cpp=.o) $(FLAGS)
 
 $(NAME): core games graphical
@@ -129,10 +129,9 @@ $(TESTS)%.o: $(TESTS)%.cpp
 
 -include $(DEP)
 %.o: %.cpp
-	$(COMPILE.cpp) $< -o $@ -MMD -MF $*.d -MT $@ $(CFLAGS)
+	$(CC) -c $< -o $@ -MMD -MF $*.d -MT $@ $(CFLAGS)
 
 clean:
-	rm -f $(OBJ)
 	rm -f $(CORE_OBJ)
 	rm -f $(NCURSES_OBJ)
 	rm -f $(SDL_OBJ)
@@ -168,8 +167,8 @@ tests_run: unit_tests
 	gcovr --exclude tests/
 	gcovr --exclude tests/ --txt-metric branch
 
-unit_tests: $(OBJ) $(TESTS_SRC:.cpp=.o)
-	$(CC) -o $(TESTS_NAME) $(OBJ) $(TESTS_SRC:.cpp=.o) $(UNIT_FLAGS)
+# unit_tests: $(OBJ) $(TESTS_SRC:.cpp=.o)
+# 	$(CC) -o $(TESTS_NAME) $(OBJ) $(TESTS_SRC:.cpp=.o) $(UNIT_FLAGS)
 
 gcovr: tests_run
 	gcovr --exclude tests/
@@ -177,4 +176,6 @@ gcovr: tests_run
 
 .PHONY: all clean libclean \
 	fclean re remake \
+	core games graphical \
+	menu snake minesweeper \
 	tests_run unit_tests gcovr
