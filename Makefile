@@ -97,24 +97,30 @@ all: $(NAME)
 
 ncurses: $(NCURSES_OBJ)
 	$(CC) -o $(NCURSES_NAME) $< $(LDFLAGS)
+	cp $(NCURSES_NAME) ./lib/
 
 sdl: $(SDL_OBJ)
 	$(CC) -o $(SDL_NAME) $< $(LDFLAGS)
+	cp $(SDL_NAME) ./lib/
 
 sfml: $(SFML_OBJ)
 	$(CC) -o $(SFML_NAME) $< $(LDFLAGS)
+	cp $(SFML_NAME) ./lib/
 
 graphical: ncurses sdl sfml
 
 
 menu: $(MENU_OBJ)
 	$(CC) -o $(MENU_NAME) $< $(LDFLAGS)
+	cp $(MENU_NAME) ./lib/
 
 snake: $(SNAKE_OBJ)
 	$(CC) -o $(SNAKE_NAME) $< $(LDFLAGS)
+	cp $(SNAKE_NAME) ./lib/
 
 minesweeper: $(MINESWEEPER_OBJ)
 	$(CC) -o $(MINESWEEPER_NAME) $< $(LDFLAGS)
+	cp $(MINESWEEPER_NAME) ./lib/
 
 games: menu snake minesweeper
 
