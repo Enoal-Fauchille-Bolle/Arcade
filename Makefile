@@ -59,7 +59,7 @@ INCLUDES = -I./src/core/interfaces	\
 # GCC Flags
 ERROR = -Werror -Wall -Wextra -Wshadow
 # Compilation Flags
-CFLAGS += $(ERROR) -I$(INCLUDES) -g -std=c++14 -fPIE
+CFLAGS += $(ERROR) -I$(INCLUDES) -g -std=c++20 -fPIE -fPIC -fno-gnu-unique
 # Pre Compilation
 CC := g++
 
