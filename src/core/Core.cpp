@@ -13,6 +13,7 @@ Core::Core(std::string path)
     std::cerr << "Core constructor" << std::endl;
     std::cerr << "Path: " << path << std::endl;
 
+    running = true;
     load_graphical(path);
 }
 
@@ -61,20 +62,30 @@ int Core::load_graphical(std::string path)
 {
     std::cerr << "Core load_graphical" << std::endl;
 
-    DLLoader<IGraphical> loader(path);
-    IGraphical* module = loader.getInstance();
-    _graphical = std::unique_ptr<IGraphical>(module);
-    return 0;
+    try {
+        DLLoader<IDisplay> loader(path);
+        IDisplay* module = loader.getInstance();
+        _graphical = std::unique_ptr<IDisplay>(module);
+        return 0;
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading graphical library: " << e.what() << std::endl;
+        return 1;
+    }
 }
 
 int Core::load_game(std::string path)
 {
     std::cerr << "Core load_game" << std::endl;
 
-    DLLoader<IGame> loader(path);
-    IGame* module = loader.getInstance();
-    _game = std::unique_ptr<IGame>(module);
-    return 0;
+    try {
+        DLLoader<IGame> loader(path);
+        IGame* module = loader.getInstance();
+        _game = std::unique_ptr<IGame>(module);
+        return 0;
+    } catch (const std::exception& e) {
+        std::cerr << "Error loading game library: " << e.what() << std::endl;
+        return 1;
+    }
 }
 
 int Core::delete_graphical()

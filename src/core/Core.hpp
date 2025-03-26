@@ -13,7 +13,7 @@
     #include <filesystem>
     #include <memory>
     #include <vector>
-    #include "../libs/graphical/interfaces/IDisplay.hpp"
+    #include "../libs/display/interfaces/IDisplay.hpp"
     #include "../libs/game/interfaces/IGame.hpp"
 
 class Core {
@@ -31,7 +31,7 @@ class Core {
         int delete_graphical();
         int delete_game();
 
-        std::unique_ptr<IGraphical> _graphical;
+        std::unique_ptr<IDisplay> _graphical;
         std::unique_ptr<IGame> _game;
         bool running = true;
 

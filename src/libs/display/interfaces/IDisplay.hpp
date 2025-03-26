@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** Arcade
 ** File description:
-** Interface for graphical
+** Interface for display
 */
 
-#ifndef IGRAPHICAL_HPP_
-    #define IGRAPHICAL_HPP_
+#ifndef IDisplay_HPP_
+    #define IDisplay_HPP_
 
     #include <string>
     #include <map>
-
+    #include <vector>
     #include "../../IType.hpp"
 
     struct rawEvent {
@@ -31,9 +31,9 @@
         std::string sprite;
     };
 
-class IGraphical {
+class IDisplay {
     public:
-        virtual ~IGraphical() = default;
+        virtual ~IDisplay() = default;
 
         virtual std::vector<rawEvent> pollEvent(void) = 0;
 
@@ -48,4 +48,4 @@ class IGraphical {
     private:
 };
 
-#endif /* !IGRAPHICAL_HPP_ */
+#endif /* !IDisplay_HPP_ */

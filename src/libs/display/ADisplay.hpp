@@ -8,11 +8,11 @@
 #ifndef ADISPLAY_HPP_
     #define ADISPLAY_HPP_
 
-    #include "IDisplay.hpp"
+    #include "./interfaces/IDisplay.hpp"
     #include <string>
     #include <vector>
 
-class ADisplay : public IGraphical {
+class ADisplay : public IDisplay {
     public:
         virtual ~ADisplay() = default;
 

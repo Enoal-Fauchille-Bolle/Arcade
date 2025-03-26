@@ -38,6 +38,7 @@ CORE_SRC = \
 NCURSES_SRC = \
 
 SFML_SRC = \
+		$(SRCDIR)libs/display/SFML/libSFML.cpp	\
 
 SDL_SRC = \
 
@@ -54,7 +55,7 @@ TESTS_SRC = \
 # Headers folder
 INCLUDES = -I./src/core/interfaces	\
 			-I./src/core/libs/game/interfaces	\
-			-I./src/core/libs/graphical/interfaces
+			-I./src/core/libs/display/interfaces
 
 # GCC Flags
 ERROR = -Werror -Wall -Wextra -Wshadow
@@ -107,7 +108,7 @@ sfml: $(SFML_OBJ)
 	$(CC) -o $(SFML_NAME) $< $(LDFLAGS)
 	cp $(SFML_NAME) ./lib/
 
-graphical: ncurses sdl sfml
+display: ncurses sdl sfml
 
 
 menu: $(MENU_OBJ)
@@ -128,7 +129,7 @@ games: menu snake minesweeper
 core: $(CORE_OBJ) $(MAIN:.cpp=.o)
 	$(CC) -o $(NAME) $(CORE_OBJ) $(MAIN:.cpp=.o) $(FLAGS)
 
-$(NAME): core games graphical
+$(NAME): core games display
 
 $(TESTS)%.o: $(TESTS)%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)
@@ -182,6 +183,6 @@ gcovr: tests_run
 
 .PHONY: all clean libclean \
 	fclean re remake \
-	core games graphical \
+	core games display \
 	menu snake minesweeper \
 	tests_run unit_tests gcovr
