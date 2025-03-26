@@ -42,6 +42,7 @@ SFML_SRC = \
 SDL_SRC = \
 
 MENU_SRC = \
+		$(SRCDIR)libs/game/Menu/Menu.cpp	\
 
 MINESWEEPER_SRC = \
 
