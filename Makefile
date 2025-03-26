@@ -14,6 +14,8 @@ SDL_NAME = arcade_sdl2.so
 
 SFML_NAME = arcade_sfml.so
 
+MENU_NAME = arcade_menu.so
+
 SNAKE_NAME = arcade_snake.so
 
 MINESWEEPER_NAME = arcade_minesweeper.so
@@ -39,6 +41,8 @@ SFML_SRC = \
 
 SDL_SRC = \
 
+MENU_SRC = \
+
 MINESWEEPER_SRC = \
 
 SNAKE_SRC = \
@@ -62,6 +66,7 @@ CC := g++
 NCURSES_OBJ = $(NCURSES_SRC:.cpp=.o)
 SDL_OBJ = $(SDL_SRC:.cpp=.o)
 SFML_OBJ = $(SFML_SRC:.cpp=.o)
+MENU_OBJ = $(MENU_SRC:.cpp=.o)
 MINESWEEPER_OBJ = $(MINESWEEPER_SRC:.cpp=.o)
 SNAKE_OBJ = $(SNAKE_SRC:.cpp=.o)
 
@@ -69,7 +74,7 @@ DEP	=	$(CORE_SRC:.cpp=.o)	\
 		$(NCURSES_SRC:.cpp=.d)	\
 		$(SDL_SRC:.cpp=.d)	\
 		$(SFML_SRC:.cpp=.d)	\
-	$(SFML_SRC:.cpp=.d)	\
+		$(MENU_SRC:.cpp=.d)	\
 		$(MINESWEEPER_SRC:.cpp=.d)	\
 		$(SNAKE_SRC:.cpp=.d)	\
 		$(MAIN:.cpp=.d)
@@ -102,13 +107,16 @@ sfml: $(SFML_OBJ)
 graphical: ncurses sdl sfml
 
 
+menu: $(MENU_OBJ)
+	$(CC) -o $(MENU_NAME) $< $(LDFLAGS)
+
 snake: $(SNAKE_OBJ)
 	$(CC) -o $(SNAKE_NAME) $< $(LDFLAGS)
 
 minesweeper: $(MINESWEEPER_OBJ)
 	$(CC) -o $(MINESWEEPER_NAME) $< $(LDFLAGS)
 
-games: snake minesweeper
+games: menu snake minesweeper
 
 
 core: $(CORE_OBJ) $(MAIN:.cpp=.o) $(LIB_)
@@ -129,6 +137,7 @@ clean:
 	rm -f $(NCURSES_OBJ)
 	rm -f $(SDL_OBJ)
 	rm -f $(SFML_OBJ)
+	rm -f $(MENU_OBJ)
 	rm -f $(MINESWEEPER_OBJ)
 	rm -f $(SNAKE_OBJ)
 	rm -f $(MAIN:.cpp=.o)
@@ -144,6 +153,7 @@ fclean: libclean
 	rm -f $(NCURSES_NAME)
 	rm -f $(SDL_NAME)
 	rm -f $(SFML_NAME)
+	rm -f $(MENU_NAME)
 	rm -f $(MINESWEEPER_NAME)
 	rm -f $(SNAKE_NAME)
 	rm -f $(TESTS_NAME)
