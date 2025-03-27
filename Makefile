@@ -50,6 +50,7 @@ MENU_SRC = \
 MINESWEEPER_SRC = \
 
 SNAKE_SRC = \
+		$(SRCDIR)libs/game/Snake/Snake.cpp	\
 
 
 TESTS_SRC = \
