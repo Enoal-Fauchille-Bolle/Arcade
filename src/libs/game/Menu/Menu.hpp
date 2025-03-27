@@ -16,14 +16,14 @@
 
     #include "../../../libs/display/interfaces/IDisplay.hpp"
     #include "../../../libs/game/interfaces/IGame.hpp"
-    #include "../AGame.hpp"
+    #include "../interfaces/IGame.hpp"
     #include "LibLoader.hpp"
 
     #define LIBRARY_PATH "./lib/"
     #define SCREEN_WIDTH 1024
     #define SCREEN_HEIGHT 768
 
-class Menu : public AGame {
+class Menu : public IGame {
     public:
         Menu();
         ~Menu() = default;
@@ -38,10 +38,13 @@ class Menu : public AGame {
 
         void handleEvent(std::vector<event>) override;
 
+        std::string getName(void) override;
+
         std::map<std::string, Entity> renderGame() override;
 
     protected:
     private:
+        std::string _name;
         enum LibType {
             GAME,
             DISPLAY

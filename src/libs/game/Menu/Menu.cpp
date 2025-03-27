@@ -524,3 +524,37 @@ std::map<std::string, Entity> Menu::renderGame()
 
     return entities;
 }
+
+/**
+ * @brief Get the name of the menu
+ *
+ * This function returns the name of the menu.
+ *
+ * @return std::string The name of the menu
+ */
+std::string Menu::getName(void)
+{
+    return _name;
+}
+
+
+/**
+    * @brief extern c
+    *
+ */
+extern "C" {
+    __attribute__((constructor))
+    void constructor()
+    {
+    }
+
+    __attribute__((destructor))
+    void destructor()
+    {
+    }
+
+    Menu *entryPoint(void)
+    {
+        return new Menu();
+    }
+}

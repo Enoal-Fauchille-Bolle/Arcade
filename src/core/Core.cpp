@@ -15,6 +15,7 @@ Core::Core(std::string path)
 
     running = true;
     load_display(path);
+    load_game("./lib/arcade_menu.so");
 }
 
 Core::~Core()
