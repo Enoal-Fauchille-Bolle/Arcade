@@ -57,9 +57,10 @@ TESTS_SRC = \
 
 
 # Headers folder
-INCLUDES = -I./src/core/interfaces	\
-			-I./src/core/libs/game/interfaces	\
-			-I./src/core/libs/display/interfaces
+INCLUDES = -I./src/interfaces	\
+			-I./src/libs/game/interfaces	\
+			-I./src/core	\
+			-I./src/libs/display/interfaces
 
 # GCC Flags
 ERROR = -Werror -Wall -Wextra -Wshadow
