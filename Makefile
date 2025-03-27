@@ -110,7 +110,8 @@ sdl: $(SDL_OBJ)
 	mv $(SDL_NAME) $(ROOT_LIBS)
 
 sfml: $(SFML_OBJ)
-	$(CC) -o $(SFML_NAME) $< $(LDFLAGS)
+	$(CC) -o $(SFML_NAME) $< $(LDFLAGS) -l csfml-graphics	\
+		-l csfml-system -l csfml-audio
 	mv $(SFML_NAME) $(ROOT_LIBS)
 
 display: ncurses sdl sfml
