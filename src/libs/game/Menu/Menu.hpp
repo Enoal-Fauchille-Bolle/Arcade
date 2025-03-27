@@ -46,10 +46,17 @@ class Menu : public AGame {
             GAME,
             DISPLAY
         };
+        struct ButtonPos {
+            int x;
+            int y;
+            int width;
+            int height;
+        };
         struct LibInfo {
-                std::string path;
-                std::string name;
-                LibType type;
+            std::string path;
+            std::string name;
+            LibType type;
+            ButtonPos pos;
         };
 
         // Library Getting
@@ -64,12 +71,16 @@ class Menu : public AGame {
         std::string isDisplayLibrary(const std::string &path);
         void categorizeLibraries(const std::vector<std::string> &paths);
 
+        // Event Handling
+        void handleLeftClick(event event);
+        void handleOneEvent(event event);
+
         // Rendering
         Entity renderTitle();
         Entity renderDisplayTitle();
-        std::map<std::string, Entity> renderLibs(std::vector<LibInfo> displayLibs,
-                  size_t selectedLib,
-                  bool selectingLibType);
+        void setupLibButton(LibInfo &lib, int x, int y);
+        std::map<std::string, Entity> renderLibs(
+            std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x);
         Entity renderGameTitle();
         Entity renderSelectedLibs(
             std::string gameName, std::string displayName);

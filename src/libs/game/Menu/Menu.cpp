@@ -176,14 +176,14 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
     for (const auto &path : paths) {
         libName = isGameLibrary(path);
         if (!libName.empty()) {
-            _gameLibs.push_back({path, libName, GAME});
+            _gameLibs.push_back({path, libName, GAME, {0, 0, 0, 0}});
             std::cout << "Found game library: " << libName << " at " << path
                       << std::endl;
             continue;
         }
         libName = isDisplayLibrary(path);
         if (!libName.empty()) {
-            _displayLibs.push_back({path, libName, DISPLAY});
+            _displayLibs.push_back({path, libName, DISPLAY, {0, 0, 0, 0}});
             std::cout << "Found graphical library: " << libName << " at "
                       << path << std::endl;
         } else {
@@ -237,16 +237,97 @@ bool Menu::isGameEnd(void)
     return _startGame;
 }
 
+/**
+ * @brief Get the name of the new library
+ *
+ * This function returns the name of the new library based on the
+ * selected game library. If no game library is selected, it returns
+ * the first game library in the list.
+ *
+ * @return std::string The name of the new library
+ */
 std::string Menu::getNewLib(void)
 {
-    return "todo";  // TODO: return the game library name to start
+    return (_selectedGameLib >= _gameLibs.size())
+               ? _gameLibs[0].name
+               : _gameLibs[_selectedGameLib].name;
 }
 
+////////////////////////////// Event Handling ///////////////////////////////
+
+/**
+ * @brief Handle a left mouse button click event
+ *
+ * This function checks if the left mouse button was clicked on a
+ * library button. If so, it updates the selected library and sets
+ * the selectingLibType to either DISPLAY or GAME.
+ *
+ * @param event The event to handle
+ */
+void Menu::handleLeftClick(event event)
+{
+    for (size_t i = 0; i < _gameLibs.size(); i++) {
+        if (event.x >= _gameLibs[i].pos.x &&
+            event.x <= _gameLibs[i].pos.x + _gameLibs[i].pos.width &&
+            event.y >= _gameLibs[i].pos.y &&
+            event.y <= _gameLibs[i].pos.y + _gameLibs[i].pos.height) {
+            _selectedGameLib = i;
+            _selectingLibType = DISPLAY;
+            return;
+        }
+    }
+    for (size_t i = 0; i < _displayLibs.size(); i++) {
+        if (event.x >= _displayLibs[i].pos.x &&
+            event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width &&
+            event.y >= _displayLibs[i].pos.y &&
+            event.y <= _displayLibs[i].pos.y + _displayLibs[i].pos.height) {
+            _selectedDisplayLib = i;
+            _selectingLibType = GAME;
+            return;
+        }
+    }
+}
+
+/**
+ * @brief Handle a single event
+ *
+ * This function takes an event and processes it. If the event is a
+ * left mouse button press, it calls the handleLeftClick function.
+ *
+ * @param event The event to handle
+ */
+void Menu::handleOneEvent(event event)
+{
+    if (event.type == PRESS && event.key == MOUSE_LEFT) {
+        handleLeftClick(event);
+    }
+}
+
+/**
+ * @brief Handle events
+ *
+ * This function takes a vector of events and processes each event
+ * using the handleOneEvent function.
+ *
+ * @param events A vector of events to handle
+ */
 void Menu::handleEvent(std::vector<event> events)
 {
-    (void)events;
+    for (const auto &event : events) {
+        handleOneEvent(event);
+    }
 }
 
+///////////////////////////////// Rendering /////////////////////////////////
+
+/**
+ * @brief Render the title of the menu
+ *
+ * This function creates an Entity object representing the title of
+ * the menu. It sets the position, color, and text of the title.
+ *
+ * @return Entity The title entity
+ */
 Entity Menu::renderTitle()
 {
     Entity titleText;
@@ -263,6 +344,14 @@ Entity Menu::renderTitle()
     return titleText;
 }
 
+/**
+ * @brief Render the display title
+ *
+ * This function creates an Entity object representing the display
+ * title. It sets the position, color, and text of the display title.
+ *
+ * @return Entity The display title entity
+ */
 Entity Menu::renderDisplayTitle()
 {
     Entity displaysTitle;
@@ -279,10 +368,40 @@ Entity Menu::renderDisplayTitle()
     return displaysTitle;
 }
 
+/**
+ * @brief Setup the button position for a library
+ *
+ * This function sets up the position of a library button based on
+ * its name and the specified coordinates.
+ *
+ * @param lib The library information
+ * @param x The x-coordinate of the button
+ * @param y The y-coordinate of the button
+ */
+void Menu::setupLibButton(LibInfo &lib, int x, int y)
+{
+    lib.pos.x = x;
+    lib.pos.y = y;
+    lib.pos.width = lib.name.length();
+    lib.pos.height = 30;
+}
+
+/**
+ * @brief Render the libraries
+ *
+ * This function creates a map of Entity objects representing the
+ * libraries. It sets the position, color, and text of each library
+ * based on the selected library and whether the user is selecting
+ * a game or display library.
+ *
+ * @param displayLibs The vector of library information
+ * @param selectedLib The index of the selected library
+ * @param x The x-coordinate of the button
+ * @return std::map<std::string, Entity> A map of Entity objects representing
+ * the libraries
+ */
 std::map<std::string, Entity> Menu::renderLibs(
-    std::vector<LibInfo> displayLibs,
-    size_t selectedLib,
-    bool selectingLibType)
+    std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x)
 {
     std::map<std::string, Entity> entities;
 
@@ -290,23 +409,19 @@ std::map<std::string, Entity> Menu::renderLibs(
     for (size_t i = 0; i < displayLibs.size(); i++) {
         Entity libEntity;
         libEntity.type = TEXT;
-        libEntity.x = 200;
+        libEntity.x = x;
         libEntity.y = yPos;
         libEntity.width = 0;
         libEntity.height = 0;
         libEntity.rotate = 0;
+        setupLibButton(displayLibs[i], x, yPos);
 
         std::string prefix;
-        if (selectingLibType && i == selectedLib) {
+        if (i == selectedLib) {
             prefix = "-> ";
             libEntity.RGB[0] = 0;
             libEntity.RGB[1] = 255;
             libEntity.RGB[2] = 0;  // Green
-        } else if (i == selectedLib) {
-            prefix = "* ";
-            libEntity.RGB[0] = 200;
-            libEntity.RGB[1] = 200;
-            libEntity.RGB[2] = 200;  // Light gray
         } else {
             prefix = "   ";
             libEntity.RGB[0] = 180;
@@ -321,6 +436,14 @@ std::map<std::string, Entity> Menu::renderLibs(
     return entities;
 }
 
+/**
+ * @brief Render the game title
+ *
+ * This function creates an Entity object representing the game title.
+ * It sets the position, color, and text of the game title.
+ *
+ * @return Entity The game title entity
+ */
 Entity Menu::renderGameTitle()
 {
     Entity gamesTitle;
@@ -337,6 +460,17 @@ Entity Menu::renderGameTitle()
     return gamesTitle;
 }
 
+/**
+ * @brief Render the selected libraries
+ *
+ * This function creates an Entity object representing the selected
+ * libraries. It sets the position, color, and text of the selected
+ * libraries.
+ *
+ * @param gameName The name of the game library
+ * @param displayName The name of the display library
+ * @return Entity The selected libraries entity
+ */
 Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
 {
     Entity selectedLibs;
@@ -354,6 +488,16 @@ Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
     return selectedLibs;
 }
 
+/**
+ * @brief Render the game menu
+ *
+ * This function creates a map of Entity objects representing the
+ * game menu. It sets the position, color, and text of each entity
+ * based on the selected libraries.
+ *
+ * @return std::map<std::string, Entity> A map of Entity objects representing
+ * the game menu
+ */
 std::map<std::string, Entity> Menu::renderGame()
 {
     std::map<std::string, Entity> entities;
@@ -363,16 +507,14 @@ std::map<std::string, Entity> Menu::renderGame()
 
     entities["display_title"] = renderDisplayTitle();
 
-    tempEntities = renderLibs(
-        _displayLibs, _selectedDisplayLib, _selectingLibType == DISPLAY);
+    tempEntities = renderLibs(_displayLibs, _selectedDisplayLib, 200);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
 
     entities["games_title"] = renderGameTitle();
 
-    tempEntities = renderLibs(
-        _gameLibs, _selectedGameLib, _selectingLibType == GAME);
+    tempEntities = renderLibs(_gameLibs, _selectedGameLib, 600);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
