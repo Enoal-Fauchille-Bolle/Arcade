@@ -11,9 +11,9 @@
     #include <SFML/Graphics.hpp>
     #include <iostream>
 
-    #include "../ADisplay.hpp"
+    #include "../interfaces/IDisplay.hpp"
 
-class libSFML : public ADisplay {
+class libSFML : public IDisplay {
     public:
         libSFML();
         ~libSFML();
@@ -23,6 +23,8 @@ class libSFML : public ADisplay {
         void clear(void) final;
         void display(void) final;
 
+        std::string getName(void) final;
+
     protected:
         void drawRectangle(renderObject obj);
         void drawCircle(renderObject obj);
@@ -30,6 +32,7 @@ class libSFML : public ADisplay {
         void drawMusic(renderObject obj);
 
     private:
+        std::string _name;
         sf::RenderWindow _window;
 };
 

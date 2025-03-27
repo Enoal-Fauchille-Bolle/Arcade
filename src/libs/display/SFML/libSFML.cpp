@@ -93,7 +93,24 @@ void libSFML::display(void)
     _window.display();
 }
 
-extern "C" libSFML *createLib(void)
+std::string libSFML::getName(void)
 {
-    return new libSFML();
+    return _name;
+}
+
+extern "C" {
+    __attribute__((constructor))
+    void constructor()
+    {
+    }
+
+    __attribute__((destructor))
+    void destructor()
+    {
+    }
+
+    libSFML *entryPoint(void)
+    {
+        return new libSFML();
+    }
 }
