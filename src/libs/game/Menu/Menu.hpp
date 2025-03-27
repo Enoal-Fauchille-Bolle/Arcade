@@ -89,7 +89,6 @@ class Menu : public AGame {
         std::vector<LibInfo> _displayLibs;
         size_t _selectedGameLib = 0;
         size_t _selectedDisplayLib = 0;
-        LibType _selectingLibType = GAME;
         bool _startGame;
 };
 

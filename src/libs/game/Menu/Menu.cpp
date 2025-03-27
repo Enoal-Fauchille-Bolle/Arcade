@@ -272,7 +272,6 @@ void Menu::handleLeftClick(event event)
             event.y >= _gameLibs[i].pos.y &&
             event.y <= _gameLibs[i].pos.y + _gameLibs[i].pos.height) {
             _selectedGameLib = i;
-            _selectingLibType = DISPLAY;
             return;
         }
     }
@@ -282,7 +281,6 @@ void Menu::handleLeftClick(event event)
             event.y >= _displayLibs[i].pos.y &&
             event.y <= _displayLibs[i].pos.y + _displayLibs[i].pos.height) {
             _selectedDisplayLib = i;
-            _selectingLibType = GAME;
             return;
         }
     }
