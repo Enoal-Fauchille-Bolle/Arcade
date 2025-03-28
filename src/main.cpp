@@ -31,6 +31,7 @@ int main(int ac, char **av)
     else {
         const std::string path = av[1];
         Core core(path);
+        core.run();
     }
     return 0;
 }
