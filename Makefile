@@ -48,6 +48,7 @@ MENU_SRC = \
 		$(SRCDIR)libs/game/Menu/Menu.cpp	\
 
 MINESWEEPER_SRC = \
+		$(SRCDIR)libs/game/MineSweeper/Minesweeper.cpp
 
 SNAKE_SRC = \
 		$(SRCDIR)libs/game/Snake/Snake.cpp	\
