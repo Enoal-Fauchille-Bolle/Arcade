@@ -10,6 +10,7 @@
 
     #include <string>
     #include "../../IType.hpp"
+    #include <map>
 
     struct Entity {
         shape type;
