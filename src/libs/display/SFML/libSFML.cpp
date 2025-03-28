@@ -7,16 +7,27 @@
 
 #include "libSFML.hpp"
 
+/**
+ * @brief Constructor for the libSFML class.
+ */
 libSFML::libSFML()
 {
     _name = "SFML";
-    _window.create(sf::VideoMode(1024, 768), "Arcade");
+    this->_window.create(sf::VideoMode(1024, 768), "Arcade");
+    this->_window.setFramerateLimit(60);
 }
 
+/**
+ * @brief Destructor for the libSFML class.
+ */
 libSFML::~libSFML()
 {
 }
 
+/**
+ * @brief Polls events from the SFML window.
+ * @return A vector of rawEvent objects representing the polled events.
+ */
 std::vector<rawEvent> libSFML::pollEvent(void)
 {
     std::vector<rawEvent> events;
@@ -39,6 +50,10 @@ std::vector<rawEvent> libSFML::pollEvent(void)
     return events;
 }
 
+/**
+ * @brief Draws a render object on the SFML window.
+ * @param obj The renderObject to be drawn.
+ */
 void libSFML::drawObject(renderObject obj)
 {
     if (obj.type == RECTANGLE)
@@ -51,6 +66,10 @@ void libSFML::drawObject(renderObject obj)
         drawMusic(obj);
 }
 
+/**
+ * @brief Draws a rectangle on the SFML window.
+ * @param obj The renderObject containing rectangle properties.
+ */
 void libSFML::drawRectangle(renderObject obj)
 {
     sf::RectangleShape rectangle(sf::Vector2f(obj.width, obj.height));
@@ -59,6 +78,10 @@ void libSFML::drawRectangle(renderObject obj)
     _window.draw(rectangle);
 }
 
+/**
+ * @brief Draws a circle on the SFML window.
+ * @param obj The renderObject containing circle properties.
+ */
 void libSFML::drawCircle(renderObject obj)
 {
     sf::CircleShape circle(obj.width);
@@ -66,6 +89,10 @@ void libSFML::drawCircle(renderObject obj)
     _window.draw(circle);
 }
 
+/**
+ * @brief Draws text on the SFML window.
+ * @param obj The renderObject containing text properties.
+ */
 void libSFML::drawText(renderObject obj)
 {
     sf::Text text;
@@ -78,38 +105,62 @@ void libSFML::drawText(renderObject obj)
     _window.draw(text);
 }
 
+/**
+ * @brief Handles music-related rendering (currently a placeholder).
+ * @param obj The renderObject containing music properties.
+ */
 void libSFML::drawMusic(renderObject obj)
 {
     (void)obj;
 }
 
+/**
+ * @brief Clears the SFML window.
+ */
 void libSFML::clear(void)
 {
     _window.clear();
 }
 
+/**
+ * @brief Displays the contents of the SFML window.
+ */
 void libSFML::display(void)
 {
     _window.display();
 }
 
+/**
+ * @brief Retrieves the name of the display library.
+ * @return A string representing the name of the library.
+ */
 std::string libSFML::getName(void)
 {
     return _name;
 }
 
 extern "C" {
+    /**
+     * @brief Constructor for the shared library.
+     */
     __attribute__((constructor))
     void constructor()
     {
     }
 
+    /**
+     * @brief Destructor for the shared library.
+     */
     __attribute__((destructor))
     void destructor()
     {
     }
 
-    libSFML *entryPoint(void)
+    /**
+     * @brief Entry point for the libSFML display library.
+     * @return A pointer to a new libSFML instance.
+     */
+    libSFML *DisplayEntryPoint()
     {
         return new libSFML();
     }
