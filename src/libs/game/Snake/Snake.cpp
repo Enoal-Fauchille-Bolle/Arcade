@@ -51,3 +51,24 @@ std::string Snake::getName(void)
 {
     return "Snake";
 }
+
+
+/**
+ * @brief extern c
+ *
+ */
+extern "C"
+{
+    __attribute__((constructor)) void constructor()
+    {
+    }
+
+    __attribute__((destructor)) void destructor()
+    {
+    }
+
+    Snake *GameEntryPoint(void)
+    {
+        return new Snake();
+    }
+}
