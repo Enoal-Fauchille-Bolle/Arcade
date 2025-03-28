@@ -19,7 +19,7 @@ Core::Core(std::string path)
 
     running = true;
     load_display(path);
-    load_game("./lib/arcade_minesweeper.so");
+    load_game("./lib/arcade_menu.so");
 }
 
 /**
