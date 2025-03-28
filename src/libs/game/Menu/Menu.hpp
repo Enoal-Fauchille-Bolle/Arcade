@@ -28,19 +28,19 @@ class Menu : public IGame {
         Menu();
         ~Menu() = default;
 
-        bool isGameOver(void) override;
+        bool isGameOver(void) final;
 
-        std::pair<float, std::string> getScore(void) override;
+        std::pair<float, std::string> getScore(void) final;
 
-        bool isGameEnd(void) override;
+        bool isGameEnd(void) final;
 
-        std::string getNewLib(void) override;
+        std::string getNewLib(void) final;
 
-        void handleEvent(std::vector<event>) override;
+        void handleEvent(std::vector<event>) final;
 
-        std::string getName(void) override;
+        std::string getName(void) final;
 
-        std::map<std::string, Entity> renderGame() override;
+        std::map<std::string, Entity> renderGame() final;
 
     protected:
     private:

@@ -23,7 +23,7 @@ Menu::Menu()
 
     _name = "Menu";
     if (libPaths.empty()) {
-        std::cerr << "No libraries found in the lib directory." << std::endl;
+        std::cerr << "No libraries found in " << LIBRARY_PATH << std::endl;
         return;
     }
     categorizeLibraries(libPaths);
@@ -123,9 +123,8 @@ void Menu::sortLibraries()
 std::string Menu::isGameLibrary(const std::string &path)
 {
     try {
-        DLLoader<IGame> loader(path);
-        IGame *instance = loader.getInstance();
-        instance->isGameOver();
+        DLLoader<IGame> loader("GameEntryPoint");
+        IGame *instance = loader.getInstance(path);
         std::string name = instance->getName();
         delete instance;
         return name;
@@ -147,9 +146,8 @@ std::string Menu::isGameLibrary(const std::string &path)
 std::string Menu::isDisplayLibrary(const std::string &path)
 {
     try {
-        DLLoader<IDisplay> loader(path);
-        IDisplay *instance = loader.getInstance();
-        instance->clear();
+        DLLoader<IDisplay> loader("DisplayEntryPoint");
+        IDisplay *instance = loader.getInstance(path);
         std::string name = instance->getName();
         delete instance;
         return name;
@@ -174,6 +172,12 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
     _gameLibs.clear();
     _displayLibs.clear();
     for (const auto &path : paths) {
+        std::cout << "  " << path << std::endl;
+    }
+    for (const auto &path : paths) {
+        if (path.find("arcade_menu.so") != std::string::npos) {
+            continue;
+        }
         libName = isGameLibrary(path);
         if (!libName.empty()) {
             _gameLibs.push_back({path, libName, GAME, {0, 0, 0, 0}});
@@ -249,8 +253,8 @@ bool Menu::isGameEnd(void)
 std::string Menu::getNewLib(void)
 {
     return (_selectedGameLib >= _gameLibs.size())
-               ? _gameLibs[0].name
-               : _gameLibs[_selectedGameLib].name;
+               ? _gameLibs[0].path
+               : _gameLibs[_selectedGameLib].path;
 }
 
 ////////////////////////////// Event Handling ///////////////////////////////
@@ -537,23 +541,21 @@ std::string Menu::getName(void)
     return _name;
 }
 
-
 /**
-    * @brief extern c
-    *
+ * @brief extern c
+ *
  */
-extern "C" {
-    __attribute__((constructor))
-    void constructor()
+extern "C"
+{
+    __attribute__((constructor)) void constructor()
     {
     }
 
-    __attribute__((destructor))
-    void destructor()
+    __attribute__((destructor)) void destructor()
     {
     }
 
-    Menu *entryPoint(void)
+    Menu *GameEntryPoint(void)
     {
         return new Menu();
     }
