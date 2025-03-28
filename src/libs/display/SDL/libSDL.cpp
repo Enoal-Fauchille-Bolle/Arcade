@@ -83,3 +83,25 @@ std::string LibSDL::getName(void)
 {
     return ("SDL");
 }
+
+
+/**
+    * @brief extern c
+    *
+ */
+extern "C" {
+    __attribute__((constructor))
+    void constructor()
+    {
+    }
+
+    __attribute__((destructor))
+    void destructor()
+    {
+    }
+
+    LibSDL *DisplayEntryPoint(void)
+    {
+        return new LibSDL();
+    }
+}
