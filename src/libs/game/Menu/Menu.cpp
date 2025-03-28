@@ -268,7 +268,7 @@ std::string Menu::getNewLib(void)
  *
  * @param event The event to handle
  */
-void Menu::handleLeftClick(event event)
+void Menu::handleLeftClick(rawEvent event)
 {
     for (size_t i = 0; i < _gameLibs.size(); i++) {
         if (event.x >= _gameLibs[i].pos.x &&
@@ -298,7 +298,7 @@ void Menu::handleLeftClick(event event)
  *
  * @param event The event to handle
  */
-void Menu::handleOneEvent(event event)
+void Menu::handleOneEvent(rawEvent event)
 {
     if (event.type == PRESS && event.key == MOUSE_LEFT) {
         handleLeftClick(event);
@@ -313,7 +313,7 @@ void Menu::handleOneEvent(event event)
  *
  * @param events A vector of events to handle
  */
-void Menu::handleEvent(std::vector<event> events)
+void Menu::handleEvent(std::vector<rawEvent> events)
 {
     for (const auto &event : events) {
         handleOneEvent(event);

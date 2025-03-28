@@ -24,7 +24,7 @@ class Snake : public IGame {
         bool isGameEnd(void) override;
         std::string getNewLib(void) override;
 
-        void handleEvent(std::vector<event>) override;
+        void handleEvent(std::vector<rawEvent>) override;
         std::map<std::string, Entity> renderGame() override;
 
         std::string getName(void) override;

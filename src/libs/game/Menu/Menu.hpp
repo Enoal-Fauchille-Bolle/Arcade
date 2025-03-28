@@ -36,7 +36,7 @@ class Menu : public IGame {
 
         std::string getNewLib(void) final;
 
-        void handleEvent(std::vector<event>) final;
+        void handleEvent(std::vector<rawEvent>) final;
 
         std::string getName(void) final;
 
@@ -75,8 +75,8 @@ class Menu : public IGame {
         void categorizeLibraries(const std::vector<std::string> &paths);
 
         // Event Handling
-        void handleLeftClick(event event);
-        void handleOneEvent(event event);
+        void handleLeftClick(rawEvent event);
+        void handleOneEvent(rawEvent event);
 
         // Rendering
         Entity renderTitle();

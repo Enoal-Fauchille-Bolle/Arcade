@@ -35,7 +35,7 @@ std::string Snake::getNewLib(void)
     return "todo";
 }
 
-void Snake::handleEvent(std::vector<event> events)
+void Snake::handleEvent(std::vector<rawEvent> events)
 {
     (void)events;
 }
