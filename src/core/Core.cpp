@@ -8,6 +8,10 @@
 #include "Core.hpp"
 #include "LibLoader.hpp"
 
+/**
+ * @brief Constructor for the Core class.
+ * @param path The path to the initial display library.
+ */
 Core::Core(std::string path)
 {
     std::cerr << "Core constructor" << std::endl;
@@ -15,19 +19,25 @@ Core::Core(std::string path)
 
     running = true;
     load_display(path);
-    load_game("./lib/arcade_menu.so");
+    load_game("./lib/arcade_minesweeper.so");
 }
 
+/**
+ * @brief Destructor for the Core class.
+ */
 Core::~Core()
 {
     std::cerr << "Core destructor" << std::endl;
 }
 
+/**
+ * @brief Main loop of the Core class. Handles game logic, events, and rendering.
+ */
 void Core::run()
 {
     std::cerr << "Core run" << std::endl;
     while (running) {
-        if (_game->isGameOver()) {
+        if (_game->isGameOver() == true) {
             auto score = _game->getScore();
         }
         if (_game->isGameEnd()) {
@@ -42,7 +52,8 @@ void Core::run()
         if (entities.size() > 0) {
             _display->clear();
             for (const auto& pair : entities) {
-                const Entity& val = pair.second;
+                std::cout << "Loop" << std::endl;
+                Entity val = pair.second;
                 renderObject obj;
                 obj.x = val.x;
                 obj.y = val.y;
@@ -58,15 +69,18 @@ void Core::run()
     }
 }
 
-
+/**
+ * @brief Loads the display library.
+ * @param path The path to the display library.
+ * @return 0 on success, 1 on failure.
+ */
 int Core::load_display(std::string path)
 {
     std::cerr << "Core load_display" << std::endl;
 
     try {
-        DLLoader<IDisplay> loader(path);
-        IDisplay* module = loader.getInstance();
-        _display = std::unique_ptr<IDisplay>(module);
+        _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
+        _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Error loading display library: " << e.what() << std::endl;
@@ -74,14 +88,18 @@ int Core::load_display(std::string path)
     }
 }
 
+/**
+ * @brief Loads the game library.
+ * @param path The path to the game library.
+ * @return 0 on success, 1 on failure.
+ */
 int Core::load_game(std::string path)
 {
     std::cerr << "Core load_game" << std::endl;
 
     try {
-        DLLoader<IGame> loader(path);
-        IGame* module = loader.getInstance();
-        _game = std::unique_ptr<IGame>(module);
+        _gameLoader = DLLoader<IGame>("GameEntryPoint");
+        _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "Error loading game library: " << e.what() << std::endl;
@@ -89,12 +107,20 @@ int Core::load_game(std::string path)
     }
 }
 
+/**
+ * @brief Deletes the currently loaded display library.
+ * @return 0 on success.
+ */
 int Core::delete_display()
 {
     std::cerr << "Core delete_display" << std::endl;
     return 0;
 }
 
+/**
+ * @brief Deletes the currently loaded game library.
+ * @return 0 on success.
+ */
 int Core::delete_game()
 {
     std::cerr << "Core delete_game" << std::endl;

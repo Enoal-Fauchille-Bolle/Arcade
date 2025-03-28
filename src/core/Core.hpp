@@ -13,6 +13,7 @@
     #include <filesystem>
     #include <memory>
     #include <vector>
+    #include "LibLoader.hpp"
     #include "../libs/display/interfaces/IDisplay.hpp"
     #include "../libs/game/interfaces/IGame.hpp"
 
@@ -21,8 +22,8 @@ class Core {
         Core(std::string path);
         ~Core();
 
-    protected:
         void run();
+    protected:
 
     private:
         int load_display(std::string path);
@@ -31,6 +32,8 @@ class Core {
         int delete_display();
         int delete_game();
 
+        DLLoader<IGame> _gameLoader;
+        DLLoader<IDisplay> _graphicLoader;
         std::unique_ptr<IDisplay> _display;
         std::unique_ptr<IGame> _game;
         bool running = true;
