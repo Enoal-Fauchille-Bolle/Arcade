@@ -23,13 +23,6 @@
         std::map<std::string, std::string> sprites;
     };
 
-    struct event {
-        eventType type;
-        eventKey key;
-        int x;
-        int y;
-    };
-
 class IGame {
     public:
         IGame() = default;
@@ -41,7 +34,7 @@ class IGame {
         virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
-        virtual void handleEvent(std::vector<event>) = 0;
+        virtual void handleEvent(std::vector<rawEvent>) = 0;
         virtual std::map<std::string, Entity> renderGame() = 0;
 
         virtual std::string getName(void) = 0;

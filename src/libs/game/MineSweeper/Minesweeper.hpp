@@ -35,7 +35,7 @@ class Minesweeper : public IGame {
 
         std::string getNewLib(void) override;
 
-        void handleEvent(std::vector<event>) override;
+        void handleEvent(std::vector<rawEvent>) override;
 
         std::map<std::string, Entity> renderGame() override;
 
@@ -49,7 +49,7 @@ class Minesweeper : public IGame {
         void flagCell(int x, int y);
         bool checkWin();
 
-        std::pair<int, int> handleClick(event event);
+        std::pair<int, int> handleClick(rawEvent event);
 
         std::map<std::string, Entity> printBoard();
 

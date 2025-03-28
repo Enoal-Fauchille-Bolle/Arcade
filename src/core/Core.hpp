@@ -13,6 +13,7 @@
     #include <filesystem>
     #include <memory>
     #include <vector>
+    #include "../libs/IType.hpp"
     #include "LibLoader.hpp"
     #include "../libs/display/interfaces/IDisplay.hpp"
     #include "../libs/game/interfaces/IGame.hpp"

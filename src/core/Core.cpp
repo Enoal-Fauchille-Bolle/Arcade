@@ -46,13 +46,11 @@ void Core::run()
             load_game(newLib);
         }
         std::vector<rawEvent> events = _display->pollEvent();
-        std::vector<event> g_events = std::vector<event>();
-        _game->handleEvent(g_events);
+        _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
         if (entities.size() > 0) {
             _display->clear();
             for (const auto& pair : entities) {
-                std::cout << "Loop" << std::endl;
                 Entity val = pair.second;
                 renderObject obj;
                 obj.x = val.x;

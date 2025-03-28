@@ -16,7 +16,7 @@ Minesweeper::Minesweeper()
     _name = "Minesweeper";
     _isOver = false;
 
-    _mines = 10;
+    _mines = 30;
     _score = std::pair<float, std::string>(0, "0");
     initBoard(20, 20);
     std::cout << "Minesweeper created" << std::endl;
@@ -69,13 +69,14 @@ std::string Minesweeper::getNewLib(void)
  * @brief Handles input events for the game.
  * @param events A vector of events to process.
  */
-void Minesweeper::handleEvent(std::vector<event> events)
+void Minesweeper::handleEvent(std::vector<rawEvent> events)
 {
     if (events.empty())
         return;
     for (const auto &event : events) {
         if (event.type == eventType::PRESS && event.key == eventKey::MOUSE_LEFT) {
             auto [x, y] = handleClick(event);
+            std::cout << "press:" << "x: " << x << " y: " << y << std::endl;
             revealCell(x, y);
         }
         if (event.type == eventType::PRESS && event.key == eventKey::MOUSE_RIGHT) {
@@ -105,7 +106,7 @@ std::map<std::string, Entity> Minesweeper::renderGame()
 std::map<std::string, Entity> Minesweeper::printBoard()
 {
     std::map<std::string, Entity> entities;
-
+    entities.clear();
     for (int y = 0; y < _height; y++) {
         for (int x = 0; x < _width; x++) {
             Entity cell;
@@ -121,15 +122,22 @@ std::map<std::string, Entity> Minesweeper::printBoard()
             if (_board[y][x].isRevealed) {
                 if (_board[y][x].isMine) {
                     cell.sprites["ncurse"] = "X";
-                    cell.sprites["SFML"] = "path";
+                    cell.sprites["SFML"] = "asset/minesweeper_bomb.jpg";
                 } else {
-                    cell.sprites["ncurse"] = std::to_string(_board[y][x].adjacentMines);
-                    cell.sprites["SFML"] = "path";
+                    if (_board[y][x].adjacentMines > 0) {
+                        cell.sprites["ncurse"] = std::to_string(_board[y][x].adjacentMines);
+                        cell.sprites["SFML"] = "asset/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
+                    } else {
+                        cell.sprites["ncurse"] = " ";
+                        cell.sprites["SFML"] = "asset/minesweeper_empty.jpg";
+                    }
                 }
-            }
-            if (_board[y][x].isFlagged) {
+            } else if (_board[y][x].isFlagged) {
                 cell.sprites["ncurse"] = "F";
                 cell.sprites["SFML"] = "path";
+            } else {
+                cell.sprites["ncurse"] = "O";
+                cell.sprites["SFML"] = "asset/minesweeper_not_click.jpg";
             }
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
         }
@@ -210,15 +218,17 @@ void Minesweeper::calculateAdjacentMines()
  */
 void Minesweeper::revealCell(int x, int y)
 {
-    if (!isFirstClikc) {
-        placeMines(x, y);
-        calculateAdjacentMines();
-        isFirstClikc = true;
-    }
     if (x < 0 || x >= _width)
         return;
     if (y < 0 || y >= _height)
         return;
+    if (_board[y][x].isFlagged)
+        return;
+    if (isFirstClikc == false) {
+        placeMines(x, y);
+        calculateAdjacentMines();
+        isFirstClikc = true;
+    }
     if (_board[y][x].isRevealed)
         return;
     _board[y][x].isRevealed = true;
@@ -269,7 +279,7 @@ bool Minesweeper::checkWin()
  * @param event The event containing the click information.
  * @return A pair of integers representing the x and y coordinates.
  */
-std::pair<int, int> Minesweeper::handleClick(event event)
+std::pair<int, int> Minesweeper::handleClick(rawEvent event)
 {
     int x = event.x / (SCREEN_HEIGHT / _width);
     int y = event.y / (SCREEN_HEIGHT / _height);

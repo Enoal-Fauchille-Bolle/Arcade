@@ -33,19 +33,182 @@ std::vector<rawEvent> libSFML::pollEvent(void)
     std::vector<rawEvent> events;
     sf::Event event;
 
-    while (_window.pollEvent(event)) {
-        // rawEvent e;
-        // e.type = "KEYBOARD";
-        // e.key = "";
-        // e.x = 0;
-        // e.y = 0;
-        // if (event.type == sf::Event::Closed) {
-        //     e.type = "CLOSE";
-        // }
-        // if (event.type == sf::Event::KeyPressed) {
-        //     e.key = std::to_string(event.key.code);
-        // }
-        // events.push_back(e);
+    while (_window.pollEvent(event))
+    {
+        rawEvent raw;
+        switch (event.type)
+        {
+            case sf::Event::KeyPressed:
+                raw.type = PRESS;
+                switch (event.key.code) {
+                    case sf::Keyboard::A: raw.key = KEY_A; break;
+                    case sf::Keyboard::B: raw.key = KEY_B; break;
+                    case sf::Keyboard::C: raw.key = KEY_C; break;
+                    case sf::Keyboard::D: raw.key = KEY_D; break;
+                    case sf::Keyboard::E: raw.key = KEY_E; break;
+                    case sf::Keyboard::F: raw.key = KEY_F; break;
+                    case sf::Keyboard::G: raw.key = KEY_G; break;
+                    case sf::Keyboard::H: raw.key = KEY_H; break;
+                    case sf::Keyboard::I: raw.key = KEY_I; break;
+                    case sf::Keyboard::J: raw.key = KEY_J; break;
+                    case sf::Keyboard::K: raw.key = KEY_K; break;
+                    case sf::Keyboard::L: raw.key = KEY_L; break;
+                    case sf::Keyboard::M: raw.key = KEY_M; break;
+                    case sf::Keyboard::N: raw.key = KEY_N; break;
+                    case sf::Keyboard::O: raw.key = KEY_O; break;
+                    case sf::Keyboard::P: raw.key = KEY_P; break;
+                    case sf::Keyboard::Q: raw.key = KEY_Q; break;
+                    case sf::Keyboard::R: raw.key = KEY_R; break;
+                    case sf::Keyboard::S: raw.key = KEY_S; break;
+                    case sf::Keyboard::T: raw.key = KEY_T; break;
+                    case sf::Keyboard::U: raw.key = KEY_U; break;
+                    case sf::Keyboard::V: raw.key = KEY_V; break;
+                    case sf::Keyboard::W: raw.key = KEY_W; break;
+                    case sf::Keyboard::X: raw.key = KEY_X; break;
+                    case sf::Keyboard::Y: raw.key = KEY_Y; break;
+                    case sf::Keyboard::Z: raw.key = KEY_Z; break;
+                    case sf::Keyboard::Num0: raw.key = KEY_0; break;
+                    case sf::Keyboard::Num1: raw.key = KEY_1; break;
+                    case sf::Keyboard::Num2: raw.key = KEY_2; break;
+                    case sf::Keyboard::Num3: raw.key = KEY_3; break;
+                    case sf::Keyboard::Num4: raw.key = KEY_4; break;
+                    case sf::Keyboard::Num5: raw.key = KEY_5; break;
+                    case sf::Keyboard::Num6: raw.key = KEY_6; break;
+                    case sf::Keyboard::Num7: raw.key = KEY_7; break;
+                    case sf::Keyboard::Num8: raw.key = KEY_8; break;
+                    case sf::Keyboard::Num9: raw.key = KEY_9; break;
+                    case sf::Keyboard::Escape: raw.key = KEY_ESCAPE; break;
+                    case sf::Keyboard::Return: raw.key = KEY_RETURN; break;
+                    case sf::Keyboard::Space: raw.key = KEY_SPACE; break;
+                    case sf::Keyboard::Backspace: raw.key = KEY_BACKSPACE; break;
+                    case sf::Keyboard::Tab: raw.key = KEY_TAB; break;
+                    case sf::Keyboard::Up: raw.key = KEY_UP; break;
+                    case sf::Keyboard::Down: raw.key = KEY_DOWN; break;
+                    case sf::Keyboard::Left: raw.key = KEY_LEFT; break;
+                    case sf::Keyboard::Right: raw.key = KEY_RIGHT; break;
+                    case sf::Keyboard::LShift: raw.key = KEY_LSHIFT; break;
+                    case sf::Keyboard::RShift: raw.key = KEY_RSHIFT; break;
+                    case sf::Keyboard::LControl: raw.key = KEY_LCTRL; break;
+                    case sf::Keyboard::RControl: raw.key = KEY_RCTRL; break;
+                    case sf::Keyboard::LAlt: raw.key = KEY_LALT; break;
+                    case sf::Keyboard::RAlt: raw.key = KEY_RALT; break;
+                    case sf::Keyboard::Home: raw.key = KEY_HOME; break;
+                    case sf::Keyboard::End: raw.key = KEY_END; break;
+                    case sf::Keyboard::Delete: raw.key = KEY_DELETE; break;
+                    case sf::Keyboard::Insert: raw.key = KEY_INSERT; break;
+                    case sf::Keyboard::PageUp: raw.key = KEY_PAGEUP; break;
+                    case sf::Keyboard::PageDown: raw.key = KEY_PAGEDOWN; break;
+                    default:
+                        continue; // Skip unmapped keys
+                }
+                events.push_back(raw);
+                break;
+            case sf::Event::KeyReleased:
+                raw.type = RELEASE;
+                switch (event.key.code) {
+                    case sf::Keyboard::A: raw.key = KEY_A; break;
+                    case sf::Keyboard::B: raw.key = KEY_B; break;
+                    case sf::Keyboard::C: raw.key = KEY_C; break;
+                    case sf::Keyboard::D: raw.key = KEY_D; break;
+                    case sf::Keyboard::E: raw.key = KEY_E; break;
+                    case sf::Keyboard::F: raw.key = KEY_F; break;
+                    case sf::Keyboard::G: raw.key = KEY_G; break;
+                    case sf::Keyboard::H: raw.key = KEY_H; break;
+                    case sf::Keyboard::I: raw.key = KEY_I; break;
+                    case sf::Keyboard::J: raw.key = KEY_J; break;
+                    case sf::Keyboard::K: raw.key = KEY_K; break;
+                    case sf::Keyboard::L: raw.key = KEY_L; break;
+                    case sf::Keyboard::M: raw.key = KEY_M; break;
+                    case sf::Keyboard::N: raw.key = KEY_N; break;
+                    case sf::Keyboard::O: raw.key = KEY_O; break;
+                    case sf::Keyboard::P: raw.key = KEY_P; break;
+                    case sf::Keyboard::Q: raw.key = KEY_Q; break;
+                    case sf::Keyboard::R: raw.key = KEY_R; break;
+                    case sf::Keyboard::S: raw.key = KEY_S; break;
+                    case sf::Keyboard::T: raw.key = KEY_T; break;
+                    case sf::Keyboard::U: raw.key = KEY_U; break;
+                    case sf::Keyboard::V: raw.key = KEY_V; break;
+                    case sf::Keyboard::W: raw.key = KEY_W; break;
+                    case sf::Keyboard::X: raw.key = KEY_X; break;
+                    case sf::Keyboard::Y: raw.key = KEY_Y; break;
+                    case sf::Keyboard::Z: raw.key = KEY_Z; break;
+                    case sf::Keyboard::Num0: raw.key = KEY_0; break;
+                    case sf::Keyboard::Num1: raw.key = KEY_1; break;
+                    case sf::Keyboard::Num2: raw.key = KEY_2; break;
+                    case sf::Keyboard::Num3: raw.key = KEY_3; break;
+                    case sf::Keyboard::Num4: raw.key = KEY_4; break;
+                    case sf::Keyboard::Num5: raw.key = KEY_5; break;
+                    case sf::Keyboard::Num6: raw.key = KEY_6; break;
+                    case sf::Keyboard::Num7: raw.key = KEY_7; break;
+                    case sf::Keyboard::Num8: raw.key = KEY_8; break;
+                    case sf::Keyboard::Num9: raw.key = KEY_9; break;
+                    case sf::Keyboard::Escape: raw.key = KEY_ESCAPE; break;
+                    case sf::Keyboard::Return: raw.key = KEY_RETURN; break;
+                    case sf::Keyboard::Space: raw.key = KEY_SPACE; break;
+                    case sf::Keyboard::Backspace: raw.key = KEY_BACKSPACE; break;
+                    case sf::Keyboard::Tab: raw.key = KEY_TAB; break;
+                    case sf::Keyboard::Up: raw.key = KEY_UP; break;
+                    case sf::Keyboard::Down: raw.key = KEY_DOWN; break;
+                    case sf::Keyboard::Left: raw.key = KEY_LEFT; break;
+                    case sf::Keyboard::Right: raw.key = KEY_RIGHT; break;
+                    case sf::Keyboard::LShift: raw.key = KEY_LSHIFT; break;
+                    case sf::Keyboard::RShift: raw.key = KEY_RSHIFT; break;
+                    case sf::Keyboard::LControl: raw.key = KEY_LCTRL; break;
+                    case sf::Keyboard::RControl: raw.key = KEY_RCTRL; break;
+                    case sf::Keyboard::LAlt: raw.key = KEY_LALT; break;
+                    case sf::Keyboard::RAlt: raw.key = KEY_RALT; break;
+                    case sf::Keyboard::Home: raw.key = KEY_HOME; break;
+                    case sf::Keyboard::End: raw.key = KEY_END; break;
+                    case sf::Keyboard::Delete: raw.key = KEY_DELETE; break;
+                    case sf::Keyboard::Insert: raw.key = KEY_INSERT; break;
+                    case sf::Keyboard::PageUp: raw.key = KEY_PAGEUP; break;
+                    case sf::Keyboard::PageDown: raw.key = KEY_PAGEDOWN; break;
+                    default:
+                        continue;
+                }
+                events.push_back(raw);
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                raw.type = PRESS;
+                if (event.mouseButton.button == sf::Mouse::Left)
+                    raw.key = MOUSE_LEFT;
+                else if (event.mouseButton.button == sf::Mouse::Right)
+                    raw.key = MOUSE_RIGHT;
+                else if (event.mouseButton.button == sf::Mouse::Middle)
+                    raw.key = MOUSE_MIDDLE;
+                raw.x = event.mouseButton.x;
+                raw.y = event.mouseButton.y;
+                events.push_back(raw);
+                break;
+
+            case sf::Event::MouseButtonReleased:
+                raw.type = RELEASE;
+                if (event.mouseButton.button == sf::Mouse::Left)
+                    raw.key = MOUSE_LEFT;
+                else if (event.mouseButton.button == sf::Mouse::Right)
+                    raw.key = MOUSE_RIGHT;
+                else if (event.mouseButton.button == sf::Mouse::Middle)
+                    raw.key = MOUSE_MIDDLE;
+                raw.x = event.mouseButton.x;
+                raw.y = event.mouseButton.y;
+                events.push_back(raw);
+                break;
+
+            case sf::Event::MouseWheelScrolled:
+                raw.type = PRESS;
+                if (event.mouseWheelScroll.delta > 0)
+                    raw.key = MOUSE_WHEEL_UP;
+                else if (event.mouseWheelScroll.delta < 0)
+                    raw.key = MOUSE_WHEEL_DOWN;
+                raw.x = event.mouseWheelScroll.x;
+                raw.y = event.mouseWheelScroll.y;
+                events.push_back(raw);
+                break;
+
+            default:
+                break;
+        }
     }
     return events;
 }
@@ -75,8 +238,24 @@ void libSFML::drawRectangle(renderObject obj)
     sf::RectangleShape rectangle(sf::Vector2f(obj.width, obj.height));
     rectangle.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
     rectangle.setPosition(obj.x, obj.y);
+
+    if (!obj.sprite.empty()) {
+        sf::Texture texture;
+        if (texture.loadFromFile(obj.sprite)) {
+            sf::Sprite sprite(texture);
+            sprite.setPosition(obj.x, obj.y);
+            sprite.setScale(
+                static_cast<float>(obj.width) / texture.getSize().x,
+                static_cast<float>(obj.height) / texture.getSize().y
+            );
+            _window.draw(sprite);
+            return;
+        }
+    }
+
     _window.draw(rectangle);
 }
+
 
 /**
  * @brief Draws a circle on the SFML window.

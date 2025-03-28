@@ -118,4 +118,11 @@ enum eventKey {
     KEY_RBRACKET,
 };
 
+struct rawEvent {
+    eventType type;
+    eventKey key;
+    int x;
+    int y;
+};
+
 #endif /* !ITYPE_HPP_ */

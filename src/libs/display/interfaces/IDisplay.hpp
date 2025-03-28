@@ -13,13 +13,6 @@
     #include <vector>
     #include "../../IType.hpp"
 
-    struct rawEvent {
-        eventType type;
-        eventKey key;
-        int x;
-        int y;
-    };
-
     struct renderObject {
         int x;
         int y;
