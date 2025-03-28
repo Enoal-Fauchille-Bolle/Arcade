@@ -17,7 +17,7 @@
     #include "../../../libs/display/interfaces/IDisplay.hpp"
     #include "../../../libs/game/interfaces/IGame.hpp"
     #include "../interfaces/IGame.hpp"
-    #include "LibLoader.hpp"
+    #include "../../../core/LibLoader.hpp"
 
     #define LIBRARY_PATH "./lib/"
     #define SCREEN_WIDTH 1024
