@@ -48,10 +48,16 @@ class Minesweeper : public IGame {
         void revealCell(int x, int y);
         void flagCell(int x, int y);
         bool checkWin();
+        bool checkLose();
+        void revelBombs();
 
         std::pair<int, int> handleClick(rawEvent event);
 
+        std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
+
+        Entity createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<std::string, std::string> sprite);
+
 
     private:
         int _width;
@@ -63,7 +69,7 @@ class Minesweeper : public IGame {
         std::string _name;
         bool _isOver;
         bool isFirstClikc = false;
-
+        bool _isMenu;
 };
 
 #endif /* !MINESWEEPER_HPP_ */
