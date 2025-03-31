@@ -33,6 +33,10 @@ class Core {
         int delete_display();
         int delete_game();
 
+        bool checkQuit(std::vector<rawEvent> events);
+
+        void renderEntities(std::map<std::string, Entity> entities);
+
         DLLoader<IGame> _gameLoader;
         DLLoader<IDisplay> _graphicLoader;
         std::unique_ptr<IDisplay> _display;

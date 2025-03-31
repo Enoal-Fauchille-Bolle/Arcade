@@ -31,6 +31,48 @@ Core::~Core()
 }
 
 /**
+ * @brief Checks if the QUIT event is present in the events vector.
+ * @param events The vector of rawEvent objects to check.
+ * @return true if a QUIT event is found, false otherwise.
+ */
+bool Core::checkQuit(std::vector<rawEvent> events)
+{
+    for (const auto& event : events) {
+        if (event.type == QUIT) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Renders the entities on the display.
+ * @param entities A map of entity names to Entity objects to render.
+ */
+void Core::renderEntities(std::map<std::string, Entity> entities)
+{
+    if (entities.size() > 0) {
+        _display->clear();
+        for (const auto& pair : entities) {
+            Entity val = pair.second;
+            renderObject obj;
+            obj.x = val.x;
+            obj.y = val.y;
+            obj.type = val.type;
+            obj.width = val.width;
+            obj.height = val.height;
+            obj.rotate = val.rotate;
+            obj.sprite = val.sprites.find(_display->getName())->second;
+            obj.RGB[0] = val.RGB[0];
+            obj.RGB[1] = val.RGB[1];
+            obj.RGB[2] = val.RGB[2];
+            _display->drawObject(obj);
+        }
+    }
+    _display->display();
+}
+
+/**
  * @brief Main loop of the Core class. Handles game logic, events, and rendering.
  */
 void Core::run()
@@ -46,33 +88,13 @@ void Core::run()
             load_game(newLib);
         }
         std::vector<rawEvent> events = _display->pollEvent();
-        for (const auto& event : events) {
-            if (event.type == QUIT) {
-                running = false;
-                break;
-            }
+        if (checkQuit(events)) {
+            running = false;
+            break;
         }
         _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
-        if (entities.size() > 0) {
-            _display->clear();
-            for (const auto& pair : entities) {
-                Entity val = pair.second;
-                renderObject obj;
-                obj.x = val.x;
-                obj.y = val.y;
-                obj.type = val.type;
-                obj.width = val.width;
-                obj.height = val.height;
-                obj.rotate = val.rotate;
-                obj.sprite = val.sprites.find(_display->getName())->second;
-                obj.RGB[0] = val.RGB[0];
-                obj.RGB[1] = val.RGB[1];
-                obj.RGB[2] = val.RGB[2];
-                _display->drawObject(obj);
-            }
-        }
-        _display->display();
+        renderEntities(entities);
     }
 }
 
