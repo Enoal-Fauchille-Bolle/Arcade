@@ -104,15 +104,15 @@ all: $(NAME)
 
 
 ncurses: $(NCURSES_OBJ)
-	$(CC) -o $(NCURSES_NAME) $< $(LDFLAGS)
+	$(CC) -o $(NCURSES_NAME) $^ $(LDFLAGS)
 	mv $(NCURSES_NAME) $(ROOT_LIBS)
 
 sdl: $(SDL_OBJ)
-	$(CC) -o $(SDL_NAME) $< $(LDFLAGS)
+	$(CC) -o $(SDL_NAME) $^ $(LDFLAGS) -l SDL2
 	mv $(SDL_NAME) $(ROOT_LIBS)
 
 sfml: $(SFML_OBJ)
-	$(CC) -o $(SFML_NAME) $< $(LDFLAGS) -l csfml-graphics	\
+	$(CC) -o $(SFML_NAME) $^ $(LDFLAGS) -l csfml-graphics	\
 		-l csfml-system -l csfml-audio
 	mv $(SFML_NAME) $(ROOT_LIBS)
 
@@ -120,15 +120,15 @@ display: ncurses sdl sfml
 
 
 menu: $(MENU_OBJ)
-	$(CC) -o $(MENU_NAME) $< $(LDFLAGS)
+	$(CC) -o $(MENU_NAME) $^ $(LDFLAGS)
 	mv $(MENU_NAME) $(ROOT_LIBS)
 
 snake: $(SNAKE_OBJ)
-	$(CC) -o $(SNAKE_NAME) $< $(LDFLAGS)
+	$(CC) -o $(SNAKE_NAME) $^ $(LDFLAGS)
 	mv $(SNAKE_NAME) $(ROOT_LIBS)
 
 minesweeper: $(MINESWEEPER_OBJ)
-	$(CC) -o $(MINESWEEPER_NAME) $< $(LDFLAGS)
+	$(CC) -o $(MINESWEEPER_NAME) $^ $(LDFLAGS)
 	mv $(MINESWEEPER_NAME) $(ROOT_LIBS)
 
 games: menu snake minesweeper
