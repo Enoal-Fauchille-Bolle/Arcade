@@ -83,7 +83,8 @@ class Menu : public IGame {
         Entity renderDisplayTitle();
         void setupLibButton(LibInfo &lib, int x, int y);
         std::map<std::string, Entity> renderLibs(
-            std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x);
+            std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x,
+            std::string libPrefix);
         Entity renderGameTitle();
         Entity renderSelectedLibs(
             std::string gameName, std::string displayName);

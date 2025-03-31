@@ -22,6 +22,7 @@ Menu::Menu()
     std::vector<std::string> libPaths = getLibraryFiles();
 
     _name = "Menu";
+    _startGame = false;
     if (libPaths.empty()) {
         std::cerr << "No libraries found in " << LIBRARY_PATH << std::endl;
         return;
@@ -270,6 +271,8 @@ std::string Menu::getNewLib(void)
  */
 void Menu::handleLeftClick(rawEvent event)
 {
+    std::cout << "Left click at (" << event.x << ", " << event.y << ")"
+              << std::endl;
     for (size_t i = 0; i < _gameLibs.size(); i++) {
         if (event.x >= _gameLibs[i].pos.x &&
             event.x <= _gameLibs[i].pos.x + _gameLibs[i].pos.width &&
@@ -302,6 +305,9 @@ void Menu::handleOneEvent(rawEvent event)
 {
     if (event.type == PRESS && event.key == MOUSE_LEFT) {
         handleLeftClick(event);
+    }
+    if (event.type == PRESS && event.key == KEY_ESCAPE) {
+        _startGame = true;
     }
 }
 
@@ -342,7 +348,7 @@ Entity Menu::renderTitle()
     titleText.RGB[0] = 255;
     titleText.RGB[1] = 255;
     titleText.RGB[2] = 255;
-    titleText.sprites["text"] = "Arcade Menu";
+    titleText.sprites["SFML"] = "Arcade Menu";
     return titleText;
 }
 
@@ -363,10 +369,10 @@ Entity Menu::renderDisplayTitle()
     displaysTitle.width = 0;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
-    displaysTitle.RGB[0] = 0;
-    displaysTitle.RGB[1] = 0;
-    displaysTitle.RGB[2] = 0;
-    displaysTitle.sprites["text"] = "Display Libraries:";
+    displaysTitle.RGB[0] = 255;
+    displaysTitle.RGB[1] = 255;
+    displaysTitle.RGB[2] = 255;
+    displaysTitle.sprites["SFML"] = "Display Libraries:";
     return displaysTitle;
 }
 
@@ -396,19 +402,21 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
  * based on the selected library and whether the user is selecting
  * a game or display library.
  *
- * @param displayLibs The vector of library information
+ * @param libs The vector of library information
  * @param selectedLib The index of the selected library
  * @param x The x-coordinate of the button
  * @return std::map<std::string, Entity> A map of Entity objects representing
  * the libraries
  */
-std::map<std::string, Entity> Menu::renderLibs(
-    std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x)
+std::map<std::string, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
+    size_t selectedLib,
+    size_t x,
+    std::string libPrefix)
 {
     std::map<std::string, Entity> entities;
 
     int yPos = 150;
-    for (size_t i = 0; i < displayLibs.size(); i++) {
+    for (size_t i = 0; i < libs.size(); i++) {
         Entity libEntity;
         libEntity.type = TEXT;
         libEntity.x = x;
@@ -416,11 +424,11 @@ std::map<std::string, Entity> Menu::renderLibs(
         libEntity.width = 0;
         libEntity.height = 0;
         libEntity.rotate = 0;
-        setupLibButton(displayLibs[i], x, yPos);
+        setupLibButton(libs[i], x, yPos);
 
         std::string prefix;
         if (i == selectedLib) {
-            prefix = "-> ";
+            prefix = "> ";
             libEntity.RGB[0] = 0;
             libEntity.RGB[1] = 255;
             libEntity.RGB[2] = 0;  // Green
@@ -431,8 +439,8 @@ std::map<std::string, Entity> Menu::renderLibs(
             libEntity.RGB[2] = 180;  // Lighter gray
         }
 
-        libEntity.sprites["text"] = prefix + displayLibs[i].name;
-        entities["display_" + std::to_string(i)] = libEntity;
+        libEntity.sprites["SFML"] = prefix + libs[i].name;
+        entities[libPrefix + std::to_string(i)] = libEntity;
         yPos += 30;
     }
     return entities;
@@ -455,10 +463,10 @@ Entity Menu::renderGameTitle()
     gamesTitle.width = 0;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
-    gamesTitle.RGB[0] = 0;
-    gamesTitle.RGB[1] = 0;
-    gamesTitle.RGB[2] = 0;
-    gamesTitle.sprites["text"] = "Game Libraries:";
+    gamesTitle.RGB[0] = 255;
+    gamesTitle.RGB[1] = 255;
+    gamesTitle.RGB[2] = 255;
+    gamesTitle.sprites["SFML"] = "Game Libraries:";
     return gamesTitle;
 }
 
@@ -485,7 +493,7 @@ Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
     selectedLibs.RGB[0] = 255;
     selectedLibs.RGB[1] = 255;
     selectedLibs.RGB[2] = 255;  // White
-    selectedLibs.sprites["text"] =
+    selectedLibs.sprites["SFML"] =
         "Selected: " + gameName + " with " + displayName;
     return selectedLibs;
 }
@@ -509,14 +517,15 @@ std::map<std::string, Entity> Menu::renderGame()
 
     entities["display_title"] = renderDisplayTitle();
 
-    tempEntities = renderLibs(_displayLibs, _selectedDisplayLib, 200);
+    tempEntities =
+        renderLibs(_displayLibs, _selectedDisplayLib, 200, "display_");
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
 
     entities["games_title"] = renderGameTitle();
 
-    tempEntities = renderLibs(_gameLibs, _selectedGameLib, 600);
+    tempEntities = renderLibs(_gameLibs, _selectedGameLib, 600, "game_");
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
