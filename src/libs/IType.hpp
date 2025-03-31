@@ -17,7 +17,8 @@ enum shape {
 
 enum eventType {
     PRESS,
-    RELEASE
+    RELEASE,
+    QUIT
 };
 
 enum eventKey {

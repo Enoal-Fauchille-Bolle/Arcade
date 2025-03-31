@@ -46,6 +46,12 @@ void Core::run()
             load_game(newLib);
         }
         std::vector<rawEvent> events = _display->pollEvent();
+        for (const auto& event : events) {
+            if (event.type == QUIT) {
+                running = false;
+                break;
+            }
+        }
         _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
         if (entities.size() > 0) {

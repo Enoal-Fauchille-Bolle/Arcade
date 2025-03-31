@@ -38,6 +38,10 @@ std::vector<rawEvent> libSFML::pollEvent(void)
         rawEvent raw;
         switch (event.type)
         {
+            case sf::Event::Closed:
+                raw.type = QUIT;
+                events.push_back(raw);
+                break;
             case sf::Event::KeyPressed:
                 raw.type = PRESS;
                 switch (event.key.code) {
