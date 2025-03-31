@@ -60,6 +60,9 @@ void Core::run()
                 obj.height = val.height;
                 obj.rotate = val.rotate;
                 obj.sprite = val.sprites.find(_display->getName())->second;
+                obj.RGB[0] = val.RGB[0];
+                obj.RGB[1] = val.RGB[1];
+                obj.RGB[2] = val.RGB[2];
                 _display->drawObject(obj);
             }
         }

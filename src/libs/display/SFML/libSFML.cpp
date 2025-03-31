@@ -281,6 +281,7 @@ void libSFML::drawText(renderObject obj)
     text.setString(obj.sprite);
     text.setCharacterSize(obj.width);
     text.setPosition(obj.x, obj.y);
+    text.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
     _window.draw(text);
 }
 
