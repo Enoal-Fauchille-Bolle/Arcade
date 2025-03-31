@@ -276,7 +276,7 @@ void libSFML::drawText(renderObject obj)
 {
     sf::Text text;
     sf::Font font;
-    font.loadFromFile("arial.ttf");
+    font.loadFromFile("./assets/arial.ttf");
     text.setFont(font);
     text.setString(obj.sprite);
     text.setCharacterSize(obj.width);
