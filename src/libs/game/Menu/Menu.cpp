@@ -121,11 +121,16 @@ void Menu::sortLibraries()
  */
 std::string Menu::isGameLibrary(const std::string &path)
 {
+    DLLoader<LibraryName> loader;
+    LibraryName name;
+    libType type;
+
     try {
-        DLLoader<IGame> loader("GameEntryPoint");
-        IGame *instance = loader.getInstance(path);
-        std::string name = instance->getName();
-        delete instance;
+        name = loader.getName(path);
+        type = loader.getType(path);
+        if (type != GAME) {
+            return "";
+        }
         return name;
     } catch (const std::exception &) {
         return "";
@@ -144,11 +149,16 @@ std::string Menu::isGameLibrary(const std::string &path)
  */
 std::string Menu::isDisplayLibrary(const std::string &path)
 {
+    DLLoader<LibraryName> loader;
+    LibraryName name;
+    libType type;
+
     try {
-        DLLoader<IDisplay> loader("DisplayEntryPoint");
-        IDisplay *instance = loader.getInstance(path);
-        std::string name = instance->getName();
-        delete instance;
+        name = loader.getName(path);
+        type = loader.getType(path);
+        if (type != DISPLAY) {
+            return "";
+        }
         return name;
     } catch (const std::exception &) {
         return "";
@@ -174,9 +184,8 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
         std::cout << "  " << path << std::endl;
     }
     for (const auto &path : paths) {
-        if (path.find("arcade_menu.so") != std::string::npos) {
+        if (path.find("arcade_menu.so") != std::string::npos)
             continue;
-        }
         libName = isGameLibrary(path);
         if (!libName.empty()) {
             _gameLibs.push_back({path, libName, GAME, {0, 0, 0, 0}});
