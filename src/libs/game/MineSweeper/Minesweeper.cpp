@@ -77,7 +77,7 @@ void Minesweeper::handleEvent(std::vector<RawEvent> events)
         return;
     for (const auto &event : events)
     {
-        if (event.type == eventType::PRESS && event.key == eventKey::MOUSE_LEFT)
+        if (event.type == EventType::PRESS && event.key == EventKey::MOUSE_LEFT)
         {
             auto [x, y] = handleClick(event);
             revealCell(x, y);
@@ -94,7 +94,7 @@ void Minesweeper::handleEvent(std::vector<RawEvent> events)
                 _score.second = "You lose!";
             }
         }
-        if (event.type == eventType::PRESS && event.key == eventKey::MOUSE_RIGHT)
+        if (event.type == EventType::PRESS && event.key == EventKey::MOUSE_RIGHT)
         {
             auto [x, y] = handleClick(event);
             flagCell(x, y);

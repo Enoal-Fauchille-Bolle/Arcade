@@ -25,7 +25,7 @@ enum Shape {
     MUSIC
 };
 
-enum eventType {
+enum EventType {
     PRESS,
     RELEASE,
     QUIT

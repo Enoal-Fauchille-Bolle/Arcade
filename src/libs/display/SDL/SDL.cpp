@@ -76,11 +76,11 @@ std::vector<RawEvent> SDL::pollEvent(void)
         _hasEvent = true;
         if (event.type == SDL_QUIT) {
             RawEvent quitEvent;
-            quitEvent.type = eventType::PRESS;
+            quitEvent.type = EventType::PRESS;
             _event.push_back(quitEvent);
         } else if (event.type == SDL_KEYDOWN) {
             RawEvent keyEvent;
-            keyEvent.type = eventType::PRESS;
+            keyEvent.type = EventType::PRESS;
             switch (event.key.keysym.sym) {
                 case SDLK_DELETE: keyEvent.key = KEY_DELETE; break;
                 case SDLK_INSERT: keyEvent.key = KEY_INSERT; break;
@@ -92,7 +92,7 @@ std::vector<RawEvent> SDL::pollEvent(void)
             _event.push_back(keyEvent);
         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
             RawEvent mouseEvent;
-            mouseEvent.type = eventType::PRESS;
+            mouseEvent.type = EventType::PRESS;
             if (event.button.button == SDL_BUTTON_LEFT)
                 mouseEvent.key = MOUSE_LEFT;
             else if (event.button.button == SDL_BUTTON_RIGHT)
