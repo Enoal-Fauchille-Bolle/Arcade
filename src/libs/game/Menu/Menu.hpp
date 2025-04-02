@@ -45,10 +45,6 @@ class Menu : public IGame {
     protected:
     private:
         std::string _name;
-        enum LibType {
-            GAME,
-            DISPLAY
-        };
         struct ButtonPos {
             int x;
             int y;
@@ -58,7 +54,7 @@ class Menu : public IGame {
         struct LibInfo {
             std::string path;
             std::string name;
-            LibType type;
+            libType type;
             ButtonPos pos;
         };
 
