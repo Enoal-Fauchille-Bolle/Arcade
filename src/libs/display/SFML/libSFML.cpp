@@ -29,14 +29,14 @@ libSFML::~libSFML()
  * @brief Polls events from the SFML window.
  * @return A vector of rawEvent objects representing the polled events.
  */
-std::vector<rawEvent> libSFML::pollEvent(void)
+std::vector<RawEvent> libSFML::pollEvent(void)
 {
-    std::vector<rawEvent> events;
+    std::vector<RawEvent> events;
     sf::Event event;
 
     while (_window.pollEvent(event))
     {
-        rawEvent raw;
+        RawEvent raw;
         switch (event.type)
         {
             case sf::Event::Closed:

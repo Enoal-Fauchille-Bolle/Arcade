@@ -129,9 +129,9 @@ enum eventKey {
     KEY_RBRACKET,
 };
 
-struct rawEvent {
-    eventType type;
-    eventKey key;
+struct RawEvent {
+    EventType type;
+    EventKey key;
     int x;
     int y;
 };

@@ -16,7 +16,7 @@ class ADisplay : public IDisplay {
     public:
         virtual ~ADisplay() = default;
 
-        virtual std::vector<rawEvent> pollEvent(void) = 0;
+        virtual std::vector<RawEvent> pollEvent(void) = 0;
 
         virtual void drawObject(renderObject) = 0;
 
@@ -27,7 +27,7 @@ class ADisplay : public IDisplay {
 
     protected:
         std::string _name;
-        std::vector<rawEvent> _events;
+        std::vector<RawEvent> _events;
         bool _isOpen;
 
     private:

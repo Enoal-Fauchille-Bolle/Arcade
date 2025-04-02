@@ -28,7 +28,7 @@ class IDisplay {
     public:
         virtual ~IDisplay() = default;
 
-        virtual std::vector<rawEvent> pollEvent(void) = 0;
+        virtual std::vector<RawEvent> pollEvent(void) = 0;
 
         virtual void drawObject(renderObject) = 0;
 

@@ -71,7 +71,7 @@ std::string Minesweeper::getNewLib(void)
  * @brief Handles input events for the game.
  * @param events A vector of events to process.
  */
-void Minesweeper::handleEvent(std::vector<rawEvent> events)
+void Minesweeper::handleEvent(std::vector<RawEvent> events)
 {
     if (events.empty())
         return;
@@ -394,7 +394,7 @@ bool Minesweeper::checkLose()
  * @param event The event containing the click information.
  * @return A pair of integers representing the x and y coordinates.
  */
-std::pair<int, int> Minesweeper::handleClick(rawEvent event)
+std::pair<int, int> Minesweeper::handleClick(RawEvent event)
 {
     int cellWidth = SCREEN_HEIGHT / _width;
     int cellHeight = SCREEN_HEIGHT / _height;

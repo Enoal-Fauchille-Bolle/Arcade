@@ -68,18 +68,18 @@ void SDL::renderPresent()
     SDL_RenderPresent(_renderer);
 }
 
-std::vector<rawEvent> SDL::pollEvent(void)
+std::vector<RawEvent> SDL::pollEvent(void)
 {
     SDL_Event event;
     _hasEvent = false;
     while (SDL_PollEvent(&event)) {
         _hasEvent = true;
         if (event.type == SDL_QUIT) {
-            rawEvent quitEvent;
+            RawEvent quitEvent;
             quitEvent.type = eventType::PRESS;
             _event.push_back(quitEvent);
         } else if (event.type == SDL_KEYDOWN) {
-            rawEvent keyEvent;
+            RawEvent keyEvent;
             keyEvent.type = eventType::PRESS;
             switch (event.key.keysym.sym) {
                 case SDLK_DELETE: keyEvent.key = KEY_DELETE; break;
@@ -91,7 +91,7 @@ std::vector<rawEvent> SDL::pollEvent(void)
             }
             _event.push_back(keyEvent);
         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-            rawEvent mouseEvent;
+            RawEvent mouseEvent;
             mouseEvent.type = eventType::PRESS;
             if (event.button.button == SDL_BUTTON_LEFT)
                 mouseEvent.key = MOUSE_LEFT;

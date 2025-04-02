@@ -26,7 +26,7 @@ class SDL {
         SDL_Renderer* createRenderer(int index, Uint32 flags);
         void renderClear();
         void renderPresent();
-        std::vector<rawEvent> pollEvent(void);
+        std::vector<RawEvent> pollEvent(void);
         void destroyAll();
 
         SDL_Window* getWindow() const { return _window; }
@@ -40,7 +40,7 @@ class SDL {
     private:
         SDL_Window* _window = nullptr;
         SDL_Renderer* _renderer = nullptr;
-        std::vector<rawEvent> _event;
+        std::vector<RawEvent> _event;
         bool _hasEvent = false;
 };
 

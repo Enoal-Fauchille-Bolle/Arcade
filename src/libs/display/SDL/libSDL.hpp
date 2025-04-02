@@ -19,7 +19,7 @@ class LibSDL : public IDisplay {
         LibSDL();
         ~LibSDL();
 
-        std::vector<rawEvent> pollEvent(void) override;
+        std::vector<RawEvent> pollEvent(void) override;
 
         void drawObject(renderObject) override;
 

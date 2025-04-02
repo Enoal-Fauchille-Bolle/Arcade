@@ -33,7 +33,7 @@ class Core {
         int delete_display(void);
         int delete_game(void);
 
-        bool checkQuit(std::vector<rawEvent> events);
+        bool checkQuit(std::vector<RawEvent> events);
 
         void renderEntities(std::map<std::string, Entity> entities);
 

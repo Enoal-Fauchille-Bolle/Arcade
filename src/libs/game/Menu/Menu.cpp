@@ -276,7 +276,7 @@ std::string Menu::getNewLib(void)
  *
  * @param event The event to check
  */
-void Menu::checkGameClick(rawEvent event)
+void Menu::checkGameClick(RawEvent event)
 {
     for (size_t i = 0; i < _gameLibs.size(); i++) {
         if (event.x >= _gameLibs[i].pos.x - LIBS_PADDING &&
@@ -300,7 +300,7 @@ void Menu::checkGameClick(rawEvent event)
  *
  * @param event The event to check
  */
-void Menu::checkDisplayClick(rawEvent event)
+void Menu::checkDisplayClick(RawEvent event)
 {
     for (size_t i = 0; i < _displayLibs.size(); i++) {
         if (event.x >= _displayLibs[i].pos.x - LIBS_PADDING &&
@@ -315,7 +315,7 @@ void Menu::checkDisplayClick(rawEvent event)
     }
 }
 
-void Menu::checkStartButton(rawEvent event)
+void Menu::checkStartButton(RawEvent event)
 {
     if (event.x >= START_BUTTON_X - LIBS_PADDING &&
         event.x <= START_BUTTON_X + START_BUTTON_WIDTH + LIBS_PADDING &&
@@ -334,7 +334,7 @@ void Menu::checkStartButton(rawEvent event)
  *
  * @param event The event to handle
  */
-void Menu::handleLeftClick(rawEvent event)
+void Menu::handleLeftClick(RawEvent event)
 {
     checkGameClick(event);
     checkDisplayClick(event);
@@ -349,7 +349,7 @@ void Menu::handleLeftClick(rawEvent event)
  *
  * @param event The event to handle
  */
-void Menu::handleOneEvent(rawEvent event)
+void Menu::handleOneEvent(RawEvent event)
 {
     if (event.type == PRESS && event.key == MOUSE_LEFT) {
         handleLeftClick(event);
@@ -367,7 +367,7 @@ void Menu::handleOneEvent(rawEvent event)
  *
  * @param events A vector of events to handle
  */
-void Menu::handleEvent(std::vector<rawEvent> events)
+void Menu::handleEvent(std::vector<RawEvent> events)
 {
     for (const auto &event : events) {
         handleOneEvent(event);

@@ -21,13 +21,12 @@ class libSFML : public IDisplay {
         libSFML();
         ~libSFML();
 
-        std::vector<rawEvent> pollEvent(void) final;
+        std::vector<RawEvent> pollEvent(void) final;
         void drawObject(renderObject) final;
         void clear(void) final;
         void display(void) final;
 
         std::string getName(void) final;
-
         DisplayType getDType(void) final;
 
     protected:

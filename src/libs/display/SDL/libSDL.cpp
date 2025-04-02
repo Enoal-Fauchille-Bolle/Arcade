@@ -39,9 +39,9 @@ LibSDL::~LibSDL()
 /**
  * @brief Polls events from the SDL event queue.
  *
- * @return A vector of rawEvent objects representing the events polled.
+ * @return A vector of RawEvent objects representing the events polled.
  */
-std::vector<rawEvent> LibSDL::pollEvent(void)
+std::vector<RawEvent> LibSDL::pollEvent(void)
 {
     return _sdl->pollEvent();
 }

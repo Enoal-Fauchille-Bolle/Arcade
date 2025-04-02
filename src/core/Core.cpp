@@ -32,10 +32,10 @@ Core::~Core()
 
 /**
  * @brief Checks if the QUIT event is present in the events vector.
- * @param events The vector of rawEvent objects to check.
+ * @param events The vector of RawEvent objects to check.
  * @return true if a QUIT event is found, false otherwise.
  */
-bool Core::checkQuit(std::vector<rawEvent> events)
+bool Core::checkQuit(std::vector<RawEvent> events)
 {
     for (const auto& event : events) {
         if (event.type == QUIT) {
@@ -87,7 +87,7 @@ void Core::run()
             delete_game();
             load_game(newLib);
         }
-        std::vector<rawEvent> events = _display->pollEvent();
+        std::vector<RawEvent> events = _display->pollEvent();
         if (checkQuit(events)) {
             running = false;
             break;
