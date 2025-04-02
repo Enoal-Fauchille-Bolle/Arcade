@@ -9,7 +9,7 @@
     #define IGAME_HPP_
 
     #include <string>
-    #include "../../IType.hpp"
+    #include "../../../interfaces/IType.hpp"
     #include <map>
 
 
