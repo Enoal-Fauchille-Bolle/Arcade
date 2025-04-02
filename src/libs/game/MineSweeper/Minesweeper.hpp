@@ -15,6 +15,8 @@
     #define SCREEN_WIDTH 1024
     #define SCREEN_HEIGHT 768
 
+    #define LIBRARY_NAME "Minesweeper"
+
 struct Cell {
     bool isMine = false;
     bool isRevealed = false;

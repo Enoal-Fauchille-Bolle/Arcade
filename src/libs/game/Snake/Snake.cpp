@@ -49,7 +49,7 @@ std::map<std::string, Entity> Snake::renderGame()
 
 std::string Snake::getName(void)
 {
-    return "Snake";
+    return LIBRARY_NAME;
 }
 
 
@@ -70,5 +70,15 @@ extern "C"
     Snake *GameEntryPoint(void)
     {
         return new Snake();
+    }
+
+    std::string getName(void)
+    {
+        return LIBRARY_NAME;
+    }
+
+    libType getType(void)
+    {
+        return GAME;
     }
 }

@@ -8,6 +8,11 @@
 #ifndef ITYPE_HPP_
     #define ITYPE_HPP_
 
+enum libType {
+    GAME,
+    DISPLAY
+};
+
 enum shape {
     RECTANGLE,
     CIRCLE,

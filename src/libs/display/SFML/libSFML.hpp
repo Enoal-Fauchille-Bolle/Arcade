@@ -13,6 +13,8 @@
 
     #include "../interfaces/IDisplay.hpp"
 
+    #define LIBRARY_NAME "SFML"
+
 class libSFML : public IDisplay {
     public:
         libSFML();

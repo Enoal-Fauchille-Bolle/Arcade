@@ -13,7 +13,7 @@
  */
 Minesweeper::Minesweeper()
 {
-    _name = "Minesweeper";
+    _name = LIBRARY_NAME;
     _isOver = false;
     _isMenu = false;
 
@@ -419,5 +419,15 @@ extern "C"
     Minesweeper *GameEntryPoint(void)
     {
         return new Minesweeper();
+    }
+
+    std::string getName(void)
+    {
+        return LIBRARY_NAME;
+    }
+
+    libType getType(void)
+    {
+        return GAME;
     }
 }

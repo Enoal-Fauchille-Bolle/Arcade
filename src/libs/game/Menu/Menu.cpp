@@ -19,7 +19,7 @@ Menu::Menu()
 {
     std::vector<std::string> libPaths = getLibraryFiles();
 
-    _name = "Menu";
+    _name = LIBRARY_NAME;
     _startGame = false;
     if (libPaths.empty()) {
         std::cerr << "No libraries found in " << LIBRARY_PATH << std::endl;
@@ -566,5 +566,15 @@ extern "C"
     Menu *GameEntryPoint(void)
     {
         return new Menu();
+    }
+
+    LibraryName getName(void)
+    {
+        return LIBRARY_NAME;
+    }
+
+    libType getType(void)
+    {
+        return GAME;
     }
 }

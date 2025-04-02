@@ -12,7 +12,7 @@
  */
 libSFML::libSFML()
 {
-    _name = "SFML";
+    _name = LIBRARY_NAME;
     this->_window.create(sf::VideoMode(1024, 768), "Arcade");
     this->_window.setFramerateLimit(60);
 }
@@ -347,5 +347,23 @@ extern "C" {
     libSFML *DisplayEntryPoint(void)
     {
         return new libSFML();
+    }
+
+    /**
+     * @brief Retrieves the name of the display library.
+     * @return A string representing the name of the library.
+     */
+    std::string getName(void)
+    {
+        return LIBRARY_NAME;
+    }
+
+    /**
+     * @brief Retrieves the type of the library.
+     * @return The type of the library (DISPLAY).
+     */
+    libType getType(void)
+    {
+        return DISPLAY;
     }
 }

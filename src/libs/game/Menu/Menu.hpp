@@ -23,6 +23,8 @@
     #define SCREEN_WIDTH 1024
     #define SCREEN_HEIGHT 768
 
+    #define LIBRARY_NAME "Menu"
+
 class Menu : public IGame {
     public:
         Menu();

@@ -13,6 +13,8 @@
     #include <vector>
     #include "../interfaces/IGame.hpp"
 
+    #define LIBRARY_NAME "Snake"
+
 class Snake : public IGame {
     public:
         Snake();
