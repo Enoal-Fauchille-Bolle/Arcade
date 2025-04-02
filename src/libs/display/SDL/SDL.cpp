@@ -82,10 +82,10 @@ std::vector<RawEvent> SDL::pollEvent(void)
             RawEvent keyEvent;
             keyEvent.type = EventType::PRESS;
             switch (event.key.keysym.sym) {
-                case SDLK_DELETE: keyEvent.key = KEY_DELETE; break;
-                case SDLK_INSERT: keyEvent.key = KEY_INSERT; break;
-                case SDLK_PAGEUP: keyEvent.key = KEY_PAGEUP; break;
-                case SDLK_PAGEDOWN: keyEvent.key = KEY_PAGEDOWN; break;
+                case SDLK_DELETE: keyEvent.key = KEYBOARD_DELETE; break;
+                case SDLK_INSERT: keyEvent.key = KEYBOARD_INSERT; break;
+                case SDLK_PAGEUP: keyEvent.key = KEYBOARD_PAGEUP; break;
+                case SDLK_PAGEDOWN: keyEvent.key = KEYBOARD_PAGEDOWN; break;
                 default:
                     continue;
             }
