@@ -36,6 +36,7 @@ class IDisplay {
         virtual void display(void) = 0;
 
         virtual std::string getName(void) = 0;
+        virtual DisplayType getDType(void) = 0;
 
     protected:
     private:

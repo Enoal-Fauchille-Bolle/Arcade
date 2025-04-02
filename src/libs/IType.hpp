@@ -13,6 +13,11 @@ enum libType {
     DISPLAY
 };
 
+enum DisplayType {
+    GRAPHICAL,
+    TERMINAL
+};
+
 enum shape {
     RECTANGLE,
     CIRCLE,

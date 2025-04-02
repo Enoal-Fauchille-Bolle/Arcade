@@ -24,7 +24,7 @@ struct Entity {
     int height;
     int rotate;
     int RGB[3];
-    std::map<LibraryName, SpriteIdentifier> sprites;
+    std::map<DisplayType, SpriteIdentifier> sprites;
 };
 
 class IGame {

@@ -14,6 +14,7 @@
     #include "../interfaces/IDisplay.hpp"
 
     #define LIBRARY_NAME "SFML"
+    #define LIBRARY_DTYPE DisplayType::GRAPHICAL
 
 class libSFML : public IDisplay {
     public:
@@ -27,6 +28,8 @@ class libSFML : public IDisplay {
 
         std::string getName(void) final;
 
+        DisplayType getDType(void) final;
+
     protected:
         void drawRectangle(renderObject obj);
         void drawCircle(renderObject obj);
@@ -35,6 +38,7 @@ class libSFML : public IDisplay {
 
     private:
         std::string _name;
+        DisplayType _dtype;
         sf::RenderWindow _window;
 };
 

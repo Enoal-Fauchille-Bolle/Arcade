@@ -82,10 +82,16 @@ void LibSDL::display(void)
  *
  * @return A string containing the name "SDL".
  */
+DisplayType LibSDL::getDType(void)
+{
+    return DisplayType::GRAPHICAL;
+}
+
 std::string LibSDL::getName(void)
 {
     return LIBRARY_NAME;
 }
+
 
 
 extern "C" {

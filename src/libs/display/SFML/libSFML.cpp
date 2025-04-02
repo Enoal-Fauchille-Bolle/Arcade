@@ -13,6 +13,7 @@
 libSFML::libSFML()
 {
     _name = LIBRARY_NAME;
+    _dtype = LIBRARY_DTYPE;
     this->_window.create(sf::VideoMode(1024, 768), "Arcade");
     this->_window.setFramerateLimit(60);
 }
@@ -318,6 +319,11 @@ void libSFML::display(void)
  * @brief Retrieves the name of the display library.
  * @return A string representing the name of the library.
  */
+DisplayType libSFML::getDType(void)
+{
+    return _dtype;
+}
+
 std::string libSFML::getName(void)
 {
     return _name;

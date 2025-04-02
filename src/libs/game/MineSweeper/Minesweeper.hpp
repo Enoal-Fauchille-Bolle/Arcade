@@ -58,7 +58,7 @@ class Minesweeper : public IGame {
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
 
-        Entity createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<std::string, std::string> sprite);
+        Entity createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
 
 
     private:

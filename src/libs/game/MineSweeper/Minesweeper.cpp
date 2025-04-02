@@ -152,35 +152,30 @@ std::map<std::string, Entity> Minesweeper::printBoard()
             {
                 if (_board[y][x].isMine)
                 {
-                    cell.sprites["ncurse"] = "X";
-                    cell.sprites["SFML"] = "assets/minesweeper_bomb.jpg";
-                    cell.sprites["SDL"] = "assets/minesweeper_bomb.jpg";
+                    cell.sprites[DisplayType::TERMINAL] = "X";
+                    cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
                 }
                 else
                 {
                     if (_board[y][x].adjacentMines > 0)
                     {
-                        cell.sprites["ncurse"] = std::to_string(_board[y][x].adjacentMines);
-                        cell.sprites["SFML"] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
-                        cell.sprites["SDL"] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
+                        cell.sprites[DisplayType::TERMINAL] = std::to_string(_board[y][x].adjacentMines);
+                        cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
                     } else {
-                        cell.sprites["ncurse"] = " ";
-                        cell.sprites["SFML"] = "assets/minesweeper_empty.jpg";
-                        cell.sprites["SDL"] = "assets/minesweeper_empty.jpg";
+                        cell.sprites[DisplayType::TERMINAL] = " ";
+                        cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
                     }
                 }
-            }   
+            }
             else if (_board[y][x].isFlagged)
             {
-                cell.sprites["ncurse"] = "F";
-                cell.sprites["SFML"] = "assets/minesweeper_flag.jpg";
-                cell.sprites["SDL"] = "assets/minesweeper_flag.jpg";
+                cell.sprites[DisplayType::TERMINAL] = "F";
+                cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
             }
             else
             {
-                cell.sprites["ncurse"] = "O";
-                cell.sprites["SFML"] = "assets/minesweeper_not_click.jpg";
-                cell.sprites["SDL"] = "assets/minesweeper_not_click.jpg";
+                cell.sprites[DisplayType::TERMINAL] = "O";
+                cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_not_click.jpg";
             }
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
         }
@@ -198,7 +193,7 @@ std::map<std::string, Entity> Minesweeper::printBoard()
  * @param offsetY The y-offset for positioning.
  * @return An Entity representing the cell.
  */
-Entity Minesweeper::createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<std::string, std::string> sprite)
+Entity Minesweeper::createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite)
 {
     Entity cell;
     cell.type = shape::RECTANGLE;

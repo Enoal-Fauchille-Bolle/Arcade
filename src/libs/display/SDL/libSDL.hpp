@@ -29,6 +29,8 @@ class LibSDL : public IDisplay {
 
         std::string getName(void) override;
 
+        DisplayType getDType(void) override;
+
     protected:
     private:
         std::unique_ptr<SDL> _sdl;

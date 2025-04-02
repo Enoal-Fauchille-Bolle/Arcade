@@ -62,7 +62,7 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
             obj.width = val.width;
             obj.height = val.height;
             obj.rotate = val.rotate;
-            obj.sprite = val.sprites.find(_display->getName())->second;
+            obj.sprite = val.sprites.find(_display->getDType())->second;
             obj.RGB[0] = val.RGB[0];
             obj.RGB[1] = val.RGB[1];
             obj.RGB[2] = val.RGB[2];
@@ -75,7 +75,7 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
 /**
  * @brief Main loop of the Core class. Handles game logic, events, and rendering.
  */
-void Core::run(void)
+void Core::run()
 {
     std::cerr << "Core run" << std::endl;
     while (running) {
@@ -140,7 +140,7 @@ int Core::load_game(std::string path)
  * @brief Deletes the currently loaded display library.
  * @return 0 on success.
  */
-int Core::delete_display(void)
+int Core::delete_display()
 {
     std::cerr << "Core delete_display" << std::endl;
     return 0;
@@ -150,7 +150,7 @@ int Core::delete_display(void)
  * @brief Deletes the currently loaded game library.
  * @return 0 on success.
  */
-int Core::delete_game(void)
+int Core::delete_game()
 {
     std::cerr << "Core delete_game" << std::endl;
     return 0;
