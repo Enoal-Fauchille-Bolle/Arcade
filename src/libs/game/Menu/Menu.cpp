@@ -7,8 +7,6 @@
 
 #include "Menu.hpp"
 
-// Screen size: 1024x768
-
 /**
  * @brief Construct a new Menu:: Menu object
  *
@@ -341,7 +339,7 @@ Entity Menu::renderTitle()
     Entity titleText;
     titleText.type = TEXT;
     titleText.x = 400;
-    titleText.y = 50;
+    titleText.y = 150;
     titleText.width = 0;
     titleText.height = 0;
     titleText.rotate = 0;
@@ -365,7 +363,7 @@ Entity Menu::renderDisplayTitle()
     Entity displaysTitle;
     displaysTitle.type = TEXT;
     displaysTitle.x = 200;
-    displaysTitle.y = 120;
+    displaysTitle.y = 250;
     displaysTitle.width = 0;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
@@ -415,7 +413,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
 {
     std::map<EntityName, Entity> entities;
 
-    int yPos = 150;
+    int yPos = 300;
     for (size_t i = 0; i < libs.size(); i++) {
         Entity libEntity;
         libEntity.type = TEXT;
@@ -459,7 +457,7 @@ Entity Menu::renderGameTitle()
     Entity gamesTitle;
     gamesTitle.type = TEXT;
     gamesTitle.x = 600;
-    gamesTitle.y = 120;
+    gamesTitle.y = 250;
     gamesTitle.width = 0;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
@@ -484,17 +482,18 @@ Entity Menu::renderGameTitle()
 Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
 {
     Entity selectedLibs;
+    std::string text = "Selected: " + gameName + " with " + displayName;
+
     selectedLibs.type = TEXT;
-    selectedLibs.x = 400;
-    selectedLibs.y = 350;
+    selectedLibs.x = 200;
+    selectedLibs.y = 600;
     selectedLibs.width = 0;
     selectedLibs.height = 0;
     selectedLibs.rotate = 0;
     selectedLibs.RGB[0] = 255;
     selectedLibs.RGB[1] = 255;
     selectedLibs.RGB[2] = 255;  // White
-    selectedLibs.sprites["SFML"] =
-        "Selected: " + gameName + " with " + displayName;
+    selectedLibs.sprites["SFML"] = text;
     return selectedLibs;
 }
 
