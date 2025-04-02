@@ -123,7 +123,7 @@ std::string Menu::isGameLibrary(const std::string &path)
 {
     DLLoader<LibraryName> loader;
     LibraryName name;
-    libType type;
+    LibType type;
 
     try {
         name = loader.getName(path);
@@ -151,7 +151,7 @@ std::string Menu::isDisplayLibrary(const std::string &path)
 {
     DLLoader<LibraryName> loader;
     LibraryName name;
-    libType type;
+    LibType type;
 
     try {
         name = loader.getName(path);
@@ -620,7 +620,7 @@ extern "C"
         return LIBRARY_NAME;
     }
 
-    libType getType(void)
+    LibType getType(void)
     {
         return GAME;
     }

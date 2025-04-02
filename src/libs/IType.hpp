@@ -8,7 +8,7 @@
 #ifndef ITYPE_HPP_
     #define ITYPE_HPP_
 
-enum libType {
+enum LibType {
     GAME,
     DISPLAY
 };

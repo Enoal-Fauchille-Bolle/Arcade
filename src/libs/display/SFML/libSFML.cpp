@@ -368,7 +368,7 @@ extern "C" {
      * @brief Retrieves the type of the library.
      * @return The type of the library (DISPLAY).
      */
-    libType getType(void)
+    LibType getType(void)
     {
         return DISPLAY;
     }

@@ -38,7 +38,7 @@ class IGame {
         virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
-        virtual void handleEvent(std::vector<rawEvent>) = 0;
+        virtual void handleEvent(std::vector<RawEvent>) = 0;
 
         using EntityName = std::string;
         virtual std::map<EntityName, Entity> renderGame() = 0;

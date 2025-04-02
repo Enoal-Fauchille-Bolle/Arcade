@@ -37,7 +37,7 @@ class Minesweeper : public IGame {
 
         std::string getNewLib(void) override;
 
-        void handleEvent(std::vector<rawEvent>) override;
+        void handleEvent(std::vector<RawEvent>) override;
 
         std::map<std::string, Entity> renderGame() override;
 
@@ -53,7 +53,7 @@ class Minesweeper : public IGame {
         bool checkLose();
         void revelBombs();
 
-        std::pair<int, int> handleClick(rawEvent event);
+        std::pair<int, int> handleClick(RawEvent event);
 
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();

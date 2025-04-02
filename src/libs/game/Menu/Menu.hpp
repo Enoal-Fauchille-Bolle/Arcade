@@ -80,7 +80,7 @@ class Menu : public IGame {
         struct LibInfo {
             std::string path;
             std::string name;
-            libType type;
+            LibType type;
             ButtonPos pos;
         };
 

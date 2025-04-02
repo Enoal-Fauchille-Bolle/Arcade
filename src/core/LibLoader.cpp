@@ -152,12 +152,12 @@ std::string DLLoader<T>::getName(const std::string &libname)
  * retrieves the type of the library using the getType function.
  *
  * @tparam T The type of the object to be loaded from the shared library.
- * @return The type of the library as a libType enum value.
+ * @return The type of the library as a LibType enum value.
  * @throws std::runtime_error if there is an error loading the library or
  *         retrieving the symbol.
  */
 template <typename T>
-libType DLLoader<T>::getType(const std::string &libname)
+LibType DLLoader<T>::getType(const std::string &libname)
 {
     if (_handle) {
         dlclose(_handle);
@@ -169,7 +169,7 @@ libType DLLoader<T>::getType(const std::string &libname)
     }
 
     // Function pointer type definition for getName
-    typedef libType (*GetTypeFunc)();
+    typedef LibType (*GetTypeFunc)();
 
     // Get the function symbol
     GetTypeFunc getTypeFunc =

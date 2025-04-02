@@ -125,7 +125,7 @@ extern "C" {
         return LIBRARY_NAME;
     }
 
-    libType getType(void)
+    LibType getType(void)
     {
         return DISPLAY;
     }
