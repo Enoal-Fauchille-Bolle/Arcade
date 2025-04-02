@@ -17,7 +17,7 @@ using LibraryName = std::string;
 using SpriteIdentifier = std::string;
 
 struct Entity {
-    shape type;
+    Shape type;
     int x;
     int y;
     int width;

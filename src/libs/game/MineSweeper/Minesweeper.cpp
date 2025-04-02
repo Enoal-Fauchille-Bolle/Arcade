@@ -139,7 +139,7 @@ std::map<std::string, Entity> Minesweeper::printBoard()
         for (int x = 0; x < _width; x++)
         {
             Entity cell;
-            cell.type = shape::RECTANGLE;
+            cell.type = Shape::RECTANGLE;
             cell.x = offsetX + x * cellWidth;
             cell.y = offsetY + y * cellHeight;
             cell.width = cellWidth;
@@ -196,7 +196,7 @@ std::map<std::string, Entity> Minesweeper::printBoard()
 Entity Minesweeper::createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite)
 {
     Entity cell;
-    cell.type = shape::RECTANGLE;
+    cell.type = Shape::RECTANGLE;
     cell.x = offsetX + x * cellWidth;
     cell.y = offsetY + y * cellHeight;
     cell.width = cellWidth;

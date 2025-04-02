@@ -18,7 +18,7 @@ enum DisplayType {
     TERMINAL
 };
 
-enum shape {
+enum Shape {
     RECTANGLE,
     CIRCLE,
     TEXT,
