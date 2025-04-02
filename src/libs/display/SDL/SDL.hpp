@@ -2,37 +2,46 @@
 ** EPITECH PROJECT, 2025
 ** Arcade
 ** File description:
-** class to encapsulate the SDL
+** Header for SDL encapsulation
 */
 
 #ifndef SDL_HPP_
-    #define SDL_HPP_
+#define SDL_HPP_
 
-    #include <SDL2/SDL.h>
     #include <iostream>
+    #include <SDL2/SDL.h>
+    #include "../interfaces/IDisplay.hpp"
+    #include <vector>
+
+    #define CENTER SDL_WINDOWPOS_CENTERED
+    #define SCREEN_WIDTH 1024
+    #define SCREEN_HEIGHT 768
 
 class SDL {
     public:
         SDL();
         ~SDL();
-
-        SDL_Window *createWindow(const char *title, int x, int y, int w, int h, Uint32 flags);
-        SDL_Renderer *createRenderer(SDL_Window *window, int index, Uint32 flags);
-        void renderClear(SDL_Renderer *renderer);
-        void renderPresent(SDL_Renderer *renderer);
-        SDL_Event pollEvent(void);
-        void destroyAll(SDL_Window *window, SDL_Renderer *renderer);
-        SDL_Renderer *getRenderer(void) { return (renderer); }
-        SDL_Window *getWindow(void) { return (window); }
-        SDL_Event getEvent(void) { return (event); }
         
-        
+        SDL_Window* createWindow(const char *title, int x, int y, int w, int h, Uint32 flags);
+        SDL_Renderer* createRenderer(int index, Uint32 flags);
+        void renderClear();
+        void renderPresent();
+        std::vector<rawEvent> pollEvent(void);
+        void destroyAll();
 
-    protected:
-        SDL_Window *window;
-        SDL_Renderer *renderer;
-        SDL_Event event;
+        SDL_Window* getWindow() const { return _window; }
+        SDL_Renderer* getRenderer() const { return _renderer; }
+        bool hasEvent() const { return _hasEvent; }
+
+        void drawRectangle(renderObject obj);
+        void drawCircle(renderObject obj);
+        void drawText(renderObject obj);
+
     private:
+        SDL_Window* _window = nullptr;
+        SDL_Renderer* _renderer = nullptr;
+        std::vector<rawEvent> _event;
+        bool _hasEvent = false;
 };
 
 #endif /* !SDL_HPP_ */
