@@ -31,7 +31,7 @@ enum EventType {
     QUIT
 };
 
-enum eventKey {
+enum EventKey {
     // Mouse events
     MOUSE_LEFT,
     MOUSE_RIGHT,
