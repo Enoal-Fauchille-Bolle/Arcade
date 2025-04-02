@@ -12,6 +12,8 @@
     #include "../interfaces/IDisplay.hpp"
     #include <memory>
 
+    #define LIBRARY_NAME "SDL"
+
 class LibSDL : public IDisplay {
     public:
         LibSDL();

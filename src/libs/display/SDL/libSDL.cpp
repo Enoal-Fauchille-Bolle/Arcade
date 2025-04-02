@@ -81,7 +81,7 @@ void LibSDL::display(void)
  */
 std::string LibSDL::getName(void)
 {
-    return ("SDL");
+    return LIBRARY_NAME;
 }
 
 
@@ -103,5 +103,15 @@ extern "C" {
     LibSDL *DisplayEntryPoint(void)
     {
         return new LibSDL();
+    }
+
+    std::string getName(void)
+    {
+        return LIBRARY_NAME;
+    }
+
+    libType getType(void)
+    {
+        return DISPLAY;
     }
 }
