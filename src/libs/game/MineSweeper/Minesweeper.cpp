@@ -154,6 +154,7 @@ std::map<std::string, Entity> Minesweeper::printBoard()
                 {
                     cell.sprites["ncurse"] = "X";
                     cell.sprites["SFML"] = "assets/minesweeper_bomb.jpg";
+                    cell.sprites["SDL"] = "assets/minesweeper_bomb.jpg";
                 }
                 else
                 {
@@ -161,21 +162,25 @@ std::map<std::string, Entity> Minesweeper::printBoard()
                     {
                         cell.sprites["ncurse"] = std::to_string(_board[y][x].adjacentMines);
                         cell.sprites["SFML"] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
+                        cell.sprites["SDL"] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
                     } else {
                         cell.sprites["ncurse"] = " ";
                         cell.sprites["SFML"] = "assets/minesweeper_empty.jpg";
+                        cell.sprites["SDL"] = "assets/minesweeper_empty.jpg";
                     }
                 }
-            }
+            }   
             else if (_board[y][x].isFlagged)
             {
                 cell.sprites["ncurse"] = "F";
                 cell.sprites["SFML"] = "assets/minesweeper_flag.jpg";
+                cell.sprites["SDL"] = "assets/minesweeper_flag.jpg";
             }
             else
             {
                 cell.sprites["ncurse"] = "O";
                 cell.sprites["SFML"] = "assets/minesweeper_not_click.jpg";
+                cell.sprites["SDL"] = "assets/minesweeper_not_click.jpg";
             }
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
         }
