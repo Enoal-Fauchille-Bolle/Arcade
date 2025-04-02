@@ -397,6 +397,7 @@ Entity Menu::renderTitle(void)
     titleText.RGB[1] = 255;
     titleText.RGB[2] = 255;
     titleText.sprites["SFML"] = "Arcade Menu";
+    titleText.sprites["SDL"] = "Arcade Menu";
     return titleText;
 }
 
@@ -421,6 +422,7 @@ Entity Menu::renderDisplayTitle(void)
     displaysTitle.RGB[1] = 255;
     displaysTitle.RGB[2] = 255;
     displaysTitle.sprites["SFML"] = "Display Libraries:";
+    displaysTitle.sprites["SDL"] = "Display Libraries:";
     return displaysTitle;
 }
 
@@ -489,6 +491,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         }
 
         libEntity.sprites["SFML"] = prefix + libs[i].name;
+        libEntity.sprites["SDL"] = prefix + libs[i].name;
         entities[libPrefix + std::to_string(i)] = libEntity;
         yPos += LIBS_HEIGHT_THRESHOLD;
     }
