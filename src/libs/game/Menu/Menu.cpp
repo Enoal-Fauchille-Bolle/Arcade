@@ -268,6 +268,64 @@ std::string Menu::getNewLib(void)
 ////////////////////////////// Event Handling ///////////////////////////////
 
 /**
+ * @brief Check if the mouse click is on a game library button
+ *
+ * This function checks if the mouse click event is within the bounds
+ * of any game library button. If so, it updates the selected game
+ * library index.
+ *
+ * @param event The event to check
+ */
+void Menu::checkGameClick(rawEvent event)
+{
+    for (size_t i = 0; i < _gameLibs.size(); i++) {
+        if (event.x >= _gameLibs[i].pos.x - LIBS_PADDING &&
+            event.x <=
+                _gameLibs[i].pos.x + _gameLibs[i].pos.width + LIBS_PADDING &&
+            event.y <= _gameLibs[i].pos.y + LIBS_PADDING &&
+            event.y >=
+                _gameLibs[i].pos.y - _gameLibs[i].pos.height - LIBS_PADDING) {
+            _selectedGameLib = i;
+            return;
+        }
+    }
+}
+
+/**
+ * @brief Check if the mouse click is on a display library button
+ *
+ * This function checks if the mouse click event is within the bounds
+ * of any display library button. If so, it updates the selected
+ * display library index.
+ *
+ * @param event The event to check
+ */
+void Menu::checkDisplayClick(rawEvent event)
+{
+    for (size_t i = 0; i < _displayLibs.size(); i++) {
+        if (event.x >= _displayLibs[i].pos.x - LIBS_PADDING &&
+            event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width +
+                           LIBS_PADDING &&
+            event.y <= _displayLibs[i].pos.y + LIBS_PADDING &&
+            event.y >= _displayLibs[i].pos.y - _displayLibs[i].pos.height -
+                           LIBS_PADDING) {
+            _selectedDisplayLib = i;
+            return;
+        }
+    }
+}
+
+void Menu::checkStartButton(rawEvent event)
+{
+    if (event.x >= START_BUTTON_X - LIBS_PADDING &&
+        event.x <= START_BUTTON_X + START_BUTTON_WIDTH + LIBS_PADDING &&
+        event.y <= START_BUTTON_Y + LIBS_PADDING &&
+        event.y >= START_BUTTON_Y - START_BUTTON_HEIGHT - LIBS_PADDING) {
+        _startGame = true;
+    }
+}
+
+/**
  * @brief Handle a left mouse button click event
  *
  * This function checks if the left mouse button was clicked on a
@@ -278,26 +336,9 @@ std::string Menu::getNewLib(void)
  */
 void Menu::handleLeftClick(rawEvent event)
 {
-    std::cout << "Left click at (" << event.x << ", " << event.y << ")"
-              << std::endl;
-    for (size_t i = 0; i < _gameLibs.size(); i++) {
-        if (event.x >= _gameLibs[i].pos.x &&
-            event.x <= _gameLibs[i].pos.x + _gameLibs[i].pos.width &&
-            event.y >= _gameLibs[i].pos.y &&
-            event.y <= _gameLibs[i].pos.y + _gameLibs[i].pos.height) {
-            _selectedGameLib = i;
-            return;
-        }
-    }
-    for (size_t i = 0; i < _displayLibs.size(); i++) {
-        if (event.x >= _displayLibs[i].pos.x &&
-            event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width &&
-            event.y >= _displayLibs[i].pos.y &&
-            event.y <= _displayLibs[i].pos.y + _displayLibs[i].pos.height) {
-            _selectedDisplayLib = i;
-            return;
-        }
-    }
+    checkGameClick(event);
+    checkDisplayClick(event);
+    checkStartButton(event);
 }
 
 /**
@@ -343,12 +384,12 @@ void Menu::handleEvent(std::vector<rawEvent> events)
  *
  * @return Entity The title entity
  */
-Entity Menu::renderTitle()
+Entity Menu::renderTitle(void)
 {
     Entity titleText;
     titleText.type = TEXT;
-    titleText.x = 400;
-    titleText.y = 150;
+    titleText.x = ARCADE_TITLE_X;
+    titleText.y = ARCADE_TITLE_Y;
     titleText.width = 0;
     titleText.height = 0;
     titleText.rotate = 0;
@@ -367,12 +408,12 @@ Entity Menu::renderTitle()
  *
  * @return Entity The display title entity
  */
-Entity Menu::renderDisplayTitle()
+Entity Menu::renderDisplayTitle(void)
 {
     Entity displaysTitle;
     displaysTitle.type = TEXT;
-    displaysTitle.x = 200;
-    displaysTitle.y = 250;
+    displaysTitle.x = DISPLAY_TITLE_X;
+    displaysTitle.y = DISPLAY_TITLE_Y;
     displaysTitle.width = 0;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
@@ -397,8 +438,8 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
 {
     lib.pos.x = x;
     lib.pos.y = y;
-    lib.pos.width = lib.name.length();
-    lib.pos.height = 30;
+    lib.pos.width = lib.name.length() * TEXT_WIDTH_MULTIPLIER;
+    lib.pos.height = LIBS_HEIGHT;
 }
 
 /**
@@ -415,14 +456,15 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
  * @return std::map<EntityName, Entity> A map of Entity objects representing
  * the libraries
  */
-std::map<IGame::EntityName, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
+std::map<IGame::EntityName, Entity> Menu::renderLibs(
+    std::vector<LibInfo> &libs,
     size_t selectedLib,
     size_t x,
     std::string libPrefix)
 {
     std::map<EntityName, Entity> entities;
 
-    int yPos = 300;
+    int yPos = LIBS_HEIGHT_START;
     for (size_t i = 0; i < libs.size(); i++) {
         Entity libEntity;
         libEntity.type = TEXT;
@@ -438,17 +480,17 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
             prefix = "> ";
             libEntity.RGB[0] = 0;
             libEntity.RGB[1] = 255;
-            libEntity.RGB[2] = 0;  // Green
+            libEntity.RGB[2] = 0;
         } else {
             prefix = "   ";
             libEntity.RGB[0] = 180;
             libEntity.RGB[1] = 180;
-            libEntity.RGB[2] = 180;  // Lighter gray
+            libEntity.RGB[2] = 180;
         }
 
         libEntity.sprites["SFML"] = prefix + libs[i].name;
         entities[libPrefix + std::to_string(i)] = libEntity;
-        yPos += 30;
+        yPos += LIBS_HEIGHT_THRESHOLD;
     }
     return entities;
 }
@@ -461,12 +503,12 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
  *
  * @return Entity The game title entity
  */
-Entity Menu::renderGameTitle()
+Entity Menu::renderGameTitle(void)
 {
     Entity gamesTitle;
     gamesTitle.type = TEXT;
-    gamesTitle.x = 600;
-    gamesTitle.y = 250;
+    gamesTitle.x = GAME_TITLE_X;
+    gamesTitle.y = GAME_TITLE_Y;
     gamesTitle.width = 0;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
@@ -488,21 +530,20 @@ Entity Menu::renderGameTitle()
  * @param displayName The name of the display library
  * @return Entity The selected libraries entity
  */
-Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
+Entity Menu::renderStartButton(void)
 {
     Entity selectedLibs;
-    std::string text = "Selected: " + gameName + " with " + displayName;
 
     selectedLibs.type = TEXT;
-    selectedLibs.x = 200;
-    selectedLibs.y = 600;
+    selectedLibs.x = START_BUTTON_X;
+    selectedLibs.y = START_BUTTON_Y;
     selectedLibs.width = 0;
     selectedLibs.height = 0;
     selectedLibs.rotate = 0;
     selectedLibs.RGB[0] = 255;
     selectedLibs.RGB[1] = 255;
-    selectedLibs.RGB[2] = 255;  // White
-    selectedLibs.sprites["SFML"] = text;
+    selectedLibs.RGB[2] = 0;
+    selectedLibs.sprites["SFML"] = "Start";
     return selectedLibs;
 }
 
@@ -538,10 +579,7 @@ std::map<IGame::EntityName, Entity> Menu::renderGame()
         entities[pair.first] = pair.second;
     }
 
-    entities["selection_text"] = renderSelectedLibs(
-        _gameLibs.empty() ? "Default" : _gameLibs[_selectedGameLib].name,
-        _displayLibs.empty() ? "Default"
-                             : _displayLibs[_selectedDisplayLib].name);
+    entities["start_button"] = renderStartButton();
 
     return entities;
 }

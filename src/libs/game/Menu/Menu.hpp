@@ -25,6 +25,30 @@
 
     #define LIBRARY_NAME "Menu"
 
+    #define ARCADE_TITLE_X 425
+    #define ARCADE_TITLE_Y 150
+
+    #define GAME_TITLE_X 600
+    #define GAME_TITLE_Y 250
+
+    #define DISPLAY_TITLE_X 200
+    #define DISPLAY_TITLE_Y 250
+
+    #define LIBS_HEIGHT_START 300
+    #define LIBS_HEIGHT_THRESHOLD 45
+    #define LIBS_HEIGHT 25
+    #define LIBS_PADDING 10
+
+    #define TEXT_WIDTH_MULTIPLIER 30
+
+    #define SELECTED_LIBS_X 200
+    #define SELECTED_LIBS_Y 600
+
+    #define START_BUTTON_X 480
+    #define START_BUTTON_Y 600
+    #define START_BUTTON_WIDTH 75
+    #define START_BUTTON_HEIGHT 25
+
 class Menu : public IGame {
     public:
         Menu();
@@ -73,19 +97,21 @@ class Menu : public IGame {
         void categorizeLibraries(const std::vector<std::string> &paths);
 
         // Event Handling
+        void checkGameClick(rawEvent event);
+        void checkDisplayClick(rawEvent event);
+        void checkStartButton(rawEvent event);
         void handleLeftClick(rawEvent event);
         void handleOneEvent(rawEvent event);
 
         // Rendering
-        Entity renderTitle();
-        Entity renderDisplayTitle();
+        Entity renderTitle(void);
+        Entity renderDisplayTitle(void);
         void setupLibButton(LibInfo &lib, int x, int y);
         std::map<EntityName, Entity> renderLibs(
-            std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x,
+            std::vector<LibInfo> &libs, size_t selectedLib, size_t x,
             std::string libPrefix);
-        Entity renderGameTitle();
-        Entity renderSelectedLibs(
-            std::string gameName, std::string displayName);
+        Entity renderGameTitle(void);
+        Entity renderStartButton(void);
 
         std::vector<LibInfo> _gameLibs;
         std::vector<LibInfo> _displayLibs;
