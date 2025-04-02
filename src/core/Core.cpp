@@ -75,7 +75,7 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
 /**
  * @brief Main loop of the Core class. Handles game logic, events, and rendering.
  */
-void Core::run()
+void Core::run(void)
 {
     std::cerr << "Core run" << std::endl;
     while (running) {
@@ -140,7 +140,7 @@ int Core::load_game(std::string path)
  * @brief Deletes the currently loaded display library.
  * @return 0 on success.
  */
-int Core::delete_display()
+int Core::delete_display(void)
 {
     std::cerr << "Core delete_display" << std::endl;
     return 0;
@@ -150,7 +150,7 @@ int Core::delete_display()
  * @brief Deletes the currently loaded game library.
  * @return 0 on success.
  */
-int Core::delete_game()
+int Core::delete_game(void)
 {
     std::cerr << "Core delete_game" << std::endl;
     return 0;

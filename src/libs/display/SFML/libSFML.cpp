@@ -344,7 +344,7 @@ extern "C" {
      * @brief Entry point for the libSFML display library.
      * @return A pointer to a new libSFML instance.
      */
-    libSFML *DisplayEntryPoint()
+    libSFML *DisplayEntryPoint(void)
     {
         return new libSFML();
     }

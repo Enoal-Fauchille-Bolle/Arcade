@@ -23,15 +23,15 @@ class Core {
         Core(std::string path);
         ~Core();
 
-        void run();
+        void run(void);
     protected:
 
     private:
         int load_display(std::string path);
         int load_game(std::string path);
 
-        int delete_display();
-        int delete_game();
+        int delete_display(void);
+        int delete_game(void);
 
         bool checkQuit(std::vector<rawEvent> events);
 
