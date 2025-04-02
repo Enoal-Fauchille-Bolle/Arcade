@@ -12,7 +12,7 @@
  *
  * This constructor initializes the SDL library by creating a unique pointer
  * to an SDL object. It sets up an SDL window with the title "Arcade", centered
- * on the screen, with a resolution of 800x600 pixels, and makes it visible.
+ * on the screen, with a resolution of 1024x768 pixels, and makes it visible.
  * Additionally, it creates an SDL renderer for the window with hardware
  * acceleration enabled.
  */
@@ -20,7 +20,7 @@ LibSDL::LibSDL()
 {
     _sdl = std::make_unique<SDL>();
     _sdl->createWindow("Arcade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    _sdl->createRenderer(_sdl->getWindow(), -1, SDL_RENDERER_ACCELERATED);
+    _sdl->createRenderer(-1, SDL_RENDERER_ACCELERATED);
 }
 
 /**
@@ -32,7 +32,7 @@ LibSDL::LibSDL()
 LibSDL::~LibSDL()
 {
     if (_sdl) {
-        _sdl->destroyAll(_sdl->getWindow(), _sdl->getRenderer());
+        _sdl->destroyAll();
     }
 }
 
@@ -43,9 +43,7 @@ LibSDL::~LibSDL()
  */
 std::vector<rawEvent> LibSDL::pollEvent(void)
 {
-    std::vector<rawEvent> events;
-
-    return events;
+    return _sdl->pollEvent();
 }
 
 /**
@@ -55,7 +53,12 @@ std::vector<rawEvent> LibSDL::pollEvent(void)
  */
 void LibSDL::drawObject(renderObject obj)
 {
-    obj = obj;
+    if (obj.type == RECTANGLE)
+        _sdl->drawRectangle(obj);
+    else if (obj.type == CIRCLE)
+        _sdl->drawCircle(obj);
+    else if (obj.type == TEXT)
+        _sdl->drawText(obj);
 }
 
 /**
@@ -63,7 +66,7 @@ void LibSDL::drawObject(renderObject obj)
  */
 void LibSDL::clear(void)
 {
-    SDL_RenderClear(_sdl->getRenderer());
+    _sdl->renderClear();
 }
 
 /**
@@ -71,7 +74,7 @@ void LibSDL::clear(void)
  */
 void LibSDL::display(void)
 {
-    SDL_RenderPresent(_sdl->getRenderer());
+    _sdl->renderPresent();
 }
 
 /**
@@ -85,22 +88,28 @@ std::string LibSDL::getName(void)
 }
 
 
-/**
-    * @brief extern c
-    *
- */
 extern "C" {
+    /**
+     * @brief Constructor for the shared library.
+     */
     __attribute__((constructor))
     void constructor()
     {
     }
 
+    /**
+     * @brief Destructor for the shared library.
+     */
     __attribute__((destructor))
     void destructor()
     {
     }
 
-    LibSDL *DisplayEntryPoint(void)
+    /**
+     * @brief Entry point for the libSDL display library.
+     * @return A pointer to a new libSDL instance.
+     */
+    LibSDL *DisplayEntryPoint()
     {
         return new LibSDL();
     }
