@@ -39,7 +39,9 @@ class IGame {
         virtual std::string getNewLib(void) = 0;
 
         virtual void handleEvent(std::vector<rawEvent>) = 0;
-        virtual std::map<std::string, Entity> renderGame() = 0;
+
+        using EntityName = std::string;
+        virtual std::map<EntityName, Entity> renderGame() = 0;
 
         virtual std::string getName(void) = 0;
 

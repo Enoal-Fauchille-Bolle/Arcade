@@ -405,15 +405,15 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
  * @param libs The vector of library information
  * @param selectedLib The index of the selected library
  * @param x The x-coordinate of the button
- * @return std::map<std::string, Entity> A map of Entity objects representing
+ * @return std::map<EntityName, Entity> A map of Entity objects representing
  * the libraries
  */
-std::map<std::string, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
+std::map<IGame::EntityName, Entity> Menu::renderLibs(std::vector<LibInfo> libs,
     size_t selectedLib,
     size_t x,
     std::string libPrefix)
 {
-    std::map<std::string, Entity> entities;
+    std::map<EntityName, Entity> entities;
 
     int yPos = 150;
     for (size_t i = 0; i < libs.size(); i++) {
@@ -505,13 +505,13 @@ Entity Menu::renderSelectedLibs(std::string gameName, std::string displayName)
  * game menu. It sets the position, color, and text of each entity
  * based on the selected libraries.
  *
- * @return std::map<std::string, Entity> A map of Entity objects representing
+ * @return std::map<EntityName, Entity> A map of Entity objects representing
  * the game menu
  */
-std::map<std::string, Entity> Menu::renderGame()
+std::map<IGame::EntityName, Entity> Menu::renderGame()
 {
-    std::map<std::string, Entity> entities;
-    std::map<std::string, Entity> tempEntities;
+    std::map<EntityName, Entity> entities;
+    std::map<EntityName, Entity> tempEntities;
 
     entities["title"] = renderTitle();
 

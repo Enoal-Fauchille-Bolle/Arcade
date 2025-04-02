@@ -40,7 +40,7 @@ class Menu : public IGame {
 
         std::string getName(void) final;
 
-        std::map<std::string, Entity> renderGame() final;
+        std::map<IGame::EntityName, Entity> renderGame() final;
 
     protected:
     private:
@@ -82,7 +82,7 @@ class Menu : public IGame {
         Entity renderTitle();
         Entity renderDisplayTitle();
         void setupLibButton(LibInfo &lib, int x, int y);
-        std::map<std::string, Entity> renderLibs(
+        std::map<EntityName, Entity> renderLibs(
             std::vector<LibInfo> displayLibs, size_t selectedLib, size_t x,
             std::string libPrefix);
         Entity renderGameTitle();
