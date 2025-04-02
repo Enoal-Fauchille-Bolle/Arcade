@@ -12,16 +12,20 @@
     #include "../../IType.hpp"
     #include <map>
 
-    struct Entity {
-        shape type;
-        int x;
-        int y;
-        int width;
-        int height;
-        int rotate;
-        int RGB[3];
-        std::map<std::string, std::string> sprites;
-    };
+
+using LibraryName = std::string;
+using SpriteIdentifier = std::string;
+
+struct Entity {
+    shape type;
+    int x;
+    int y;
+    int width;
+    int height;
+    int rotate;
+    int RGB[3];
+    std::map<LibraryName, SpriteIdentifier> sprites;
+};
 
 class IGame {
     public:
