@@ -110,12 +110,13 @@ ncurses: $(NCURSES_OBJ)
 	mv $(NCURSES_NAME) $(ROOT_LIBS)
 
 sdl: $(SDL_OBJ)
-	$(CC) -o $(SDL_NAME) $^ $(LDFLAGS) -l SDL2
+	$(CC) -o $(SDL_NAME) $^ $(LDFLAGS) -l SDL2 -l SDL2_ttf \
+		-l SDL2_image
 	mv $(SDL_NAME) $(ROOT_LIBS)
 
 sfml: $(SFML_OBJ)
-	$(CC) -o $(SFML_NAME) $^ $(LDFLAGS) -l csfml-graphics	\
-		-l csfml-system -l csfml-audio
+	$(CC) -o $(SFML_NAME) $^ $(LDFLAGS) -l sfml-graphics	\
+		-l sfml-system -l sfml-audio
 	mv $(SFML_NAME) $(ROOT_LIBS)
 
 display: ncurses sdl sfml
