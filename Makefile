@@ -37,6 +37,7 @@ CORE_SRC = \
 		$(SRCDIR)core/LibLoader.cpp	\
 
 NCURSES_SRC = \
+		$(SRCDIR)libs/display/Ncurses/Ncurses.cpp	\
 
 SFML_SRC = \
 		$(SRCDIR)libs/display/SFML/libSFML.cpp	\
@@ -106,7 +107,7 @@ all: $(NAME)
 
 
 ncurses: $(NCURSES_OBJ)
-	$(CC) -o $(NCURSES_NAME) $^ $(LDFLAGS)
+	$(CC) -o $(NCURSES_NAME) $^ $(LDFLAGS) -lncursesw
 	mv $(NCURSES_NAME) $(ROOT_LIBS)
 
 sdl: $(SDL_OBJ)

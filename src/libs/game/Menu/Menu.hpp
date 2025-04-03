@@ -91,7 +91,7 @@ class Menu : public IGame {
         std::vector<std::string> getLibraryFiles();
 
         // Library Categorization
-        void sortLibraries();
+        void sortLibraries(void);
         std::string isGameLibrary(const std::string &path);
         std::string isDisplayLibrary(const std::string &path);
         void categorizeLibraries(const std::vector<std::string> &paths);

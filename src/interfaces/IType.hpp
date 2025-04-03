@@ -136,4 +136,15 @@ struct RawEvent {
     int y;
 };
 
+struct Coordinates {
+    int x;
+    int y;
+};
+
+struct RgbColor {
+    int r;
+    int g;
+    int b;
+};
+
 #endif /* !ITYPE_HPP_ */

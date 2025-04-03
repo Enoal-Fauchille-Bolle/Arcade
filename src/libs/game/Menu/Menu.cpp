@@ -77,7 +77,7 @@ std::vector<std::string> Menu::findSharedLibraries(
  *
  * @return std::vector<std::string> A vector of strings containing the paths
  */
-std::vector<std::string> Menu::getLibraryFiles()
+std::vector<std::string> Menu::getLibraryFiles(void)
 {
     std::string libPath = LIBRARY_PATH;
 
@@ -101,7 +101,7 @@ std::vector<std::string> Menu::getLibraryFiles()
  * order based on their names. It uses the std::sort algorithm to
  * perform the sorting.
  */
-void Menu::sortLibraries()
+void Menu::sortLibraries(void)
 {
     std::sort(_gameLibs.begin(), _gameLibs.end(),
         [](const LibInfo &a, const LibInfo &b) { return a.name < b.name; });
@@ -336,6 +336,7 @@ void Menu::checkStartButton(RawEvent event)
  */
 void Menu::handleLeftClick(RawEvent event)
 {
+    // std::cout << "Clicked at: " << event.x << ", " << event.y << std::endl;
     checkGameClick(event);
     checkDisplayClick(event);
     checkStartButton(event);
@@ -397,6 +398,7 @@ Entity Menu::renderTitle(void)
     titleText.RGB[1] = 255;
     titleText.RGB[2] = 255;
     titleText.sprites[DisplayType::GRAPHICAL] = "Arcade Menu";
+    titleText.sprites[DisplayType::TERMINAL] = "Arcade Menu";
     return titleText;
 }
 
@@ -421,6 +423,7 @@ Entity Menu::renderDisplayTitle(void)
     displaysTitle.RGB[1] = 255;
     displaysTitle.RGB[2] = 255;
     displaysTitle.sprites[DisplayType::GRAPHICAL] = "Display Libraries:";
+    displaysTitle.sprites[DisplayType::TERMINAL] = "Display Libraries:";
     return displaysTitle;
 }
 
@@ -489,6 +492,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         }
 
         libEntity.sprites[DisplayType::GRAPHICAL] = prefix + libs[i].name;
+        libEntity.sprites[DisplayType::TERMINAL] = prefix + libs[i].name;
         entities[libPrefix + std::to_string(i)] = libEntity;
         yPos += LIBS_HEIGHT_THRESHOLD;
     }
@@ -516,6 +520,7 @@ Entity Menu::renderGameTitle(void)
     gamesTitle.RGB[1] = 255;
     gamesTitle.RGB[2] = 255;
     gamesTitle.sprites[DisplayType::GRAPHICAL] = "Game Libraries:";
+    gamesTitle.sprites[DisplayType::TERMINAL] = "Game Libraries:";
     return gamesTitle;
 }
 
@@ -544,6 +549,7 @@ Entity Menu::renderStartButton(void)
     selectedLibs.RGB[1] = 255;
     selectedLibs.RGB[2] = 0;
     selectedLibs.sprites[DisplayType::GRAPHICAL] = "Start";
+    selectedLibs.sprites[DisplayType::TERMINAL] = "Start";
     return selectedLibs;
 }
 
@@ -557,7 +563,7 @@ Entity Menu::renderStartButton(void)
  * @return std::map<EntityName, Entity> A map of Entity objects representing
  * the game menu
  */
-std::map<IGame::EntityName, Entity> Menu::renderGame()
+std::map<IGame::EntityName, Entity> Menu::renderGame(void)
 {
     std::map<EntityName, Entity> entities;
     std::map<EntityName, Entity> tempEntities;
