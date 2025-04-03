@@ -19,7 +19,7 @@
 LibSDL::LibSDL()
 {
     _sdl = std::make_unique<SDL>();
-    _sdl->createWindow("Arcade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+    _sdl->createWindow("Arcade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_SHOWN);
     _sdl->createRenderer(-1, SDL_RENDERER_ACCELERATED);
 }
 
