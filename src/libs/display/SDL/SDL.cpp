@@ -9,6 +9,65 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <iostream>
+#include <unordered_map>
+
+static const std::unordered_map<SDL_Keycode, EventKey> eventTypeMap = {
+    {SDL_BUTTON_LEFT, MOUSE_LEFT},
+    {SDL_BUTTON_RIGHT, MOUSE_RIGHT},
+    {SDL_BUTTON_MIDDLE, MOUSE_MIDDLE},
+    {SDLK_a, KEYBOARD_A},
+    {SDLK_b, KEYBOARD_B},
+    {SDLK_c, KEYBOARD_C},
+    {SDLK_d, KEYBOARD_D},
+    {SDLK_e, KEYBOARD_E},
+    {SDLK_f, KEYBOARD_F},
+    {SDLK_g, KEYBOARD_G},
+    {SDLK_h, KEYBOARD_H},
+    {SDLK_i, KEYBOARD_I},
+    {SDLK_j, KEYBOARD_J},
+    {SDLK_k, KEYBOARD_K},
+    {SDLK_l, KEYBOARD_L},
+    {SDLK_m, KEYBOARD_M},
+    {SDLK_n, KEYBOARD_N},
+    {SDLK_o, KEYBOARD_O},
+    {SDLK_p, KEYBOARD_P},
+    {SDLK_q, KEYBOARD_Q},
+    {SDLK_r, KEYBOARD_R},
+    {SDLK_s, KEYBOARD_S},
+    {SDLK_t, KEYBOARD_T},
+    {SDLK_u, KEYBOARD_U},
+    {SDLK_v, KEYBOARD_V},
+    {SDLK_w, KEYBOARD_W},
+    {SDLK_x, KEYBOARD_X},
+    {SDLK_y, KEYBOARD_Y},
+    {SDLK_z, KEYBOARD_Z},
+    {SDLK_0, KEYBOARD_0},
+    {SDLK_1, KEYBOARD_1},
+    {SDLK_2, KEYBOARD_2},
+    {SDLK_3, KEYBOARD_3},
+    {SDLK_4, KEYBOARD_4},
+    {SDLK_5, KEYBOARD_5},
+    {SDLK_6, KEYBOARD_6},
+    {SDLK_7, KEYBOARD_7},
+    {SDLK_8, KEYBOARD_8},
+    {SDLK_9, KEYBOARD_9},
+    {SDLK_UP, KEYBOARD_UP},
+    {SDLK_DOWN, KEYBOARD_DOWN},
+    {SDLK_LEFT, KEYBOARD_LEFT},
+    {SDLK_RIGHT, KEYBOARD_RIGHT},
+    {SDLK_ESCAPE, KEYBOARD_ESCAPE},
+    {SDLK_SPACE, KEYBOARD_SPACE},
+    {SDLK_TAB, KEYBOARD_TAB},
+    {SDLK_BACKSPACE, KEYBOARD_BACKSPACE},
+    {SDLK_DELETE, KEYBOARD_DELETE},
+    {SDLK_LSHIFT, KEYBOARD_LSHIFT},
+    {SDLK_RSHIFT, KEYBOARD_RSHIFT},
+    {SDLK_LCTRL, KEYBOARD_LCTRL},
+    {SDLK_RCTRL, KEYBOARD_RCTRL},
+    {SDLK_LALT, KEYBOARD_LALT},
+    {SDLK_RALT, KEYBOARD_RALT}
+};
 
 SDL::SDL()
 {
@@ -58,12 +117,12 @@ SDL_Renderer* SDL::createRenderer(int index, Uint32 flags)
     return _renderer;
 }
 
-void SDL::renderClear()
+void SDL::renderClear(void)
 {
     SDL_RenderClear(_renderer);
 }
 
-void SDL::renderPresent()
+void SDL::renderPresent(void)
 {
     SDL_RenderPresent(_renderer);
 }
@@ -72,33 +131,28 @@ std::vector<RawEvent> SDL::pollEvent(void)
 {
     SDL_Event event;
     _hasEvent = false;
+
     while (SDL_PollEvent(&event)) {
         _hasEvent = true;
         if (event.type == SDL_QUIT) {
             RawEvent quitEvent;
-            quitEvent.type = EventType::PRESS;
+            quitEvent.type = EventType::QUIT;
             _event.push_back(quitEvent);
         } else if (event.type == SDL_KEYDOWN) {
             RawEvent keyEvent;
             keyEvent.type = EventType::PRESS;
-            switch (event.key.keysym.sym) {
-                case SDLK_DELETE: keyEvent.key = KEYBOARD_DELETE; break;
-                case SDLK_INSERT: keyEvent.key = KEYBOARD_INSERT; break;
-                case SDLK_PAGEUP: keyEvent.key = KEYBOARD_PAGEUP; break;
-                case SDLK_PAGEDOWN: keyEvent.key = KEYBOARD_PAGEDOWN; break;
-                default:
-                    continue;
+            auto it = eventTypeMap.find(event.key.keysym.sym);
+            if (it != eventTypeMap.end()) {
+                keyEvent.key = it->second;
             }
             _event.push_back(keyEvent);
         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
             RawEvent mouseEvent;
             mouseEvent.type = EventType::PRESS;
-            if (event.button.button == SDL_BUTTON_LEFT)
-                mouseEvent.key = MOUSE_LEFT;
-            else if (event.button.button == SDL_BUTTON_RIGHT)
-                mouseEvent.key = MOUSE_RIGHT;
-            else if (event.button.button == SDL_BUTTON_MIDDLE)
-                mouseEvent.key = MOUSE_MIDDLE;
+            auto it = eventTypeMap.find(event.button.button);
+            if (it != eventTypeMap.end()) {
+                mouseEvent.key = it->second;
+            }
             mouseEvent.x = event.button.x;
             mouseEvent.y = event.button.y;
             _event.push_back(mouseEvent);
@@ -107,7 +161,7 @@ std::vector<RawEvent> SDL::pollEvent(void)
     return _event;
 }
 
-void SDL::destroyAll()
+void SDL::destroyAll(void)
 {
     if (_renderer)
         SDL_DestroyRenderer(_renderer);
