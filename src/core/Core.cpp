@@ -143,6 +143,10 @@ int Core::load_game(std::string path)
 int Core::delete_display()
 {
     std::cerr << "Core delete_display" << std::endl;
+    if (_display) {
+        _display.reset();
+        _graphicLoader.~DLLoader();
+    }
     return 0;
 }
 
@@ -153,5 +157,9 @@ int Core::delete_display()
 int Core::delete_game()
 {
     std::cerr << "Core delete_game" << std::endl;
+    if (_game) {
+        _game.reset();
+        _gameLoader.~DLLoader();
+    }
     return 0;
 }

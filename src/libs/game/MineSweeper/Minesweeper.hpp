@@ -11,6 +11,8 @@
     #include <vector>
     #include "../interfaces/IGame.hpp"
     #include <map>
+    #include <string>
+    #include <chrono>
 
     #define SCREEN_WIDTH 1024
     #define SCREEN_HEIGHT 768
@@ -53,8 +55,15 @@ class Minesweeper : public IGame {
         bool checkLose();
         void revelBombs();
 
+        void handleEventGame(std::vector<RawEvent> events);
+        void handleEventMenu(std::vector<RawEvent> events);
+        void handleEventGameOver(std::vector<RawEvent> events);
+        void handleEventESC(std::vector<RawEvent> events);
+
         std::pair<int, int> handleClick(RawEvent event);
 
+        std::map<std::string, Entity> printESC();
+        std::map<std::string, Entity> printWinOrLose();
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
 
@@ -62,16 +71,30 @@ class Minesweeper : public IGame {
 
 
     private:
+        enum GameState {
+            MENU,
+            GAME,
+            GAME_LOSE,
+            GAME_WIN,
+            ESC
+        };
+
+        GameState _state = MENU;
+
         int _width;
         int _height;
         int _mines;
 
+        std::chrono::steady_clock::time_point _startTime;
+
         std::vector<std::vector<Cell>> _board;
         std::pair<float, std::string> _score;
         std::string _name;
-        bool _isOver;
+
         bool isFirstClikc = false;
-        bool _isMenu;
+
+        bool _isGameTermiated = false;
+        bool _isGameOver = false;
 };
 
 #endif /* !MINESWEEPER_HPP_ */
