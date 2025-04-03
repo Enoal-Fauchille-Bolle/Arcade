@@ -12,8 +12,34 @@
     #include <map>
     #include <vector>
     #include "../interfaces/IGame.hpp"
+    #include <chrono>
 
     #define LIBRARY_NAME "Snake"
+
+struct Position {
+    int x = 0;
+    int y = 0;
+};
+
+struct Cell {
+    bool isSnake = false;
+    bool isFood = false;
+    bool isWall = false;
+    struct Position pos;
+};
+
+struct snake {
+    std::vector<std::pair<Position, int>> body;
+    bool isAlive = true;
+    int length = 4;
+};
+
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+};
 
 class Snake : public IGame {
     public:
@@ -26,14 +52,32 @@ class Snake : public IGame {
         bool isGameEnd(void) override;
         std::string getNewLib(void) override;
 
-        void handleEvent(std::vector<rawEvent>) override;
+        void handleEvent(std::vector<RawEvent>) override;
         std::map<std::string, Entity> renderGame() override;
 
         std::string getName(void) override;
 
     protected:
     private:
-        std::pair<float, std::string> score;
+        void goUp();
+        void goDown();
+        void goLeft();
+        void goRight();
+        void moveSnake();
+        void generateFood();
+        void eatFood();
+        void createGrid(int width, int height);
+        std::vector<std::vector<Cell>> grid;
+        std::pair<float, std::string> _score;
+        bool gameOver = false;
+        bool gameEnd = false;
+        bool _win;
+        const int gridWidth = 20;
+        const int gridHeight = 20;
+        enum Direction direction;
+        struct snake snake;
+        std::chrono::steady_clock::time_point lastMoveTime;
+        const int moveInterval = 1000 / 24;
 };
 
 #endif /* !SNAKE_HPP_ */
