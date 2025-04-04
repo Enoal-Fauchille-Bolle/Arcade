@@ -12,6 +12,7 @@ Snake::Snake()
     std::cout << "Snake created" << std::endl;
     createGrid(gridWidth, gridHeight);
     lastMoveTime = std::chrono::steady_clock::now();
+    direction = UP;
 }
 
 Snake::~Snake()
@@ -31,12 +32,12 @@ void Snake::createGrid(int width, int height)
             }
         }
     }
-    snake.body.push_back({{width / 2, height / 2}, 0});
-    snake.body.push_back({{width / 2, height / 2 + 1}, 0});
-    snake.body.push_back({{width / 2, height / 2 + 2}, 0});
-    snake.body.push_back({{width / 2, height / 2 + 3}, 0});
+    snake.body.push_back({width / 2, height / 2});
+    snake.body.push_back({width / 2, height / 2 + 1});
+    snake.body.push_back({width / 2, height / 2 + 2});
+    snake.body.push_back({width / 2, height / 2 + 3});
     for (const auto& segment : snake.body) {
-        grid[segment.first.y][segment.first.x].isSnake = true;
+        grid[segment.y][segment.x].isSnake = true;
     }
     generateFood();
 }
@@ -111,14 +112,14 @@ void Snake::eatFood()
 {
     _score.first += 10;
     _score.second = std::to_string(_score.first);
-    grid[snake.body[0].first.y][snake.body[0].first.x].isFood = false;
+    grid[snake.body[0].y][snake.body[0].x].isFood = false;
 
     generateFood();
 }
 
 void Snake::moveSnake()
 {
-    Position newHead = snake.body[0].first;
+    Position newHead = snake.body[0];
 
     if (gameOver)
         return;
@@ -140,23 +141,22 @@ void Snake::moveSnake()
         gameOver = true;
         return;
     }
-    for (size_t i = snake.body.size() - 1; i > 0; --i) {
-        snake.body[i] = snake.body[i - 1];
-    }
-    snake.body.insert(snake.body.begin(), {newHead, 0});
     if (grid[newHead.y][newHead.x].isWall || grid[newHead.y][newHead.x].isSnake) {
         gameOver = true;
         return;
     }
+    bool foodEaten = grid[newHead.y][newHead.x].isFood;
+    snake.body.insert(snake.body.begin(), newHead);
     grid[newHead.y][newHead.x].isSnake = true;
-    if (grid[newHead.y][newHead.x].isFood) {
+    if (foodEaten) {
         eatFood();
         if (snake.body.size() == static_cast<size_t>(gridWidth * gridHeight)) {
             gameEnd = true;
             return;
         }
     } else {
-        grid[snake.body.back().first.y][snake.body.back().first.x].isSnake = false;
+        Position tail = snake.body.back();
+        grid[tail.y][tail.x].isSnake = false;
         snake.body.pop_back();
     }
 }
