@@ -181,13 +181,11 @@ re: fclean all
 
 re_clean: fclean all clean
 
-tests_run: unit_tests
-	./$(TESTS_NAME) --verbose
-	gcovr --exclude tests/
-	gcovr --exclude tests/ --txt-metric branch
-
 unit_tests: $(OBJ) $(TESTS_SRC:.cpp=.o)
 	$(CC) -o $(TESTS_NAME) $(OBJ) $(TESTS_SRC:.cpp=.o) $(UNIT_FLAGS)
+
+tests_run: unit_tests
+	./$(TESTS_NAME) --verbose
 
 gcovr: tests_run
 	gcovr --exclude tests/
