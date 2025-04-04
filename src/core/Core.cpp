@@ -62,6 +62,10 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
             obj.width = val.width;
             obj.height = val.height;
             obj.rotate = val.rotate;
+            if (val.sprites.find(_display->getDType()) == val.sprites.end()) {
+                std::cerr << "Error: Sprite not found for display type." << std::endl;
+                continue;
+            }
             obj.sprite = val.sprites.find(_display->getDType())->second;
             obj.RGB[0] = val.RGB[0];
             obj.RGB[1] = val.RGB[1];
