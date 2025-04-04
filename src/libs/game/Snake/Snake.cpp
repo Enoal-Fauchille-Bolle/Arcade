@@ -76,7 +76,6 @@ void Snake::handleEvent(std::vector<RawEvent> events)
 
     if (events.empty()) {
         _frameRate = 10;
-        return;
     }
 
     for (const auto& event : events) {
@@ -184,6 +183,45 @@ void Snake::moveSnake()
     }
 }
 
+void Snake::setGridColor(Entity& entity, int r, int g, int b)
+{
+    entity.RGB[0] = r;
+    entity.RGB[1] = g;
+    entity.RGB[2] = b;
+}
+
+
+void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities)
+{
+    if (grid[y][x].isWall) {
+        setGridColor(entity, 255, 0, 0);
+        entity.sprites[DisplayType::TERMINAL] = "A";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+    } else if (grid[y][x].isSnake) {
+        setGridColor(entity, 0, 255, 255);
+        entity.sprites[DisplayType::TERMINAL] = "S";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/snake.jpg";
+        if (snake.body.front().x == x && snake.body.front().y == y) {
+            setGridColor(entity, 255, 0, 255);
+            entity.sprites[DisplayType::TERMINAL] = "H";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_3.jpg";
+        }
+        if (gameOver) {
+            setGridColor(entity, 255, 0, 0);
+            entity.sprites[DisplayType::TERMINAL] = "X";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/dead_snake.png";
+        }
+    } else if (grid[y][x].isFood) {
+        setGridColor(entity, 0, 255, 0);
+        entity.sprites[DisplayType::TERMINAL] = "F";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
+    } else {
+        entity.sprites[DisplayType::TERMINAL] = "C";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+    }
+    entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
+}
+
 std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
@@ -193,36 +231,13 @@ std::map<std::string, Entity> Snake::renderGame()
         for (int x = 0; x < gridWidth; ++x) {
             Entity entity;
             entity.type = Shape::RECTANGLE;
-            entity.x = x * 20;
-            entity.y = y * 20;
-            entity.width = 20;
-            entity.height = 20;
+            entity.x = x * 38;
+            entity.y = y * 38;
+            entity.width = 38;
+            entity.height = 38;
             entity.rotate = 0;
-            entity.RGB[0] = 255;
-            entity.RGB[1] = 255;
-            entity.RGB[2] = 255;
-            if (grid[y][x].isWall) {
-                entity.sprites[DisplayType::TERMINAL] = "A";
-                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
-            } else if (grid[y][x].isSnake) {
-                entity.sprites[DisplayType::TERMINAL] = "S";
-                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_1.jpg";
-                if (snake.body.front().x == x && snake.body.front().y == y) {
-                    entity.sprites[DisplayType::TERMINAL] = "H";
-                    entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_3.jpg";
-                }
-                if (gameOver) {
-                    entity.sprites[DisplayType::TERMINAL] = "X";
-                    entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_2.jpg";
-                }
-            } else if (grid[y][x].isFood) {
-                entity.sprites[DisplayType::TERMINAL] = "F";
-                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
-            } else {
-                entity.sprites[DisplayType::TERMINAL] = "C";
-                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
-            }
-            entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
+            setGridColor(entity, 255, 255, 255);
+            LoadFirstAssetPack(x, y, entity, entities);
         }
     }
 

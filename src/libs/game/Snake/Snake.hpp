@@ -67,6 +67,8 @@ class Snake : public IGame {
         void generateFood();
         void eatFood();
         void createGrid(int width, int height);
+        void setGridColor(Entity& entity, int r, int g, int b);
+        void LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
         bool gameOver = false;
