@@ -181,23 +181,16 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
     _gameLibs.clear();
     _displayLibs.clear();
     for (const auto &path : paths) {
-        std::cout << "  " << path << std::endl;
-    }
-    for (const auto &path : paths) {
         if (path.find("arcade_menu.so") != std::string::npos)
             continue;
         libName = isGameLibrary(path);
         if (!libName.empty()) {
             _gameLibs.push_back({path, libName, GAME, {0, 0, 0, 0}});
-            std::cout << "Found game library: " << libName << " at " << path
-                      << std::endl;
             continue;
         }
         libName = isDisplayLibrary(path);
         if (!libName.empty()) {
             _displayLibs.push_back({path, libName, DISPLAY, {0, 0, 0, 0}});
-            std::cout << "Found graphical library: " << libName << " at "
-                      << path << std::endl;
         } else {
             std::cerr << "Failed to identify library type for " << path
                       << std::endl;
@@ -336,7 +329,6 @@ void Menu::checkStartButton(RawEvent event)
  */
 void Menu::handleLeftClick(RawEvent event)
 {
-    // std::cout << "Clicked at: " << event.x << ", " << event.y << std::endl;
     checkGameClick(event);
     checkDisplayClick(event);
     checkStartButton(event);
