@@ -388,6 +388,7 @@ void Menu::handleEvent(std::vector<RawEvent> events)
 Entity Menu::renderTitle(void)
 {
     Entity titleText;
+
     titleText.type = TEXT;
     titleText.x = ARCADE_TITLE_X;
     titleText.y = ARCADE_TITLE_Y;
@@ -413,6 +414,7 @@ Entity Menu::renderTitle(void)
 Entity Menu::renderDisplayTitle(void)
 {
     Entity displaysTitle;
+
     displaysTitle.type = TEXT;
     displaysTitle.x = DISPLAY_TITLE_X;
     displaysTitle.y = DISPLAY_TITLE_Y;
@@ -473,10 +475,11 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
     std::string libPrefix)
 {
     std::map<EntityName, Entity> entities;
+    std::string prefix;
+    Entity libEntity;
 
     int yPos = LIBS_HEIGHT_START;
     for (size_t i = 0; i < libs.size(); i++) {
-        Entity libEntity;
         libEntity.type = TEXT;
         libEntity.x = x;
         libEntity.y = yPos;
@@ -484,8 +487,6 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         libEntity.height = 0;
         libEntity.rotate = 0;
         setupLibButton(libs[i], x, yPos);
-
-        std::string prefix;
         if (i == selectedLib) {
             prefix = "> ";
             setEntityColor(libEntity, 0, 255, 0);
@@ -493,7 +494,6 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
             prefix = "   ";
             setEntityColor(libEntity, 180, 180, 180);
         }
-
         libEntity.sprites[DisplayType::GRAPHICAL] = prefix + libs[i].name;
         libEntity.sprites[DisplayType::TERMINAL] = prefix + libs[i].name;
         entities[libPrefix + std::to_string(i)] = libEntity;
@@ -513,6 +513,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
 Entity Menu::renderGameTitle(void)
 {
     Entity gamesTitle;
+
     gamesTitle.type = TEXT;
     gamesTitle.x = GAME_TITLE_X;
     gamesTitle.y = GAME_TITLE_Y;
@@ -572,24 +573,18 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
     std::map<EntityName, Entity> tempEntities;
 
     entities["title"] = renderTitle();
-
     entities["display_title"] = renderDisplayTitle();
-
     tempEntities =
         renderLibs(_displayLibs, _selectedDisplayLib, 200, "display_");
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-
     entities["games_title"] = renderGameTitle();
-
     tempEntities = renderLibs(_gameLibs, _selectedGameLib, 600, "game_");
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-
     entities["start_button"] = renderStartButton();
-
     return entities;
 }
 

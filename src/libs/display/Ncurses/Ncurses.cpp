@@ -100,22 +100,21 @@ Ncurses::NcursesColor Ncurses::getClosestPredefinedColor(const RgbColor &color)
 {
     int closestColor = COLOR_WHITE;
     int minDistance = INT_MAX;
+    int dr = 0;
+    int dg = 0;
+    int db = 0;
+    int distance = 0;
 
     for (const auto &[colorId, predefinedColor] : predefinedColors) {
-        // Calculate Euclidean distance in RGB space
-        int dr = color.r - predefinedColor.r;
-        int dg = color.g - predefinedColor.g;
-        int db = color.b - predefinedColor.b;
-
-        // Square of Euclidean distance (avoiding sqrt for performance)
-        int distance = dr * dr + dg * dg + db * db;
-
+        dr = color.r - predefinedColor.r;
+        dg = color.g - predefinedColor.g;
+        db = color.b - predefinedColor.b;
+        distance = dr * dr + dg * dg + db * db;
         if (distance < minDistance) {
             minDistance = distance;
             closestColor = colorId;
         }
     }
-
     return closestColor;
 }
 
@@ -294,19 +293,18 @@ bool Ncurses::isUtf8String(const std::string &str)
  */
 int Ncurses::getCharWidth(const std::string &utf8_char)
 {
-    // Convert UTF-8 string to wchar_t
     wchar_t wc;
-    mbstowcs(&wc, utf8_char.c_str(), 1);
 
-    // Return the display width
+    mbstowcs(&wc, utf8_char.c_str(), 1);
     return wcwidth(wc);
 }
 
 void Ncurses::drawCharacter(
     Coordinates terminalCoordinates, const std::string &sprite)
 {
+    wchar_t wstr[1024];
+
     if (isUtf8String(sprite)) {
-        wchar_t wstr[1024];
         mbstowcs(wstr, sprite.c_str(), 1024);
         mvwaddwstr(
             _buffer, terminalCoordinates.y, terminalCoordinates.x, wstr);
