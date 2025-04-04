@@ -228,7 +228,7 @@ bool Ncurses::checkScreenSize(void)
     if (this->_screenWidth < SCREEN_WIDTH ||
         this->_screenHeight < SCREEN_HEIGHT) {
         mvprintw((this->_screenHeight - 1) / 2,
-            (this->_screenWidth / 2) - (strlen(str) / 2), str);
+            (this->_screenWidth / 2) - (strlen(str) / 2), "%s", str);
         return false;
     }
     return true;
