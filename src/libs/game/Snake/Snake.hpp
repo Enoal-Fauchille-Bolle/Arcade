@@ -29,7 +29,7 @@ struct Cell {
 };
 
 struct snake {
-    std::vector<std::pair<Position, int>> body;
+    std::vector<Position> body;
     bool isAlive = true;
     int length = 4;
 };
@@ -77,7 +77,7 @@ class Snake : public IGame {
         enum Direction direction;
         struct snake snake;
         std::chrono::steady_clock::time_point lastMoveTime;
-        const int moveInterval = 1000 / 24;
+        const int moveInterval = 1000 / 10;
 };
 
 #endif /* !SNAKE_HPP_ */
