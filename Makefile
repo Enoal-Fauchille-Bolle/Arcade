@@ -186,8 +186,8 @@ tests_run: unit_tests
 	gcovr --exclude tests/
 	gcovr --exclude tests/ --txt-metric branch
 
-# unit_tests: $(OBJ) $(TESTS_SRC:.cpp=.o)
-# 	$(CC) -o $(TESTS_NAME) $(OBJ) $(TESTS_SRC:.cpp=.o) $(UNIT_FLAGS)
+unit_tests: $(OBJ) $(TESTS_SRC:.cpp=.o)
+	$(CC) -o $(TESTS_NAME) $(OBJ) $(TESTS_SRC:.cpp=.o) $(UNIT_FLAGS)
 
 gcovr: tests_run
 	gcovr --exclude tests/
