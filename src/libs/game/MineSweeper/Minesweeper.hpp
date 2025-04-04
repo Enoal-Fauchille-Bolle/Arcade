@@ -54,6 +54,7 @@ class Minesweeper : public IGame {
         bool checkWin();
         bool checkLose();
         void revelBombs();
+        void setCellColor(Entity &cell, int r, int g, int b);
 
         void handleEventGame(std::vector<RawEvent> events);
         void handleEventMenu(std::vector<RawEvent> events);
