@@ -71,9 +71,15 @@ void Snake::handleEvent(std::vector<RawEvent> events)
 {
     auto currentTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
+    static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
+    auto fruitSpawnElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastFruitSpawnTime).count();
 
     if (elapsedTime < moveInterval) {
         return;
+    }
+    if (fruitSpawnElapsedTime >= 5) {
+        generateFood();
+        lastFruitSpawnTime = currentTime;
     }
     lastMoveTime = currentTime;
     for (const auto& event : events) {
@@ -101,7 +107,7 @@ void Snake::generateFood()
 {
     int x = rand() % gridWidth;
     int y = rand() % gridHeight;
-    while (grid[y][x].isWall || grid[y][x].isSnake) {
+    while (grid[y][x].isWall || grid[y][x].isSnake || grid[y][x].isFood) {
         x = rand() % gridWidth;
         y = rand() % gridHeight;
     }
