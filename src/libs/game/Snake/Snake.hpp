@@ -24,6 +24,7 @@ struct Position {
 struct Cell {
     bool isSnake = false;
     bool isFood = false;
+    bool isTimeFood = false;
     bool isWall = false;
     struct Position pos;
 };
@@ -64,11 +65,17 @@ class Snake : public IGame {
         void goLeft();
         void goRight();
         void moveSnake();
-        void generateFood();
+        void generateFood(bool timeFood);
         void eatFood();
         void createGrid(int width, int height);
         void setGridColor(Entity& entity, int r, int g, int b);
         void LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
+        bool shouldSpawnFruit();
+        bool shouldMoveSnake();
+        void shouldIncreaseSpeed();
+        void setDirection(std::vector<RawEvent> events);
+        void setFrameRate(bool speed, bool up);
+
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
         bool gameOver = false;
