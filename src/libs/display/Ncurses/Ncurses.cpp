@@ -132,8 +132,12 @@ Ncurses::NcursesColor Ncurses::getClosestPredefinedColor(const RgbColor &color)
 RawEvent Ncurses::pollMouseEvent(MEVENT mouseEvent)
 {
     RawEvent event;
-    Coordinates mouseCoordinates = terminalCoordinatesToGraphical(
-        Coordinates{mouseEvent.x + 1, mouseEvent.y + 1});
+    int offsetX = (this->_screenWidth / 2) - (SCREEN_WIDTH / 2);
+    int offsetY = (this->_screenHeight / 2) - (SCREEN_HEIGHT / 2);
+    int adjustedX = mouseEvent.x + 1 - offsetX;
+    int adjustedY = mouseEvent.y + 1 - offsetY;
+    Coordinates mouseCoordinates =
+        terminalCoordinatesToGraphical(Coordinates{adjustedX, adjustedY});
 
     event.x = mouseCoordinates.x;
     event.y = mouseCoordinates.y;
