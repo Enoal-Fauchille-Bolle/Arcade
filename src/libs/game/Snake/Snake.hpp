@@ -77,7 +77,7 @@ class Snake : public IGame {
         enum Direction direction;
         struct snake snake;
         std::chrono::steady_clock::time_point lastMoveTime;
-        const int moveInterval = 1000 / 10;
+        int _frameRate = 1;
 };
 
 #endif /* !SNAKE_HPP_ */
