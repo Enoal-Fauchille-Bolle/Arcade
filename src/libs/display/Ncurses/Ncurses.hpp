@@ -48,6 +48,7 @@ class Ncurses : public IDisplay {
         RawEvent pollKeyboardEvent(int key);
         RawEvent pollMouseEvent(MEVENT mouseEvent);
 
+        ScreenSize getScreenSize(void);
         bool checkScreenSize(void);
 
         Coordinates graphicalCoordinatesToTerminal(

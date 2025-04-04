@@ -214,6 +214,17 @@ std::vector<RawEvent> Ncurses::pollEvent(void)
 ///////////////////////////////// Rendering /////////////////////////////////
 
 /**
+ * @brief Get the screen size of the terminal.
+ * @return ScreenSize The width and height of the terminal screen.
+ */
+ScreenSize Ncurses::getScreenSize(void)
+{
+    getmaxyx(stdscr, this->_screenHeight, this->_screenWidth);
+    return ScreenSize{static_cast<int>(this->_screenWidth),
+        static_cast<int>(this->_screenHeight)};
+}
+
+/**
  * @brief Check if the terminal screen size is sufficient.
  * @return true if the screen size is sufficient, false otherwise.
  */
@@ -223,10 +234,9 @@ bool Ncurses::checkScreenSize(void)
 
     snprintf(str, 100, "Please enlarge your terminal (%dx%d)", SCREEN_WIDTH,
         SCREEN_HEIGHT);
-    getmaxyx(stdscr, this->_screenHeight, this->_screenWidth);
     if (this->_screenWidth < SCREEN_WIDTH ||
         this->_screenHeight < SCREEN_HEIGHT) {
-        mvprintw((this->_screenHeight - 1) / 2,
+        mvwprintw(_buffer, (this->_screenHeight - 1) / 2,
             (this->_screenWidth / 2) - (strlen(str) / 2), "%s", str);
         return false;
     }
@@ -303,13 +313,17 @@ void Ncurses::drawCharacter(
     Coordinates terminalCoordinates, const std::string &sprite)
 {
     wchar_t wstr[1024];
+    int x =
+        (this->_screenWidth / 2) - (SCREEN_WIDTH / 2) + terminalCoordinates.x;
+    int y = (this->_screenHeight / 2) - (SCREEN_HEIGHT / 2) +
+            terminalCoordinates.y;
 
     if (isUtf8String(sprite)) {
         mbstowcs(wstr, sprite.c_str(), 1024);
         mvwaddwstr(
-            _buffer, terminalCoordinates.y, terminalCoordinates.x, wstr);
+            _buffer, y, x, wstr);
     } else {
-        mvwprintw(_buffer, terminalCoordinates.y, terminalCoordinates.x, "%s",
+        mvwprintw(_buffer, y, x, "%s",
             sprite.c_str());
     }
 }
@@ -320,14 +334,12 @@ void Ncurses::drawCharacter(
  */
 void Ncurses::drawObject(renderObject obj)
 {
+    ScreenSize screenSize = getScreenSize();
+
+    _screenHeight = screenSize.height;
+    _screenWidth = screenSize.width;
     if (!checkScreenSize())
         return;
-    // std::cout << "Drawing object: " << obj.sprite << std::endl;
-    // std::cout << "Type: " << obj.type << std::endl;
-    // std::cout << "Coordinates: (" << obj.x << ", " << obj.y << ")"
-    //           << std::endl;
-    // std::cout << "Size: (" << obj.width << ", " << obj.height << ")"
-    //           << std::endl;
     if (obj.type == RECTANGLE)
         drawRectangle(obj);
     if (obj.type == CIRCLE)

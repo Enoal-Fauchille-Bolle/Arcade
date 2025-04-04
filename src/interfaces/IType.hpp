@@ -141,6 +141,11 @@ struct Coordinates {
     int y;
 };
 
+struct ScreenSize {
+    int width;
+    int height;
+};
+
 struct RgbColor {
     int r;
     int g;
