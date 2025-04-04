@@ -291,6 +291,13 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     return entities;
 }
 
+void Minesweeper::setCellColor(Entity &cell, int r, int g, int b)
+{
+    cell.RGB[0] = r;
+    cell.RGB[1] = g;
+    cell.RGB[2] = b;
+}
+
 /**
  * @brief Prints the current state of the game board.
  * @return A map of entities representing the board.
@@ -313,15 +320,15 @@ std::map<std::string, Entity> Minesweeper::printBoard()
             cell.width = cellWidth;
             cell.height = cellHeight;
             cell.rotate = 0;
-            cell.RGB[0] = 255;
-            cell.RGB[1] = 255;
-            cell.RGB[2] = 255;
+            setCellColor(cell, 255, 255, 255);
             if (_board[y][x].isRevealed) {
                 if (_board[y][x].isMine) {
+                    setCellColor(cell, 255, 0, 0);
                     cell.sprites[DisplayType::TERMINAL] = "X";
                     cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
                 } else {
                     if (_board[y][x].adjacentMines > 0) {
+                        setCellColor(cell, 0, 255, 255);
                         cell.sprites[DisplayType::TERMINAL] = std::to_string(_board[y][x].adjacentMines);
                         cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
                     } else {
@@ -330,7 +337,9 @@ std::map<std::string, Entity> Minesweeper::printBoard()
                     }
                 }
             } else if (_board[y][x].isFlagged) {
-                cell.sprites[DisplayType::TERMINAL] = "F";
+                setCellColor(cell, 0, 255, 0);
+                // cell.sprites[DisplayType::TERMINAL] = "F";
+                cell.sprites[DisplayType::TERMINAL] = "🚩";
                 cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
             } else {
                 cell.sprites[DisplayType::TERMINAL] = "O";
