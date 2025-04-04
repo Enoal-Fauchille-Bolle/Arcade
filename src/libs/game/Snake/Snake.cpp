@@ -6,10 +6,10 @@
 */
 
 #include "Snake.hpp"
+#include <thread>
 
 Snake::Snake()
 {
-    std::cout << "Snake created" << std::endl;
     createGrid(gridWidth, gridHeight);
     lastMoveTime = std::chrono::steady_clock::now();
     direction = UP;
@@ -39,14 +39,15 @@ void Snake::createGrid(int width, int height)
     for (const auto& segment : snake.body) {
         grid[segment.y][segment.x].isSnake = true;
     }
-    generateFood();
+    generateFood(false);
 }
-
 
 bool Snake::isGameOver(void)
 {
-    if (gameOver)
+    if (gameOver) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
         return true;
+    }
     return false;
 }
 
@@ -59,84 +60,175 @@ std::pair<float, std::string> Snake::getScore(void)
 
 bool Snake::isGameEnd(void)
 {
-    return gameEnd;
+    if (gameOver) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        return true;
+    }
+    return false;
 }
 
 std::string Snake::getNewLib(void)
 {
-    return "./lib/arcade_snake.so";
+    if (gameOver) {
+        return "lib/arcade_menu.so";
+    }
+    return "lib/arcade_snake.so";
+}
+
+void Snake::setDirection(std::vector<RawEvent> events)
+
+{
+    for (const auto& event : events) {
+        if (event.type == EventType::PRESS) {
+            switch (event.key) {
+                case KEYBOARD_UP:
+                    if (direction != DOWN) {
+                        direction = UP;
+                    }
+                    break;
+                case KEYBOARD_DOWN:
+                    if (direction != UP) {
+                        direction = DOWN;
+                    }
+                    break;
+                case KEYBOARD_LEFT:
+                    if (direction != RIGHT) {
+                        direction = LEFT;
+                    }
+                    break;
+                case KEYBOARD_RIGHT:
+                    if (direction != LEFT) {
+                        direction = RIGHT;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+void Snake::setFrameRate(bool speed, bool up)
+{
+    static int frameRate = 10;
+
+    if (up) {
+        frameRate += 2;
+    }
+    if (frameRate > 35) {
+        frameRate = 35;
+    }
+    if (speed) {
+        _frameRate = 35;
+    } else {
+        _frameRate = frameRate;
+    }
+    
+}
+
+void Snake::shouldIncreaseSpeed()
+{
+    static auto lastSpeedIncreaseTime = std::chrono::steady_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastSpeedIncreaseTime).count();
+
+    if (elapsedTime >= 10) {
+        setFrameRate(false, true);
+        lastSpeedIncreaseTime = currentTime;
+    }
 }
 
 void Snake::handleEvent(std::vector<RawEvent> events)
 {
-    auto currentTime = std::chrono::steady_clock::now();
-    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
-    static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
-    auto fruitSpawnElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastFruitSpawnTime).count();
-
     if (events.empty()) {
-        _frameRate = 10;
+        setFrameRate(false, false);
     }
-
     for (const auto& event : events) {
         if (event.type == EventType::QUIT) {
             gameOver = true;
             return;
         }
         if (event.type == EventType::PRESS && event.key == KEYBOARD_SPACE) {
-            _frameRate = 35;
+            setFrameRate(true, false);
         } else {
-            _frameRate = 10;
+            setFrameRate(false, false);
         }
     }
-    int moveInterval = 1000 / _frameRate;
-    if (elapsedTime < moveInterval) {
-        return;
+    if (shouldSpawnFruit()) {
+        generateFood(true);
     }
-    if (fruitSpawnElapsedTime >= 5) {
-        generateFood();
-        lastFruitSpawnTime = currentTime;
+    setDirection(events);
+    if (shouldMoveSnake()) {
+        moveSnake();
     }
-    lastMoveTime = currentTime;
-    for (const auto& event : events) {
-        if (event.type == EventType::PRESS) {
-            if (event.key == KEYBOARD_UP && direction != DOWN) {
-                direction = UP;
-            }
-            if (event.key == KEYBOARD_DOWN && direction != UP) {
-                direction = DOWN;
-            }
-            if (event.key == KEYBOARD_LEFT && direction != RIGHT) {
-                direction = LEFT;
-            }
-            if (event.key == KEYBOARD_RIGHT && direction != LEFT) {
-                direction = RIGHT;
-            }
-       }
-    }
-    if (direction != UP && direction != DOWN && direction != LEFT && direction != RIGHT)
-        direction = UP;
-    moveSnake();
 }
 
-void Snake::generateFood()
+bool Snake::shouldMoveSnake()
 {
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
+    int moveInterval = 1000 / _frameRate;
+
+    if (elapsedTime >= moveInterval) {
+        lastMoveTime = currentTime;
+        return true;
+    }
+    return false;
+}
+
+bool Snake::shouldSpawnFruit()
+{
+    static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
+    auto fruitSpawnElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastFruitSpawnTime).count();
+
+    if (fruitSpawnElapsedTime >= 5) {
+        lastFruitSpawnTime = currentTime;
+        return true;
+    }
+    return false;
+}
+
+void Snake::generateFood(bool timeFood)
+{
+    int foodCount = 0;
+    for (int i = 0; i < gridHeight; ++i) {
+        for (int j = 0; j < gridWidth; ++j) {
+            if (grid[i][j].isFood) {
+                foodCount++;
+            }
+        }
+    }
+    if (foodCount >= 3) {
+        return;
+    }
     int x = rand() % gridWidth;
     int y = rand() % gridHeight;
     while (grid[y][x].isWall || grid[y][x].isSnake || grid[y][x].isFood) {
         x = rand() % gridWidth;
         y = rand() % gridHeight;
     }
+    if (timeFood) {
+        grid[y][x].isTimeFood = true;
+    } else {
+        grid[y][x].isTimeFood = false;
+    }
     grid[y][x].isFood = true;
 }
 
 void Snake::eatFood()
 {
+    bool isTimeFood = grid[snake.body[0].y][snake.body[0].x].isTimeFood;
+
     _score.first += 10;
     _score.second = std::to_string(_score.first);
     grid[snake.body[0].y][snake.body[0].x].isFood = false;
+    grid[snake.body[0].y][snake.body[0].x].isTimeFood = false;
 
-    generateFood();
+    if (isTimeFood) {
+        return;
+    }
+    generateFood(false);
 }
 
 void Snake::moveSnake()
