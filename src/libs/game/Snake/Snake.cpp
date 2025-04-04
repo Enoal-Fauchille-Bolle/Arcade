@@ -184,6 +184,10 @@ std::map<std::string, Entity> Snake::renderGame()
             } else if (grid[y][x].isSnake) {
                 entity.sprites[DisplayType::TERMINAL] = "S";
                 entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_1.jpg";
+                if (snake.body.front().x == x && snake.body.front().y == y) {
+                    entity.sprites[DisplayType::TERMINAL] = "H";
+                    entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_3.jpg";
+                }
                 if (gameOver) {
                     entity.sprites[DisplayType::TERMINAL] = "X";
                     entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_2.jpg";
