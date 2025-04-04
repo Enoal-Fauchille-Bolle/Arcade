@@ -74,6 +74,23 @@ void Snake::handleEvent(std::vector<RawEvent> events)
     static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
     auto fruitSpawnElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastFruitSpawnTime).count();
 
+    if (events.empty()) {
+        _frameRate = 10;
+        return;
+    }
+
+    for (const auto& event : events) {
+        if (event.type == EventType::QUIT) {
+            gameOver = true;
+            return;
+        }
+        if (event.type == EventType::PRESS && event.key == KEYBOARD_SPACE) {
+            _frameRate = 35;
+        } else {
+            _frameRate = 10;
+        }
+    }
+    int moveInterval = 1000 / _frameRate;
     if (elapsedTime < moveInterval) {
         return;
     }
