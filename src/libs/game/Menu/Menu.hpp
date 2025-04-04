@@ -107,6 +107,7 @@ class Menu : public IGame {
         Entity renderTitle(void);
         Entity renderDisplayTitle(void);
         void setupLibButton(LibInfo &lib, int x, int y);
+        void setEntityColor(Entity &cell, int r, int g, int b);
         std::map<EntityName, Entity> renderLibs(
             std::vector<LibInfo> &libs, size_t selectedLib, size_t x,
             std::string libPrefix);

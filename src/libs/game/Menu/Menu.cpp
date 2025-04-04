@@ -445,6 +445,13 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
     lib.pos.height = LIBS_HEIGHT;
 }
 
+void Menu::setEntityColor(Entity &entoty, int r, int g, int b)
+{
+    entoty.RGB[0] = r;
+    entoty.RGB[1] = g;
+    entoty.RGB[2] = b;
+}
+
 /**
  * @brief Render the libraries
  *
@@ -481,14 +488,10 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         std::string prefix;
         if (i == selectedLib) {
             prefix = "> ";
-            libEntity.RGB[0] = 0;
-            libEntity.RGB[1] = 255;
-            libEntity.RGB[2] = 0;
+            setEntityColor(libEntity, 0, 255, 0);
         } else {
             prefix = "   ";
-            libEntity.RGB[0] = 180;
-            libEntity.RGB[1] = 180;
-            libEntity.RGB[2] = 180;
+            setEntityColor(libEntity, 180, 180, 180);
         }
 
         libEntity.sprites[DisplayType::GRAPHICAL] = prefix + libs[i].name;
