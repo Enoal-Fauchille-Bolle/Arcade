@@ -119,6 +119,7 @@ SDL_Renderer* SDL::createRenderer(int index, Uint32 flags)
 
 void SDL::renderClear(void)
 {
+    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
     SDL_RenderClear(_renderer);
 }
 
