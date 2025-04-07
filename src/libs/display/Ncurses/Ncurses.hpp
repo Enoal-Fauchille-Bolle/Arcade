@@ -51,6 +51,9 @@ class Ncurses : public IDisplay {
         ScreenSize getScreenSize(void);
         bool checkScreenSize(void);
 
+        bool checkScreenBox(void);
+        void displayScreenBox(void);
+
         Coordinates graphicalCoordinatesToTerminal(
             Coordinates graphicalCoordinates);
         Coordinates terminalCoordinatesToGraphical(

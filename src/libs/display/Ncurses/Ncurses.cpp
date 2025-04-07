@@ -248,6 +248,39 @@ bool Ncurses::checkScreenSize(void)
 }
 
 /**
+ * @brief Check if the terminal screen box is sufficient.
+ * @return true if the screen box is sufficient, false otherwise.
+ */
+bool Ncurses::checkScreenBox(void)
+{
+    return _screenWidth - SCREEN_WIDTH >= 2 &&
+           _screenHeight - SCREEN_HEIGHT >= 2;
+}
+
+/**
+ * @brief Display the screen box on the terminal.
+ *
+ * This function draws a box around the screen area.
+ */
+void Ncurses::displayScreenBox(void)
+{
+    int offsetX = (this->_screenWidth / 2) - (SCREEN_WIDTH / 2);
+    int offsetY = (this->_screenHeight / 2) - (SCREEN_HEIGHT / 2);
+
+    mvwaddch(_buffer, offsetY - 1, offsetX - 1, ACS_ULCORNER);
+    mvwhline(_buffer, offsetY - 1, offsetX, ACS_HLINE, SCREEN_WIDTH);
+    mvwaddch(_buffer, offsetY - 1, offsetX + SCREEN_WIDTH, ACS_URCORNER);
+    mvwvline(_buffer, offsetY, offsetX - 1, ACS_VLINE, SCREEN_HEIGHT);
+    mvwvline(
+        _buffer, offsetY, offsetX + SCREEN_WIDTH, ACS_VLINE, SCREEN_HEIGHT);
+    mvwaddch(_buffer, offsetY + SCREEN_HEIGHT, offsetX - 1, ACS_LLCORNER);
+    mvwhline(
+        _buffer, offsetY + SCREEN_HEIGHT, offsetX, ACS_HLINE, SCREEN_WIDTH);
+    mvwaddch(_buffer, offsetY + SCREEN_HEIGHT, offsetX + SCREEN_WIDTH,
+        ACS_LRCORNER);
+}
+
+/**
  * @brief Converts graphical coordinates to terminal coordinates.
  * @param graphicalCoordinates The graphical coordinates to convert.
  * @return The converted terminal coordinates.
@@ -324,11 +357,9 @@ void Ncurses::drawCharacter(
 
     if (isUtf8String(sprite)) {
         mbstowcs(wstr, sprite.c_str(), 1024);
-        mvwaddwstr(
-            _buffer, y, x, wstr);
+        mvwaddwstr(_buffer, y, x, wstr);
     } else {
-        mvwprintw(_buffer, y, x, "%s",
-            sprite.c_str());
+        mvwprintw(_buffer, y, x, "%s", sprite.c_str());
     }
 }
 
@@ -352,6 +383,8 @@ void Ncurses::drawObject(renderObject obj)
         drawText(obj);
     if (obj.type == MUSIC)
         drawMusic(obj);
+    if (checkScreenBox())
+        displayScreenBox();
 }
 
 /**
