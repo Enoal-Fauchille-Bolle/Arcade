@@ -55,7 +55,7 @@ std::pair<float, std::string> Minesweeper::getScore(void)
  */
 bool Minesweeper::isGameEnd(void)
 {
-    return _isGameOver;
+    return _isGameTermiated;
 }
 
 /**
@@ -73,7 +73,7 @@ std::string Minesweeper::getNewLib(void)
  */
 void Minesweeper::handleEvent(std::vector<RawEvent> events)
 {
-    if (_isGameOver) {
+    if (_state == GAME_WIN || _state == GAME_LOSE) {
         handleEventGameOver(events);
     } else if (_state == GAME) {
         handleEventGame(events);
@@ -151,14 +151,14 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
 {
 
     int playX = SCREEN_WIDTH / 2 - 50;
-    int playY = SCREEN_HEIGHT / 2;
-    int playW = 60;
-    int playH = 30;
+    int playY = SCREEN_HEIGHT / 2 + 12;
+    int playW = 120;
+    int playH = 60;
 
     int quitX = SCREEN_WIDTH / 2 - 50;
-    int quitY = SCREEN_HEIGHT / 2 + 75;
-    int quitW = 60;
-    int quitH = 30;
+    int quitY = SCREEN_HEIGHT / 2 + 85;
+    int quitW = 120;
+    int quitH = 60;
 
     if (events.empty()) {
         return;
@@ -168,13 +168,14 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
             if (event.x >= playX && event.x <= playX + playW &&
                 event.y >= playY && event.y <= playY + playH) {
                 _state = GAME;
+                _isGameOver = false;
                 _mines = 70;
                 isFirstClikc = false;
                 initBoard(20, 20);
             }
             else if (event.x >= quitX && event.x <= quitX + quitW &&
                      event.y >= quitY && event.y <= quitY + quitH) {
-                _isGameOver = true;
+                _isGameTermiated = true;
                 _state = MENU;
             }
         }
@@ -263,6 +264,34 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     title.sprites[DisplayType::GRAPHICAL] = "MINESWEEPER";
     entities["title"] = title;
 
+    // Play button
+    Entity PlayButton;
+    PlayButton.type = Shape::RECTANGLE;
+    PlayButton.x = SCREEN_WIDTH / 2 - 50;
+    PlayButton.y = SCREEN_HEIGHT / 2 + 12;
+    PlayButton.width = 120;
+    PlayButton.height = 60;
+    PlayButton.RGB[0] = 255;
+    PlayButton.RGB[1] = 255;
+    PlayButton.RGB[2] = 255;
+    PlayButton.sprites[DisplayType::TERMINAL] = "no sprite";
+    PlayButton.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+    entities["button"] = PlayButton;
+
+    // Quit button
+    Entity QuitButton;
+    QuitButton.type = Shape::RECTANGLE;
+    QuitButton.x = SCREEN_WIDTH / 2 - 50;
+    QuitButton.y = SCREEN_HEIGHT / 2 + 85;
+    QuitButton.width = 120;
+    QuitButton.height = 60;
+    QuitButton.RGB[0] = 255;
+    QuitButton.RGB[1] = 255;
+    QuitButton.RGB[2] = 255;
+    QuitButton.sprites[DisplayType::TERMINAL] = "no sprite";
+    QuitButton.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+    entities["AAquitButton"] = QuitButton;
+
     // Play option
     Entity play;
     play.type = Shape::TEXT;
@@ -281,7 +310,10 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     Entity quit;
     quit.type = Shape::TEXT;
     quit.x = SCREEN_WIDTH / 2 - 50;
-    quit.y = SCREEN_HEIGHT / 2 + 75;     // Place below the play option
+    quit.y = SCREEN_HEIGHT / 2 + 75;
+    quit.RGB[0] = 255;
+    quit.RGB[1] = 255;
+    quit.RGB[2] = 255;
     quit.width = 60;
     quit.height = 30;
     quit.sprites[DisplayType::TERMINAL] = "Quit";

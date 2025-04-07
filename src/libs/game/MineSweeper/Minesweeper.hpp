@@ -95,6 +95,7 @@ class Minesweeper : public IGame {
         bool isFirstClikc = false;
 
         bool _isGameTermiated = false;
+
         bool _isGameOver = false;
 };
 
