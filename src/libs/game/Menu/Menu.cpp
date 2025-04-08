@@ -199,6 +199,14 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
     sortLibraries();
 }
 
+std::string Menu::getNewDisplay(bool success)
+{
+    if (success == true) {
+        return "";
+    }
+    return "";
+}
+
 /**
  * @brief Check if the game is over
  *

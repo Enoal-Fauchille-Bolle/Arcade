@@ -62,6 +62,8 @@ class Menu : public IGame {
 
         std::string getNewLib(void) final;
 
+        std::string getNewDisplay(bool success) final;
+
         void handleEvent(std::vector<RawEvent>) final;
 
         std::string getName(void) final;
