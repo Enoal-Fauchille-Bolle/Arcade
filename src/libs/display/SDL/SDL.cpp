@@ -197,7 +197,8 @@ void SDL::drawRectangle(renderObject obj)
             SDL_FreeSurface(surface);
             return;
         }
-        SDL_RenderCopy(_renderer, texture, nullptr, &rect);
+        SDL_Point center = {rect.w / 2, rect.h / 2};
+        SDL_RenderCopyEx(_renderer, texture, nullptr, &rect, obj.rotate, &center, SDL_FLIP_NONE);
         SDL_DestroyTexture(texture);
         SDL_FreeSurface(surface);
         return;
