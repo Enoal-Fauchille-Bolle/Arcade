@@ -14,8 +14,6 @@
  */
 Core::Core(std::string path)
 {
-    std::cerr << "Core constructor" << std::endl;
-    std::cerr << "Path: " << path << std::endl;
 
     running = true;
     load_display(path);
@@ -27,7 +25,6 @@ Core::Core(std::string path)
  */
 Core::~Core()
 {
-    std::cerr << "Core destructor" << std::endl;
 }
 
 /**
@@ -63,7 +60,6 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
             obj.height = val.height;
             obj.rotate = val.rotate;
             if (val.sprites.find(_display->getDType()) == val.sprites.end()) {
-                std::cerr << "Error: Sprite not found for display type." << std::endl;
                 continue;
             }
             obj.sprite = val.sprites.find(_display->getDType())->second;
@@ -72,8 +68,8 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
             obj.RGB[2] = val.RGB[2];
             _display->drawObject(obj);
         }
+        _display->display();
     }
-    _display->display();
 }
 
 /**
@@ -81,15 +77,22 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
  */
 void Core::run()
 {
-    std::cerr << "Core run" << std::endl;
     while (running) {
         if (_game->isGameOver() == true) {
             auto score = _game->getScore();
+            printf("Score: %f\n", score.first);
         }
         if (_game->isGameEnd()) {
             std::string newLib = _game->getNewLib();
             delete_game();
             load_game(newLib);
+        }
+        if (_game->getNewDisplay(false) != "") {
+            std::string newDisplay = _game->getNewDisplay(false);
+            printf("New display: %s\n", newDisplay.c_str());
+            delete_display();
+            load_display(newDisplay);
+            _game->getNewDisplay(true);
         }
         std::vector<RawEvent> events = _display->pollEvent();
         if (checkQuit(events)) {
@@ -109,7 +112,6 @@ void Core::run()
  */
 int Core::load_display(std::string path)
 {
-    std::cerr << "Core load_display" << std::endl;
 
     try {
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
@@ -128,8 +130,6 @@ int Core::load_display(std::string path)
  */
 int Core::load_game(std::string path)
 {
-    std::cerr << "Core load_game" << std::endl;
-
     try {
         _gameLoader = DLLoader<IGame>("GameEntryPoint");
         _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
@@ -146,10 +146,8 @@ int Core::load_game(std::string path)
  */
 int Core::delete_display()
 {
-    std::cerr << "Core delete_display" << std::endl;
     if (_display) {
         _display.reset();
-        _graphicLoader.~DLLoader();
     }
     return 0;
 }
@@ -160,10 +158,8 @@ int Core::delete_display()
  */
 int Core::delete_game()
 {
-    std::cerr << "Core delete_game" << std::endl;
     if (_game) {
         _game.reset();
-        _gameLoader.~DLLoader();
     }
     return 0;
 }
