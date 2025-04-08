@@ -360,6 +360,13 @@ std::string Snake::getName(void)
     return LIBRARY_NAME;
 }
 
+std::string Snake::getNewDisplay(bool success)
+{
+    if (success) {
+        return "";
+    }
+    return "";
+}
 
 /**
  * @brief extern c

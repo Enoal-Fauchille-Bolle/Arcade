@@ -37,7 +37,11 @@ Minesweeper::~Minesweeper()
  */
 bool Minesweeper::isGameOver(void)
 {
-    return _isGameOver;
+    if (_isGameOver == true) {
+        _isGameOver = false;
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -65,6 +69,14 @@ bool Minesweeper::isGameEnd(void)
 std::string Minesweeper::getNewLib(void)
 {
     return "lib/arcade_menu.so";
+}
+
+std::string Minesweeper::getNewDisplay(bool sucsess)
+{
+    if (sucsess == true) {
+        _lib = "";
+    }
+    return _lib;
 }
 
 /**
@@ -127,7 +139,6 @@ void Minesweeper::handleEventGameOver(std::vector<RawEvent> events)
         for (const auto &event : events) {
             if (event.type == EventType::PRESS && event.key == EventKey::MOUSE_LEFT) {
                 _state = MENU;
-                _isGameOver = false;
             }
         }
     } else if (_state == GAME_LOSE) {
@@ -137,7 +148,6 @@ void Minesweeper::handleEventGameOver(std::vector<RawEvent> events)
         for (const auto &event : events) {
             if (event.type == EventType::PRESS && event.key == EventKey::MOUSE_LEFT) {
                 _state = MENU;
-                _isGameOver = true;
             }
         }
     }
@@ -168,7 +178,6 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
             if (event.x >= playX && event.x <= playX + playW &&
                 event.y >= playY && event.y <= playY + playH) {
                 _state = GAME;
-                _isGameOver = false;
                 _mines = 70;
                 isFirstClikc = false;
                 initBoard(20, 20);
@@ -214,7 +223,7 @@ std::map<std::string, Entity> Minesweeper::renderGame()
     } else if (_state == MENU) {
         entities = printMenu();
     } else if (_state == GAME_WIN || _state == GAME_LOSE) {
-        entities = printWinOrLose();
+        entities = printBoard();
     }
 
     return entities;
@@ -251,18 +260,22 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     std::map<std::string, Entity> entities;
 
     // Title entity
-    Entity title;
-    title.type = Shape::TEXT;
-    title.x = SCREEN_WIDTH / 2 - 200;  // Adjust to center horizontally
-    title.y = SCREEN_HEIGHT / 4;       // Position towards the top
-    title.width = 60;
-    title.height = 50;
-    title.RGB[0] = 255;
-    title.RGB[1] = 255;
-    title.RGB[2] = 255;
-    title.sprites[DisplayType::TERMINAL] = "MINESWEEPER";
-    title.sprites[DisplayType::GRAPHICAL] = "MINESWEEPER";
+    Entity title = createEntity(Shape::TEXT, 0, 0, 60, 50, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 4,
+        {
+            {DisplayType::TERMINAL, "MINESWEEPER"},
+            {DisplayType::GRAPHICAL, "MINESWEEPER"}
+        });
+    setCellColor(title, 255, 255, 255);
     entities["title"] = title;
+
+    Entity title_shadow = createEntity(Shape::TEXT, 0, 0, 60, 50, SCREEN_WIDTH / 2 - 205, SCREEN_HEIGHT / 4 + 5,
+        {
+            {DisplayType::TERMINAL, "MINESWEEPER"},
+            {DisplayType::GRAPHICAL, "MINESWEEPER"}
+        });
+    setCellColor(title_shadow, 0, 0, 0);
+    entities["title_shadow"] = title_shadow;
+
 
     // Play button
     Entity PlayButton;
@@ -271,12 +284,12 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     PlayButton.y = SCREEN_HEIGHT / 2 + 12;
     PlayButton.width = 120;
     PlayButton.height = 60;
-    PlayButton.RGB[0] = 255;
-    PlayButton.RGB[1] = 255;
-    PlayButton.RGB[2] = 255;
+    PlayButton.RGB[0] = 0;
+    PlayButton.RGB[1] = 0;
+    PlayButton.RGB[2] = 0;
     PlayButton.sprites[DisplayType::TERMINAL] = "no sprite";
-    PlayButton.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
-    entities["button"] = PlayButton;
+    PlayButton.sprites[DisplayType::GRAPHICAL] = "";
+    entities["ZZbutton"] = PlayButton;
 
     // Quit button
     Entity QuitButton;
@@ -285,12 +298,12 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     QuitButton.y = SCREEN_HEIGHT / 2 + 85;
     QuitButton.width = 120;
     QuitButton.height = 60;
-    QuitButton.RGB[0] = 255;
-    QuitButton.RGB[1] = 255;
-    QuitButton.RGB[2] = 255;
+    QuitButton.RGB[0] = 0;
+    QuitButton.RGB[1] = 0;
+    QuitButton.RGB[2] = 0;
     QuitButton.sprites[DisplayType::TERMINAL] = "no sprite";
-    QuitButton.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
-    entities["AAquitButton"] = QuitButton;
+    QuitButton.sprites[DisplayType::GRAPHICAL] = "";
+    entities["ZZquitButton"] = QuitButton;
 
     // Play option
     Entity play;
@@ -320,6 +333,15 @@ std::map<std::string, Entity> Minesweeper::printMenu()
     quit.sprites[DisplayType::GRAPHICAL] = "Quit";
     entities["quit"] = quit;
 
+    // Background entity
+    Entity background = createEntity(Shape::RECTANGLE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0,
+        {
+            {DisplayType::TERMINAL, "ta mere"},
+            {DisplayType::GRAPHICAL, "assets/minesweeper_not_click.jpg"}
+        });
+    setCellColor(background, 0, 0, 0);
+    entities["ZZZZZbackground"] = background;
+
     return entities;
 }
 
@@ -337,7 +359,6 @@ void Minesweeper::setCellColor(Entity &cell, int r, int g, int b)
 std::map<std::string, Entity> Minesweeper::printBoard()
 {
     std::map<std::string, Entity> entities;
-    entities.clear();
     int cellWidth = SCREEN_HEIGHT / _width;
     int cellHeight = SCREEN_HEIGHT / _height;
     int offsetX = (SCREEN_WIDTH - (_width * cellWidth)) / 2;
@@ -345,59 +366,43 @@ std::map<std::string, Entity> Minesweeper::printBoard()
 
     for (int y = 0; y < _height; y++) {
         for (int x = 0; x < _width; x++) {
-            Entity cell;
-            cell.type = Shape::RECTANGLE;
-            cell.x = offsetX + x * cellWidth;
-            cell.y = offsetY + y * cellHeight;
-            cell.width = cellWidth;
-            cell.height = cellHeight;
-            cell.rotate = 0;
-            setCellColor(cell, 255, 255, 255);
+            std::map<DisplayType, std::string> sprite;
+            sprite[DisplayType::TERMINAL] = "O";
+            sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_not_click.jpg";
+
             if (_board[y][x].isRevealed) {
                 if (_board[y][x].isMine) {
-                    setCellColor(cell, 255, 0, 0);
-                    cell.sprites[DisplayType::TERMINAL] = "X";
-                    cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+                    sprite[DisplayType::TERMINAL] = "X";
+                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+                } else if (_board[y][x].adjacentMines > 0) {
+                    sprite[DisplayType::TERMINAL] = std::to_string(_board[y][x].adjacentMines);
+                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
                 } else {
-                    if (_board[y][x].adjacentMines > 0) {
-                        setCellColor(cell, 0, 255, 255);
-                        cell.sprites[DisplayType::TERMINAL] = std::to_string(_board[y][x].adjacentMines);
-                        cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
-                    } else {
-                        cell.sprites[DisplayType::TERMINAL] = " ";
-                        cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
-                    }
+                    sprite[DisplayType::TERMINAL] = " ";
+                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
                 }
             } else if (_board[y][x].isFlagged) {
-                setCellColor(cell, 0, 255, 0);
-                // cell.sprites[DisplayType::TERMINAL] = "F";
-                cell.sprites[DisplayType::TERMINAL] = "🚩";
-                cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
-            } else {
-                cell.sprites[DisplayType::TERMINAL] = "O";
-                cell.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_not_click.jpg";
+                sprite[DisplayType::TERMINAL] = "🚩";
+                sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
             }
+
+            Entity cell = createEntity(Shape::RECTANGLE ,x, y, cellWidth, cellHeight, offsetX, offsetY, sprite);
+            setCellColor(cell, 255, 255, 255);
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
         }
     }
 
-    // Timer
     auto currentTime = std::chrono::steady_clock::now();
     std::chrono::duration<float> elapsed = currentTime - _startTime;
     int elapsedSeconds = static_cast<int>(elapsed.count());
     std::string timeStr = "Time: " + std::to_string(elapsedSeconds) + "s";
-    Entity timerEntity;
-    timerEntity.type = Shape::TEXT;
-    timerEntity.x = SCREEN_WIDTH - 100;
-    timerEntity.y = 10;
-    timerEntity.width = 20;
-    timerEntity.RGB[0] = 255;
-    timerEntity.RGB[1] = 255;
-    timerEntity.RGB[2] = 255;
-    timerEntity.height = 20;
-    timerEntity.sprites[DisplayType::TERMINAL] = timeStr;
-    timerEntity.sprites[DisplayType::GRAPHICAL] = timeStr;
+    Entity timerEntity = createEntity(Shape::TEXT ,0, 0, 20, 20, SCREEN_WIDTH - 100, 10,
+        {
+            {DisplayType::TERMINAL, timeStr},
+            {DisplayType::GRAPHICAL, timeStr}
+        });
     entities["timer"] = timerEntity;
+
     return entities;
 }
 
@@ -411,10 +416,10 @@ std::map<std::string, Entity> Minesweeper::printBoard()
  * @param offsetY The y-offset for positioning.
  * @return An Entity representing the cell.
  */
-Entity Minesweeper::createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite)
+Entity Minesweeper::createEntity(Shape Shape ,int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite)
 {
     Entity cell;
-    cell.type = Shape::RECTANGLE;
+    cell.type = Shape;
     cell.x = offsetX + x * cellWidth;
     cell.y = offsetY + y * cellHeight;
     cell.width = cellWidth;
@@ -530,7 +535,6 @@ void Minesweeper::revealCell(int x, int y)
     }
     _board[y][x].isRevealed = true;
     if (_board[y][x].isMine) {
-        _isGameOver = true;
         return;
     }
     if (_board[y][x].adjacentMines > 0) {

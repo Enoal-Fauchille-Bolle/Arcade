@@ -43,6 +43,8 @@ class Minesweeper : public IGame {
 
         std::map<std::string, Entity> renderGame() override;
 
+        std::string getNewDisplay(bool sucsess) override;
+
         std::string getName(void) override;
 
     protected:
@@ -68,7 +70,7 @@ class Minesweeper : public IGame {
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
 
-        Entity createEntity(int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
+        Entity createEntity(Shape shape,int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
 
 
     private:
@@ -91,6 +93,8 @@ class Minesweeper : public IGame {
         std::vector<std::vector<Cell>> _board;
         std::pair<float, std::string> _score;
         std::string _name;
+
+        std::string _lib = "lib/arcade_ncurses.so";
 
         bool isFirstClikc = false;
 
