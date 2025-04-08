@@ -76,7 +76,6 @@ std::string Snake::getNewLib(void)
 }
 
 void Snake::setDirection(std::vector<RawEvent> events)
-
 {
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
@@ -132,7 +131,7 @@ void Snake::shouldIncreaseSpeed()
     auto currentTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastSpeedIncreaseTime).count();
 
-    if (elapsedTime >= 10) {
+    if (elapsedTime >= 5) {
         setFrameRate(false, true);
         lastSpeedIncreaseTime = currentTime;
     }
@@ -296,20 +295,20 @@ void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::strin
         if (snake.body.front().x == x && snake.body.front().y == y) {
             setGridColor(entity, 255, 0, 255);
             entity.sprites[DisplayType::TERMINAL] = "H";
-            // switch (this->direction) {
-            //     case UP:
-            //         entity.rotate = 180;
-            //         break;
-            //     case DOWN:
-            //         entity.rotate = 0;
-            //         break;
-            //     case LEFT:
-            //         entity.rotate = 90;
-            //         break;
-            //     case RIGHT:
-            //         entity.rotate = 270;
-            //         break;
-            // }
+            switch (this->direction) {
+                case UP:
+                    entity.rotate = 180;
+                    break;
+                case DOWN:
+                    entity.rotate = 0;
+                    break;
+                case LEFT:
+                    entity.rotate = 90;
+                    break;
+                case RIGHT:
+                    entity.rotate = 270;
+                    break;
+            }
             entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/head.png";
         }
         if (gameOver) {
@@ -327,7 +326,7 @@ void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::strin
         entity.sprites[DisplayType::TERMINAL] = "F";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/apple.png";
     } else {
-        entity.sprites[DisplayType::TERMINAL] = "C";
+        entity.sprites[DisplayType::TERMINAL] = " ";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/floor.png";
     }
     entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
