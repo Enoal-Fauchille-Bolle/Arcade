@@ -34,9 +34,18 @@ Core::~Core()
 {
 }
 
+/**
+ * @brief Starts the emergency menu if the game fails to load.
+ * This function creates an instance of the EmergencyMenu class and enters a
+ * loop to handle events and render the menu until a game is selected or the
+ * application is quit.
+ */
 void Core::startEmergencyMenu(void)
 {
     bool gameSelected = false;
+    std::map<std::string, Entity> entities;
+    std::string newDisplay;
+    std::string newGamePath;
 
     _game = std::make_unique<EmergencyMenu>();
     while (!gameSelected && running) {
@@ -46,16 +55,21 @@ void Core::startEmergencyMenu(void)
             break;
         }
         _game->handleEvent(events);
-        std::map<std::string, Entity> entities = _game->renderGame();
+        entities = _game->renderGame();
         renderEntities(entities);
-        if (dynamic_cast<EmergencyMenu *>(_game.get())->isGameEnd()) {
-            std::string newGamePath = _game->getNewLib();
-            _game.reset();
+        if (_game->isGameEnd()) {
+            newDisplay = _game->getNewDisplay();
+            if (!newDisplay.empty()) {
+                delete_display();
+                if (load_display(newDisplay) == 1) {
+                    std::cerr << "Failed to load display library: " << newDisplay << std::endl;
+                }
+            }
+            newGamePath = _game->getNewLib();
             if (load_game(newGamePath) == 0) {
                 gameSelected = true;
             } else {
-                std::cerr << "Failed to load selected game: " << newGamePath
-                          << std::endl;
+                std::cerr << "Failed to load selected game: " << newGamePath << std::endl;
                 _game = std::make_unique<EmergencyMenu>();
             }
         }
@@ -116,19 +130,20 @@ void Core::run()
     while (running) {
         if (_game->isGameOver() == true) {
             auto score = _game->getScore();
-            printf("Score: %f\n", score.first);
+        }
+        if (_game->getNewDisplay() != "") {
+            std::string newDisplay = _game->getNewDisplay();
+            delete_display();
+            load_display(newDisplay);
+            _game->getNewDisplay();
         }
         if (_game->isGameEnd()) {
             std::string newLib = _game->getNewLib();
             delete_game();
-            load_game(newLib);
-        }
-        if (_game->getNewDisplay(false) != "") {
-            std::string newDisplay = _game->getNewDisplay(false);
-            printf("New display: %s\n", newDisplay.c_str());
-            delete_display();
-            load_display(newDisplay);
-            _game->getNewDisplay(true);
+            if (load_game(newLib) == 1) {
+                std::cerr << "Failed to load selected game: " << newLib << std::endl;
+                startEmergencyMenu();
+            }
         }
         std::vector<RawEvent> events = _display->pollEvent();
         if (checkQuit(events)) {
@@ -148,7 +163,6 @@ void Core::run()
  */
 int Core::load_display(std::string path)
 {
-
     try {
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
         _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
