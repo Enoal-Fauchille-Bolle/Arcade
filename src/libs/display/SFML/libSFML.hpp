@@ -9,6 +9,9 @@
     #define LIBSFML_HPP_
 
     #include <SFML/Graphics.hpp>
+    #include <SFML/Window.hpp>
+    #include <SFML/System.hpp>
+    #include <SFML/Audio.hpp>
     #include <iostream>
 
     #include "../interfaces/IDisplay.hpp"
@@ -39,6 +42,8 @@ class libSFML : public IDisplay {
         std::string _name;
         DisplayType _dtype;
         sf::RenderWindow _window;
+
+        sf::Music _music;
 };
 
 #endif /* !LIBSFML_HPP_ */

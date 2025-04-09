@@ -231,7 +231,7 @@ void libSFML::drawObject(renderObject obj)
     if (obj.type == TEXT)
         drawText(obj);
     if (obj.type == MUSIC)
-        drawMusic(obj);
+        drawMusic(obj); // draw xD
 }
 
 /**
@@ -286,7 +286,7 @@ void libSFML::drawText(renderObject obj)
 {
     sf::Text text;
     sf::Font font;
-    font.loadFromFile("./assets/arial.ttf");
+    font.loadFromFile("./assets/Tahoma.ttf");
     text.setFont(font);
     text.setString(obj.sprite);
     text.setCharacterSize(obj.width);
@@ -301,7 +301,12 @@ void libSFML::drawText(renderObject obj)
  */
 void libSFML::drawMusic(renderObject obj)
 {
-    (void)obj;
+    if (!_music.openFromFile(obj.sprite)) {
+        std::cerr << "Error loading sound file: " << obj.sprite << std::endl;
+        return;
+    }
+    _music.setVolume(12);
+    _music.play();
 }
 
 /**
