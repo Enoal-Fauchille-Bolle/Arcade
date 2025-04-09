@@ -292,9 +292,9 @@ void Menu::checkGameClick(RawEvent event)
         if (event.x >= _gameLibs[i].pos.x - LIBS_PADDING &&
             event.x <=
                 _gameLibs[i].pos.x + _gameLibs[i].pos.width + LIBS_PADDING &&
-            event.y <= _gameLibs[i].pos.y + LIBS_PADDING &&
+            event.y <= (_gameLibs[i].pos.y + 15) + LIBS_PADDING &&
             event.y >=
-                _gameLibs[i].pos.y - _gameLibs[i].pos.height - LIBS_PADDING) {
+                (_gameLibs[i].pos.y + 15) - _gameLibs[i].pos.height - LIBS_PADDING) {
             _selectedGameLib = i;
             return;
         }
@@ -316,8 +316,8 @@ void Menu::checkDisplayClick(RawEvent event)
         if (event.x >= _displayLibs[i].pos.x - LIBS_PADDING &&
             event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width +
                            LIBS_PADDING &&
-            event.y <= _displayLibs[i].pos.y + LIBS_PADDING &&
-            event.y >= _displayLibs[i].pos.y - _displayLibs[i].pos.height -
+            event.y <= (_displayLibs[i].pos.y + 15) + LIBS_PADDING &&
+            event.y >= (_displayLibs[i].pos.y + 15) - _displayLibs[i].pos.height -
                            LIBS_PADDING) {
             _selectedDisplayLib = i;
             return;
@@ -329,8 +329,8 @@ void Menu::checkStartButton(RawEvent event)
 {
     if (event.x >= START_BUTTON_X - LIBS_PADDING &&
         event.x <= START_BUTTON_X + START_BUTTON_WIDTH + LIBS_PADDING &&
-        event.y <= START_BUTTON_Y + LIBS_PADDING &&
-        event.y >= START_BUTTON_Y - START_BUTTON_HEIGHT - LIBS_PADDING) {
+        event.y <= (START_BUTTON_Y + 15) + LIBS_PADDING &&
+        event.y >= (START_BUTTON_Y + 15) - START_BUTTON_HEIGHT - LIBS_PADDING) {
         _startGame = true;
     }
 }
@@ -398,7 +398,7 @@ Entity Menu::renderTitle(void)
     titleText.type = TEXT;
     titleText.x = ARCADE_TITLE_X;
     titleText.y = ARCADE_TITLE_Y;
-    titleText.width = 20;
+    titleText.width = 30;
     titleText.height = 0;
     titleText.rotate = 0;
     titleText.RGB[0] = 255;
@@ -424,7 +424,7 @@ Entity Menu::renderDisplayTitle(void)
     displaysTitle.type = TEXT;
     displaysTitle.x = DISPLAY_TITLE_X;
     displaysTitle.y = DISPLAY_TITLE_Y;
-    displaysTitle.width = 20;
+    displaysTitle.width = 30;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
     displaysTitle.RGB[0] = 255;
@@ -489,7 +489,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         libEntity.type = TEXT;
         libEntity.x = x;
         libEntity.y = yPos;
-        libEntity.width = 20;
+        libEntity.width = 30;
         libEntity.height = 0;
         libEntity.rotate = 0;
         setupLibButton(libs[i], x, yPos);
@@ -523,7 +523,7 @@ Entity Menu::renderGameTitle(void)
     gamesTitle.type = TEXT;
     gamesTitle.x = GAME_TITLE_X;
     gamesTitle.y = GAME_TITLE_Y;
-    gamesTitle.width = 20;
+    gamesTitle.width = 30;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
     setEntityColor(gamesTitle, 255, 255, 255);
@@ -550,7 +550,7 @@ Entity Menu::renderStartButton(void)
     selectedLibs.type = TEXT;
     selectedLibs.x = START_BUTTON_X;
     selectedLibs.y = START_BUTTON_Y;
-    selectedLibs.width = 20;
+    selectedLibs.width = 30;
     selectedLibs.height = 0;
     selectedLibs.rotate = 0;
     setEntityColor(selectedLibs, 255, 255, 0);
