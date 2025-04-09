@@ -241,21 +241,26 @@ void libSFML::drawObject(renderObject obj)
 void libSFML::drawRectangle(renderObject obj)
 {
     sf::RectangleShape rectangle(sf::Vector2f(obj.width, obj.height));
-    rectangle.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
-    rectangle.setPosition(obj.x, obj.y);
 
+    rectangle.setOrigin(obj.width / 2.0f, obj.height / 2.0f);
+    rectangle.setPosition(obj.x + obj.width / 2.0f, obj.y + obj.height / 2.0f);
+    rectangle.setRotation(static_cast<float>(obj.rotate));
+
+    static std::map<std::string, sf::Texture> textureCache;
     if (!obj.sprite.empty()) {
-        sf::Texture texture;
-        if (texture.loadFromFile(obj.sprite)) {
-            sf::Sprite sprite(texture);
-            sprite.setPosition(obj.x, obj.y);
-            sprite.setScale(
-                static_cast<float>(obj.width) / texture.getSize().x,
-                static_cast<float>(obj.height) / texture.getSize().y
-            );
-            _window.draw(sprite);
-            return;
+        if (textureCache.find(obj.sprite) == textureCache.end()) {
+            sf::Texture texture;
+            if (texture.loadFromFile(obj.sprite)) {
+                textureCache[obj.sprite] = texture;
+            }
         }
+        if (textureCache.find(obj.sprite) != textureCache.end()) {
+            rectangle.setTexture(&textureCache[obj.sprite], true);
+        } else {
+            rectangle.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
+        }
+    } else {
+        rectangle.setFillColor(sf::Color(obj.RGB[0], obj.RGB[1], obj.RGB[2]));
     }
 
     _window.draw(rectangle);
