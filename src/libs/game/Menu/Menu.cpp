@@ -29,6 +29,82 @@ Menu::Menu()
 }
 
 /**
+ * @brief Check if the game is over
+ *
+ * This function checks if the game is over. In this case, it always
+ * returns false.
+ *
+ * @return true if the game is over
+ * @return false if the game is not over
+ */
+bool Menu::isGameOver(void)
+{
+    return false;
+}
+
+/**
+ * @brief Get the score of the game
+ *
+ * This function returns a pair containing the score and a string
+ * representation of the score. In this case, it returns 0 and "0".
+ *
+ * @return std::pair<float, std::string> A pair containing the score and its
+ * string representation
+ */
+std::pair<float, std::string> Menu::getScore(void)
+{
+    return std::pair<float, std::string>(0, "0");
+}
+
+/**
+ * @brief Check if the game has ended
+ *
+ * This function checks if the user has selected a diplay lib and
+ * a game lib. If so, it sets the _startGame variable to true, indicating
+ * that the game should start. If not, it returns false.
+ *
+ * @return true if the user has selected libs
+ * @return false if the user has not selected libs
+ */
+bool Menu::isGameEnd(void)
+{
+    return _startGame;
+}
+
+/**
+ * @brief Get the name of the new library
+ *
+ * This function returns the name of the new library based on the
+ * selected game library. If no game library is selected, it returns
+ * the first game library in the list.
+ *
+ * @return std::string The name of the new library
+ */
+std::string Menu::getNewLib(void)
+{
+    return (_selectedGameLib >= _gameLibs.size())
+               ? _gameLibs[0].path
+               : _gameLibs[_selectedGameLib].path;
+}
+
+/**
+ * @brief Get the name of the menu
+ *
+ * This function returns the name of the menu.
+ *
+ * @return std::string The name of the menu
+ */
+std::string Menu::getNewDisplay(bool success)
+{
+    if (success == true) {
+        return "";
+    }
+    return "";
+}
+
+////////////////////////////// Library Getting //////////////////////////////
+
+/**
  * @brief Check if a directory is valid
  *
  * This function checks if the given path exists and is a directory.
@@ -197,73 +273,6 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
         }
     }
     sortLibraries();
-}
-
-std::string Menu::getNewDisplay(bool success)
-{
-    if (success == true) {
-        return "";
-    }
-    return "";
-}
-
-/**
- * @brief Check if the game is over
- *
- * This function checks if the game is over. In this case, it always
- * returns false.
- *
- * @return true if the game is over
- * @return false if the game is not over
- */
-bool Menu::isGameOver(void)
-{
-    return false;
-}
-
-/**
- * @brief Get the score of the game
- *
- * This function returns a pair containing the score and a string
- * representation of the score. In this case, it returns 0 and "0".
- *
- * @return std::pair<float, std::string> A pair containing the score and its
- * string representation
- */
-std::pair<float, std::string> Menu::getScore(void)
-{
-    return std::pair<float, std::string>(0, "0");
-}
-
-/**
- * @brief Check if the game has ended
- *
- * This function checks if the user has selected a diplay lib and
- * a game lib. If so, it sets the _startGame variable to true, indicating
- * that the game should start. If not, it returns false.
- *
- * @return true if the user has selected libs
- * @return false if the user has not selected libs
- */
-bool Menu::isGameEnd(void)
-{
-    return _startGame;
-}
-
-/**
- * @brief Get the name of the new library
- *
- * This function returns the name of the new library based on the
- * selected game library. If no game library is selected, it returns
- * the first game library in the list.
- *
- * @return std::string The name of the new library
- */
-std::string Menu::getNewLib(void)
-{
-    return (_selectedGameLib >= _gameLibs.size())
-               ? _gameLibs[0].path
-               : _gameLibs[_selectedGameLib].path;
 }
 
 ////////////////////////////// Event Handling ///////////////////////////////
