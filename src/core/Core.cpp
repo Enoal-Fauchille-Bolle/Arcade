@@ -15,6 +15,9 @@
  */
 Core::Core(std::string path)
 {
+    LibGetter libGetter = LibGetter();
+
+    _displayLibs = libGetter.getDisplayLibs();
     if (load_display(path) != 0) {
         std::cerr << "Error loading display library" << std::endl;
         _running = false;
@@ -122,6 +125,59 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
 }
 
 /**
+ * @brief Switches to the next display library.
+ * This function increments the selected display library index and loads
+ * the corresponding library. If it reaches the end of the list, it wraps
+ * around to the first library.
+ */
+void Core::nextDisplayLibrary(void)
+{
+    std::string newDisplayPath;
+
+    _selectedDisplayLib++;
+    if (_selectedDisplayLib >= _displayLibs.size()) {
+        _selectedDisplayLib = 0;
+    }
+    newDisplayPath = getDisplayLibPathFromIndex(_selectedDisplayLib);
+    if (load_display(newDisplayPath) == 1) {
+        std::cerr << "Failed to load display library: " << newDisplayPath << std::endl;
+    }
+}
+
+void Core::previousDisplayLibrary(void)
+{
+    std::string newDisplayPath;
+
+    if (_selectedDisplayLib == 0) {
+        _selectedDisplayLib = _displayLibs.size() - 1;
+    } else {
+        _selectedDisplayLib--;
+    }
+    newDisplayPath = getDisplayLibPathFromIndex(_selectedDisplayLib);
+    if (load_display(newDisplayPath) == 1) {
+        std::cerr << "Failed to load display library: " << newDisplayPath << std::endl;
+    }
+}
+
+/**
+ * @brief Switches to the previous display library.
+ * This function decrements the selected display library index and loads
+ * the corresponding library. If it reaches the beginning of the list, it
+ * wraps around to the last library.
+ */
+void Core::displayLibrarySwitching(std::vector<RawEvent> events)
+{
+    for (const auto &event : events) {
+        if (event.type == PRESS && event.key == KEYBOARD_N) {
+            nextDisplayLibrary();
+        }
+        if (event.type == PRESS && event.key == KEYBOARD_P) {
+            previousDisplayLibrary();
+        }
+    }
+}
+
+/**
  * @brief Main loop of the Core class. Handles game logic, events, and
  * rendering.
  */
@@ -150,6 +206,7 @@ void Core::run()
             _running = false;
             break;
         }
+        displayLibrarySwitching(events);
         _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
         renderEntities(entities);
@@ -166,6 +223,9 @@ int Core::load_display(std::string path)
     try {
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
         _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
+        _selectedDisplayLib = getDisplayLibIndexFromPath(path);
+        std::cout << "_selectedDisplayLib: " << _selectedDisplayLib << std::endl;
+        std::cout << "path: " << path << std::endl;
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Error loading display library: " << e.what()
@@ -233,4 +293,23 @@ void Core::saveScore(std::pair<float, std::string> score)
     } else {
         std::cerr << "Unable to open score file: " << fileName << std::endl;
     }
+}
+
+
+std::string Core::getDisplayLibPathFromIndex(size_t index)
+{
+    if (index >= _displayLibs.size()) {
+        return 0;
+    }
+    return _displayLibs[index].path;
+}
+
+size_t Core::getDisplayLibIndexFromPath(std::string path)
+{
+    for (size_t i = 0; i < _displayLibs.size(); i++) {
+        if (_displayLibs[i].path == path) {
+            return i;
+        }
+    }
+    return 0;
 }
