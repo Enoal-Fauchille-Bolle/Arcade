@@ -383,7 +383,7 @@ void EmergencyMenu::handleOneEvent(RawEvent event)
     if (event.type == PRESS &&
         (event.key == KEYBOARD_RIGHT || event.key == KEYBOARD_LEFT))
         handleHorizontalArrow();
-    if (event.type == PRESS && event.key == KEYBOARD_RETURN)
+    if (event.type == PRESS && event.key == KEYBOARD_ENTER)
         handleEnter();
 }
 

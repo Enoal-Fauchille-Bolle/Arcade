@@ -94,7 +94,7 @@ enum EventKey {
 
     // Special keys
     KEYBOARD_ESCAPE,
-    KEYBOARD_RETURN,
+    KEYBOARD_ENTER,
     KEYBOARD_SPACE,
     KEYBOARD_BACKSPACE,
     KEYBOARD_TAB,

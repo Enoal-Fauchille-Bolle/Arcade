@@ -83,7 +83,7 @@ std::vector<RawEvent> libSFML::pollEvent(void)
                     case sf::Keyboard::Num8: raw.key = KEYBOARD_8; break;
                     case sf::Keyboard::Num9: raw.key = KEYBOARD_9; break;
                     case sf::Keyboard::Escape: raw.key = KEYBOARD_ESCAPE; break;
-                    case sf::Keyboard::Return: raw.key = KEYBOARD_RETURN; break;
+                    case sf::Keyboard::Return: raw.key = KEYBOARD_ENTER; break;
                     case sf::Keyboard::Space: raw.key = KEYBOARD_SPACE; break;
                     case sf::Keyboard::Backspace: raw.key = KEYBOARD_BACKSPACE; break;
                     case sf::Keyboard::Tab: raw.key = KEYBOARD_TAB; break;
@@ -148,7 +148,7 @@ std::vector<RawEvent> libSFML::pollEvent(void)
                     case sf::Keyboard::Num8: raw.key = KEYBOARD_8; break;
                     case sf::Keyboard::Num9: raw.key = KEYBOARD_9; break;
                     case sf::Keyboard::Escape: raw.key = KEYBOARD_ESCAPE; break;
-                    case sf::Keyboard::Return: raw.key = KEYBOARD_RETURN; break;
+                    case sf::Keyboard::Return: raw.key = KEYBOARD_ENTER; break;
                     case sf::Keyboard::Space: raw.key = KEYBOARD_SPACE; break;
                     case sf::Keyboard::Backspace: raw.key = KEYBOARD_BACKSPACE; break;
                     case sf::Keyboard::Tab: raw.key = KEYBOARD_TAB; break;
