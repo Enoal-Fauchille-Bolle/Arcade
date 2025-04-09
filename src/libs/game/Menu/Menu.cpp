@@ -401,7 +401,7 @@ Entity Menu::renderTitle(void)
     titleText.type = TEXT;
     titleText.x = ARCADE_TITLE_X;
     titleText.y = ARCADE_TITLE_Y;
-    titleText.width = 0;
+    titleText.width = 20;
     titleText.height = 0;
     titleText.rotate = 0;
     titleText.RGB[0] = 255;
@@ -427,7 +427,7 @@ Entity Menu::renderDisplayTitle(void)
     displaysTitle.type = TEXT;
     displaysTitle.x = DISPLAY_TITLE_X;
     displaysTitle.y = DISPLAY_TITLE_Y;
-    displaysTitle.width = 0;
+    displaysTitle.width = 20;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
     displaysTitle.RGB[0] = 255;
@@ -492,7 +492,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(
         libEntity.type = TEXT;
         libEntity.x = x;
         libEntity.y = yPos;
-        libEntity.width = 0;
+        libEntity.width = 20;
         libEntity.height = 0;
         libEntity.rotate = 0;
         setupLibButton(libs[i], x, yPos);
@@ -526,7 +526,7 @@ Entity Menu::renderGameTitle(void)
     gamesTitle.type = TEXT;
     gamesTitle.x = GAME_TITLE_X;
     gamesTitle.y = GAME_TITLE_Y;
-    gamesTitle.width = 0;
+    gamesTitle.width = 20;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
     gamesTitle.RGB[0] = 255;
@@ -555,7 +555,7 @@ Entity Menu::renderStartButton(void)
     selectedLibs.type = TEXT;
     selectedLibs.x = START_BUTTON_X;
     selectedLibs.y = START_BUTTON_Y;
-    selectedLibs.width = 0;
+    selectedLibs.width = 20;
     selectedLibs.height = 0;
     selectedLibs.rotate = 0;
     selectedLibs.RGB[0] = 255;
