@@ -230,8 +230,6 @@ int Core::load_display(std::string path)
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
         _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
         _selectedDisplayLib = getDisplayLibIndexFromPath(path);
-        std::cout << "_selectedDisplayLib: " << _selectedDisplayLib << std::endl;
-        std::cout << "path: " << path << std::endl;
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Error loading display library: " << e.what()
