@@ -364,9 +364,6 @@ void Menu::handleOneEvent(RawEvent event)
     if (event.type == PRESS && event.key == MOUSE_LEFT) {
         handleLeftClick(event);
     }
-    if (event.type == PRESS && event.key == KEYBOARD_ESCAPE) {
-        _startGame = true;
-    }
 }
 
 /**
