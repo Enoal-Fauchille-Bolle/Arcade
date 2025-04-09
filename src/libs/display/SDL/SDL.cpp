@@ -12,6 +12,12 @@
 #include <iostream>
 #include <unordered_map>
 
+/** 
+ * @brief Maps SDL keycodes to EventKey enum values.
+ *
+ * This map is used to convert SDL keycodes to the corresponding EventKey
+ * enum values for event handling.
+ */
 static const std::unordered_map<SDL_Keycode, EventKey> eventTypeMap = {
     {SDL_BUTTON_LEFT, MOUSE_LEFT},
     {SDL_BUTTON_RIGHT, MOUSE_RIGHT},
@@ -95,6 +101,20 @@ SDL::~SDL()
 {
 }
 
+/**
+ * @brief Creates an SDL window.
+ *
+ * This function creates an SDL window with the specified parameters.
+ * If the window creation fails, it prints an error message and exits the program.
+ *
+ * @param title The title of the window.
+ * @param x The x-coordinate of the window position.
+ * @param y The y-coordinate of the window position.
+ * @param w The width of the window.
+ * @param h The height of the window.
+ * @param flags Additional flags for window creation.
+ * @return A pointer to the created SDL_Window object.
+ */
 SDL_Window* SDL::createWindow(const char *title, int x, int y, int w, int h, Uint32 flags)
 {
     _window = SDL_CreateWindow(title, x, y, w, h, flags);
@@ -106,6 +126,16 @@ SDL_Window* SDL::createWindow(const char *title, int x, int y, int w, int h, Uin
     return _window;
 }
 
+/**
+ * @brief Creates an SDL renderer.
+ *
+ * This function creates an SDL renderer for the specified window.
+ * If the renderer creation fails, it prints an error message and exits the program.
+ *
+ * @param index The index of the rendering driver to initialize.
+ * @param flags Additional flags for renderer creation.
+ * @return A pointer to the created SDL_Renderer object.
+ */
 SDL_Renderer* SDL::createRenderer(int index, Uint32 flags)
 {
     _renderer = SDL_CreateRenderer(_window, index, flags);
@@ -118,17 +148,35 @@ SDL_Renderer* SDL::createRenderer(int index, Uint32 flags)
     return _renderer;
 }
 
+/**
+ * @brief Clears the current rendering target.
+ *
+ * This function sets the draw color to black and clears the current rendering target.
+ */
 void SDL::renderClear(void)
 {
     SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
     SDL_RenderClear(_renderer);
 }
 
+/**
+ * @brief Presents the current rendering target.
+ *
+ * This function updates the screen with the contents of the current rendering target.
+ */
 void SDL::renderPresent(void)
 {
     SDL_RenderPresent(_renderer);
 }
 
+/**
+ * @brief Polls events from the SDL event queue.
+ *
+ * This function retrieves events from the SDL event queue and processes them.
+ * It returns a vector of RawEvent objects representing the events polled.
+ *
+ * @return A vector of RawEvent objects representing the events polled.
+ */
 std::vector<RawEvent> SDL::pollEvent(void)
 {
     SDL_Event event;
@@ -164,6 +212,12 @@ std::vector<RawEvent> SDL::pollEvent(void)
     return _event;
 }
 
+/**
+ * @brief Destroys all SDL resources.
+ *
+ * This function destroys the SDL window and renderer, and quits SDL,
+ * TTF, and IMG subsystems.
+ */
 void SDL::destroyAll(void)
 {
     if (_renderer)
@@ -178,6 +232,15 @@ void SDL::destroyAll(void)
     IMG_Quit();
 }
 
+/**
+ * @brief Draws a rectangle on the screen.
+ *
+ * This function draws a rectangle on the screen using the specified
+ * renderObject parameters. If a sprite is provided, it will be drawn
+ * instead of the rectangle.
+ *
+ * @param obj The renderObject containing the rectangle parameters.
+ */
 void SDL::drawRectangle(renderObject obj)
 {
     SDL_Rect rect;
@@ -208,6 +271,14 @@ void SDL::drawRectangle(renderObject obj)
     SDL_RenderFillRect(_renderer, &rect);
 }
 
+/**
+ * @brief Draws a circle on the screen.
+ *
+ * This function draws a circle on the screen using the specified
+ * renderObject parameters.
+ *
+ * @param obj The renderObject containing the circle parameters.
+ */
 void SDL::drawCircle(renderObject obj)
 {
     int radius = obj.width / 2;
@@ -226,6 +297,14 @@ void SDL::drawCircle(renderObject obj)
     }
 }
 
+/**
+ * @brief Draws a line on the screen.
+ *
+ * This function draws a line on the screen using the specified
+ * renderObject parameters.
+ *
+ * @param obj The renderObject containing the line parameters.
+ */
 void SDL::drawText(renderObject obj)
 {
     TTF_Font *font = TTF_OpenFont("assets/arial.ttf", obj.width);
