@@ -6,8 +6,8 @@
 */
 
 #include "Core.hpp"
-
 #include "LibLoader.hpp"
+#include <fstream>
 
 /**
  * @brief Constructor for the Core class.
@@ -213,4 +213,24 @@ int Core::delete_game()
         _game.reset();
     }
     return 0;
+}
+
+/**
+ * @brief Saves the score to a text file based on the game’s name.
+ *        The file will be named "score_<gameName>.txt" and will contain lines with the player's name and score.
+ * @param score A pair containing the score (first element) and the player's name (second element).
+ */
+void Core::saveScore(std::pair<float, std::string> score)
+{
+    std::string gameName = _game->getName();
+
+    std::string fileName = "score_" + gameName + ".txt";
+
+    std::ofstream file(fileName, std::ios::app);
+    if (file.is_open()) {
+        file << "Player: " << score.second << " - Score: " << score.first << "\n";
+        file.close();
+    } else {
+        std::cerr << "Unable to open score file: " << fileName << std::endl;
+    }
 }

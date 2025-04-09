@@ -40,6 +40,8 @@ class Core {
 
         void renderEntities(std::map<std::string, Entity> entities);
 
+        void saveScore(std::pair<float, std::string> score);
+
         DLLoader<IGame> _gameLoader;
         DLLoader<IDisplay> _graphicLoader;
         std::unique_ptr<IDisplay> _display;
