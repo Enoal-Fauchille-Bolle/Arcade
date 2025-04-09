@@ -95,7 +95,7 @@ class Minesweeper : public IGame {
         std::string _name;
 
 
-        bool isFirstClikc = false;
+        bool isFirstClick = false;
 
         bool _isGameTermiated = false;
 

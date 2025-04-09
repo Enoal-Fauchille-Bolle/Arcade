@@ -176,7 +176,7 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
                 event.y >= playY && event.y <= playY + playH) {
                 _state = GAME;
                 _mines = 70;
-                isFirstClikc = false;
+                isFirstClick = false;
                 initBoard(20, 20);
             }
             else if (event.x >= quitX && event.x <= quitX + quitW &&
@@ -187,7 +187,6 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
         }
     }
 }
-
 
 /**
  * @brief Handles the event when the game is in the ESC state.
@@ -522,10 +521,10 @@ void Minesweeper::revealCell(int x, int y)
     if (_board[y][x].isFlagged) {
         return;
     }
-    if (isFirstClikc == false) {
+    if (isFirstClick == false) {
         placeMines(x, y);
         calculateAdjacentMines();
-        isFirstClikc = true;
+        isFirstClick = true;
     }
     if (_board[y][x].isRevealed) {
         return;
