@@ -94,7 +94,6 @@ class Minesweeper : public IGame {
         std::pair<float, std::string> _score;
         std::string _name;
 
-        std::string _lib = "lib/arcade_ncurses.so";
 
         bool isFirstClikc = false;
 
