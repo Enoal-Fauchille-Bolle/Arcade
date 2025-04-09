@@ -117,6 +117,7 @@ void Minesweeper::handleEventGame(std::vector<RawEvent> events)
         if (event.type == EventType::PRESS && event.key == EventKey::MOUSE_LEFT) {
             auto [x, y] = handleClick(event);
             revealCell(x, y);
+            _sounds.push_back(_Sprite + "click.ogg");
             if (checkWin())
                 _isGameOver = true;
             if (checkLose())
@@ -225,7 +226,18 @@ std::map<std::string, Entity> Minesweeper::renderGame()
     } else if (_state == GAME_WIN || _state == GAME_LOSE) {
         entities = printBoard();
     }
-
+    for (size_t i = 0; i < _sounds.size(); i++) {
+        Entity sound = createEntity(
+            Shape::MUSIC, 0, 0, 0, 0,
+            0, 0,
+            {
+                {DisplayType::TERMINAL, "no sprite"},
+                {DisplayType::GRAPHICAL, _sounds[i]}
+            }
+        );
+        entities["sound" + std::to_string(i)] = sound;
+    }
+    _sounds.clear();
     return entities;
 }
 
@@ -340,7 +352,7 @@ std::map<std::string, Entity> Minesweeper::printMenu()
         0, 0,
         {
             {DisplayType::TERMINAL, " "},
-            {DisplayType::GRAPHICAL, "assets/minesweeper_not_click.jpg"}
+            {DisplayType::GRAPHICAL, _Sprite + "minesweeper_not_click.jpg"}
         }
     );
     setCellColor(background, 0, 0, 0);
@@ -412,28 +424,31 @@ std::map<std::string, Entity> Minesweeper::printBoard()
         for (int x = 0; x < _width; x++) {
             std::map<DisplayType, std::string> sprite;
             sprite[DisplayType::TERMINAL] = "O";
-            sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_not_click.jpg";
+            sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_not_click.jpg";
             if (_board[y][x].isRevealed) {
-                if (_board[y][x].isMine) {
+                if (_board[y][x].isMine && _board[y][x].State != LOSER) {
                     sprite[DisplayType::TERMINAL] = "X";
-                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+                    sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_bomb.jpg";
+                } else if (_board[y][x].isMine && _board[y][x].State == LOSER) {
+                    sprite[DisplayType::TERMINAL] = "💣";
+                    sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_bomb_red.jpg";
                 }
                 else if (_board[y][x].adjacentMines > 0) {
                     sprite[DisplayType::TERMINAL] = std::to_string(_board[y][x].adjacentMines);
-                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
+                    sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_" + std::to_string(_board[y][x].adjacentMines) + ".jpg";
                 }
                 else {
                     sprite[DisplayType::TERMINAL] = " ";
-                    sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+                    sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_empty.jpg";
                 }
             }
             else if (_board[y][x].State == FLAGGED) {
                 sprite[DisplayType::TERMINAL] = "🚩";
-                sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
+                sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_flag.jpg";
             }
             else if (_board[y][x].State == QMARK) {
                 sprite[DisplayType::TERMINAL] = "?";
-                sprite[DisplayType::GRAPHICAL] = "assets/minesweeper_question.jpg";
+                sprite[DisplayType::GRAPHICAL] = _Sprite + "minesweeper_question.jpg";
             }
             Entity cell = createEntity(
                 Shape::RECTANGLE, x, y, cellWidth, cellHeight,
@@ -472,8 +487,8 @@ std::map<std::string, Entity> Minesweeper::printBoard()
         Shape::RECTANGLE, 0, 0, (SCREEN_WIDTH - (_width * cellWidth) - 5), SCREEN_HEIGHT,
         0, 0,
         {
-            {DisplayType::TERMINAL, "ta mere"},
-            {DisplayType::GRAPHICAL, "assets/bg_3.png"}
+            {DisplayType::TERMINAL, " "},
+            {DisplayType::GRAPHICAL, _Sprite + "bg_3.png"}
         }
     );
     setCellColor(background, 0, 0, 0);
@@ -488,13 +503,13 @@ void Minesweeper::addSmileyEntity(std::map<std::string, Entity> &entities)
     std::string smileyPath;
 
     if (_smileyState == SMILEY) {
-        smileyPath = "assets/minesweeper_smiley_nomal.jpg";
+        smileyPath = _Sprite + "minesweeper_smiley_nomal.jpg";
     } else if (_smileyState == CLICK) {
-        smileyPath = "assets/minesweeper_smiley_click.jpg";
+        smileyPath = _Sprite + "minesweeper_smiley_click.jpg";
     } else if (_smileyState == WIN) {
-        smileyPath = "assets/minesweeper_smiley_win.jpg";
+        smileyPath = _Sprite + "minesweeper_smiley_win.jpg";
     } else if (_smileyState == LOSE) {
-        smileyPath = "assets/minesweeper_smiley_dead.jpg";
+        smileyPath = _Sprite + "minesweeper_smiley_dead.jpg";
     }
     Entity smiley = createEntity(Shape::RECTANGLE, 0, 0, 50 , 50 , 100, 36,
         {
@@ -736,6 +751,7 @@ bool Minesweeper::checkLose()
     for (int y = 0; y < _height; y++) {
         for (int x = 0; x < _width; x++) {
             if (_board[y][x].isMine && _board[y][x].isRevealed) {
+                _board[y][x].State = LOSER;
                 revealBombs();
                 int flaggedBombs = 0;
                 for (int i = 0; i < _height; i++) {

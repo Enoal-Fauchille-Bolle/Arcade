@@ -22,7 +22,8 @@
 enum CellState {
     NONE,
     QMARK,
-    FLAGGED
+    FLAGGED,
+    LOSER
 };
 
 struct Cell {
@@ -90,6 +91,8 @@ class Minesweeper : public IGame {
             ESC
         };
 
+        std::vector<std::string> _sounds;
+
         enum SmileyState {
             SMILEY,
             CLICK,
@@ -121,6 +124,8 @@ class Minesweeper : public IGame {
         int _remainingMines = 0;
         int _flaggedMines = 0;
         int _revealedCells = 0;
+
+        std::string _Sprite = "assets/Minesweeper_1/"; // Vos daronnes y boivent du _Sprite sa mère !
 };
 
 #endif /* !MINESWEEPER_HPP_ */
