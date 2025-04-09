@@ -8,16 +8,12 @@
 #ifndef EMERGENCYMENU_HPP_
     #define EMERGENCYMENU_HPP_
 
-    #include <algorithm>
-    #include <filesystem>
     #include <iostream>
     #include <map>
     #include <vector>
 
     #include "../libs/display/interfaces/IDisplay.hpp"
     #include "../libs/game/interfaces/IGame.hpp"
-    #include "../interfaces/IGame.hpp"
-    #include "./LibLoader.hpp"
     #include "./LibGetter.hpp"
 
     #define LIBRARY_PATH "./lib/"

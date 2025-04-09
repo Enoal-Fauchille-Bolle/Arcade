@@ -8,16 +8,12 @@
 #ifndef MENU_HPP_
     #define MENU_HPP_
 
-    #include <algorithm>
-    #include <filesystem>
     #include <iostream>
     #include <map>
     #include <vector>
 
     #include "../../../libs/display/interfaces/IDisplay.hpp"
     #include "../../../libs/game/interfaces/IGame.hpp"
-    #include "../interfaces/IGame.hpp"
-    #include "../../../core/LibLoader.hpp"
     #include "../../../core/LibGetter.hpp"
 
     #define LIBRARY_PATH "./lib/"
