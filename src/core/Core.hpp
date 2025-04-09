@@ -46,7 +46,7 @@ class Core {
         DLLoader<IDisplay> _graphicLoader;
         std::unique_ptr<IDisplay> _display;
         std::unique_ptr<IGame> _game;
-        bool running = true;
+        bool _running = true;
 
 };
 

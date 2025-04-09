@@ -17,7 +17,7 @@ Core::Core(std::string path)
 {
     if (load_display(path) != 0) {
         std::cerr << "Error loading display library" << std::endl;
-        running = false;
+        _running = false;
         return;
     }
     if (load_game("./lib/arcade_menu.so") == 1) {
@@ -48,10 +48,10 @@ void Core::startEmergencyMenu(void)
     std::string newGamePath;
 
     _game = std::make_unique<EmergencyMenu>();
-    while (!gameSelected && running) {
+    while (!gameSelected && _running) {
         std::vector<RawEvent> events = _display->pollEvent();
         if (checkQuit(events)) {
-            running = false;
+            _running = false;
             break;
         }
         _game->handleEvent(events);
@@ -127,7 +127,7 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
  */
 void Core::run()
 {
-    while (running) {
+    while (_running) {
         if (_game->isGameOver() == true) {
             auto score = _game->getScore();
         }
@@ -147,7 +147,7 @@ void Core::run()
         }
         std::vector<RawEvent> events = _display->pollEvent();
         if (checkQuit(events)) {
-            running = false;
+            _running = false;
             break;
         }
         _game->handleEvent(events);
