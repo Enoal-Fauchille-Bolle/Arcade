@@ -526,9 +526,7 @@ Entity Menu::renderGameTitle(void)
     gamesTitle.width = 20;
     gamesTitle.height = 0;
     gamesTitle.rotate = 0;
-    gamesTitle.RGB[0] = 255;
-    gamesTitle.RGB[1] = 255;
-    gamesTitle.RGB[2] = 255;
+    setEntityColor(gamesTitle, 255, 255, 255);
     gamesTitle.sprites[DisplayType::GRAPHICAL] = "Game Libraries:";
     gamesTitle.sprites[DisplayType::TERMINAL] = "Game Libraries:";
     return gamesTitle;
@@ -555,9 +553,7 @@ Entity Menu::renderStartButton(void)
     selectedLibs.width = 20;
     selectedLibs.height = 0;
     selectedLibs.rotate = 0;
-    selectedLibs.RGB[0] = 255;
-    selectedLibs.RGB[1] = 255;
-    selectedLibs.RGB[2] = 0;
+    setEntityColor(selectedLibs, 255, 255, 0);
     selectedLibs.sprites[DisplayType::GRAPHICAL] = "Start";
     selectedLibs.sprites[DisplayType::TERMINAL] = "Start";
     return selectedLibs;
