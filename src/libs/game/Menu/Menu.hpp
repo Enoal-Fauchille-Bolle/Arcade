@@ -18,6 +18,7 @@
     #include "../../../libs/game/interfaces/IGame.hpp"
     #include "../interfaces/IGame.hpp"
     #include "../../../core/LibLoader.hpp"
+    #include "../../../core/LibGetter.hpp"
 
     #define LIBRARY_PATH "./lib/"
     #define SCREEN_WIDTH 1024
@@ -41,8 +42,8 @@
 
     #define TEXT_WIDTH_MULTIPLIER 30
 
-    #define SELECTED_LIBS_X 200
-    #define SELECTED_LIBS_Y 600
+    #define DISPLAY_LIB_X 200
+    #define GAME_LIB_X 600
 
     #define START_BUTTON_X 480
     #define START_BUTTON_Y 600
@@ -79,24 +80,7 @@ class Menu : public IGame {
             int width;
             int height;
         };
-        struct LibInfo {
-            std::string path;
-            std::string name;
-            LibType type;
-            ButtonPos pos;
-        };
-
-        // Library Getting
-        bool isValidDirectory(const std::string &path);
-        std::vector<std::string> findSharedLibraries(
-            const std::string &directoryPath);
-        std::vector<std::string> getLibraryFiles();
-
-        // Library Categorization
-        void sortLibraries(void);
-        std::string isGameLibrary(const std::string &path);
-        std::string isDisplayLibrary(const std::string &path);
-        void categorizeLibraries(const std::vector<std::string> &paths);
+        using LibPos = std::pair<LibInfo, ButtonPos>;
 
         // Event Handling
         void checkGameClick(RawEvent event);
@@ -108,16 +92,14 @@ class Menu : public IGame {
         // Rendering
         Entity renderTitle(void);
         Entity renderDisplayTitle(void);
-        void setupLibButton(LibInfo &lib, int x, int y);
+        void setupLibButton(LibPos &libPos, int x, int y);
         void setEntityColor(Entity &cell, int r, int g, int b);
-        std::map<EntityName, Entity> renderLibs(
-            std::vector<LibInfo> &libs, size_t selectedLib, size_t x,
-            std::string libPrefix);
+        std::map<EntityName, Entity> renderLibs(LibType libType);
         Entity renderGameTitle(void);
         Entity renderStartButton(void);
 
-        std::vector<LibInfo> _gameLibs;
-        std::vector<LibInfo> _displayLibs;
+        std::vector<LibPos> _gameLibs;
+        std::vector<LibPos> _displayLibs;
         size_t _selectedGameLib = 0;
         size_t _selectedDisplayLib = 0;
         bool _startGame;

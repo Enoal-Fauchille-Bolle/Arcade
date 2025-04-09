@@ -17,15 +17,18 @@
  */
 Menu::Menu()
 {
-    std::vector<std::string> libPaths = getLibraryFiles();
+    LibGetter libGetter = LibGetter();
+    std::vector<LibInfo> gamesLibs = libGetter.getGameLibs();
+    std::vector<LibInfo> displayLibs = libGetter.getDisplayLibs();
 
     _name = LIBRARY_NAME;
     _startGame = false;
-    if (libPaths.empty()) {
-        std::cerr << "No libraries found in " << LIBRARY_PATH << std::endl;
-        return;
+    for (size_t i = 0; i < gamesLibs.size(); i++) {
+        _gameLibs.push_back({gamesLibs[i], {0, 0, 0, 0}});
     }
-    categorizeLibraries(libPaths);
+    for (size_t i = 0; i < displayLibs.size(); i++) {
+        _displayLibs.push_back({displayLibs[i], {0, 0, 0, 0}});
+    }
 }
 
 /**
@@ -59,8 +62,8 @@ std::pair<float, std::string> Menu::getScore(void)
 /**
  * @brief Check if the game has ended
  *
- * This function checks if the user has selected a diplay lib and
- * a game lib. If so, it sets the _startGame variable to true, indicating
+ * This function checks if the user has selected a diplay libPos and
+ * a game libPos. If so, it sets the _startGame variable to true, indicating
  * that the game should start. If not, it returns false.
  *
  * @return true if the user has selected libs
@@ -83,8 +86,8 @@ bool Menu::isGameEnd(void)
 std::string Menu::getNewLib(void)
 {
     return (_selectedGameLib >= _gameLibs.size())
-               ? _gameLibs[0].path
-               : _gameLibs[_selectedGameLib].path;
+               ? _gameLibs[0].first.path
+               : _gameLibs[_selectedGameLib].first.path;
 }
 
 /**
@@ -99,181 +102,8 @@ std::string Menu::getNewDisplay(void)
     if (!_startGame)
         return "";
     return (_selectedDisplayLib >= _displayLibs.size())
-               ? _displayLibs[0].path
-               : _displayLibs[_selectedDisplayLib].path;
-}
-
-////////////////////////////// Library Getting //////////////////////////////
-
-/**
- * @brief Check if a directory is valid
- *
- * This function checks if the given path exists and is a directory.
- *
- * @param path The path to check
- * @return true if the path is a valid directory
- * @return false if the path does not exist or is not a directory
- */
-bool Menu::isValidDirectory(const std::string &path)
-{
-    return std::filesystem::exists(path) &&
-           std::filesystem::is_directory(path);
-}
-
-/**
- * @brief Find all shared libraries in a directory
- *
- * This function scans the specified directory for shared libraries
- * (files with a .so extension) and returns their paths in a vector.
- *
- * @param directoryPath The path to the directory to scan
- * @return std::vector<std::string> A vector of strings containing the paths to
- * the shared libraries
- */
-std::vector<std::string> Menu::findSharedLibraries(
-    const std::string &directoryPath)
-{
-    std::vector<std::string> libraryPaths;
-
-    for (const auto &entry :
-        std::filesystem::directory_iterator(directoryPath)) {
-        if (entry.is_regular_file() && entry.path().extension() == ".so") {
-            libraryPaths.push_back(entry.path().string());
-        }
-    }
-    return libraryPaths;
-}
-
-/**
- * @brief Get all shared libraries in the library path
- *
- * This function scans the LIBRARY_PATH directory for shared libraries
- * (files with a .so extension) and returns their paths in a vector.
- * If the directory does not exist or an error occurs during scanning,
- * an empty vector is returned.
- *
- * @return std::vector<std::string> A vector of strings containing the paths
- */
-std::vector<std::string> Menu::getLibraryFiles(void)
-{
-    std::string libPath = LIBRARY_PATH;
-
-    if (!isValidDirectory(libPath)) {
-        std::cerr << "Library directory not found: " << libPath << std::endl;
-        return {};
-    }
-    try {
-        return findSharedLibraries(libPath);
-    } catch (const std::exception &e) {
-        std::cerr << "Error scanning library directory: " << e.what()
-                  << std::endl;
-        return {};
-    }
-}
-
-/**
- * @brief Sort the game and display libraries
- *
- * This function sorts the game and display libraries in alphabetical
- * order based on their names. It uses the std::sort algorithm to
- * perform the sorting.
- */
-void Menu::sortLibraries(void)
-{
-    std::sort(_gameLibs.begin(), _gameLibs.end(),
-        [](const LibInfo &a, const LibInfo &b) { return a.name < b.name; });
-    std::sort(_displayLibs.begin(), _displayLibs.end(),
-        [](const LibInfo &a, const LibInfo &b) { return a.name < b.name; });
-}
-
-/**
- * @brief Check if the library is a game library
- *
- * This function attempts to load a game library from the given path
- * and returns its name if successful. If the library cannot be loaded,
- * an empty string is returned.
- *
- * @param path The path to the library
- * @return std::string The name of the game library, or an empty string
- */
-std::string Menu::isGameLibrary(const std::string &path)
-{
-    DLLoader<LibraryName> loader;
-    LibraryName name;
-    LibType type;
-
-    try {
-        name = loader.getName(path);
-        type = loader.getType(path);
-        if (type != GAME) {
-            return "";
-        }
-        return name;
-    } catch (const std::exception &) {
-        return "";
-    }
-}
-
-/**
- * @brief Check if the library is a display library
- *
- * This function attempts to load a display library from the given path
- * and returns its name if successful. If the library cannot be loaded,
- * an empty string is returned.
- *
- * @param path The path to the library
- * @return std::string The name of the display library, or an empty string
- */
-std::string Menu::isDisplayLibrary(const std::string &path)
-{
-    DLLoader<LibraryName> loader;
-    LibraryName name;
-    LibType type;
-
-    try {
-        name = loader.getName(path);
-        type = loader.getType(path);
-        if (type != DISPLAY) {
-            return "";
-        }
-        return name;
-    } catch (const std::exception &) {
-        return "";
-    }
-}
-
-/**
- * @brief Categorize libraries into game and display libraries
- *
- * This function takes a vector of library paths and categorizes them
- * into game and display libraries. It uses the tryLoadGameLibrary and
- * tryLoadDisplayLibrary functions to attempt to load each library.
- *
- * @param paths A vector of strings containing the paths to the libraries
- */
-void Menu::categorizeLibraries(const std::vector<std::string> &paths)
-{
-    std::string libName;
-
-    _gameLibs.clear();
-    _displayLibs.clear();
-    for (const auto &path : paths) {
-        if (path.find("arcade_menu.so") != std::string::npos)
-            continue;
-        libName = isGameLibrary(path);
-        if (!libName.empty()) {
-            _gameLibs.push_back({path, libName, GAME, {0, 0, 0, 0}});
-            continue;
-        }
-        libName = isDisplayLibrary(path);
-        if (!libName.empty()) {
-            _displayLibs.push_back({path, libName, DISPLAY, {0, 0, 0, 0}});
-        } else {
-            std::cerr << "Failed to identify library type for " << path
-                      << std::endl;
-        }
-    }
-    sortLibraries();
+               ? _displayLibs[0].first.path
+               : _displayLibs[_selectedDisplayLib].first.path;
 }
 
 ////////////////////////////// Event Handling ///////////////////////////////
@@ -290,12 +120,12 @@ void Menu::categorizeLibraries(const std::vector<std::string> &paths)
 void Menu::checkGameClick(RawEvent event)
 {
     for (size_t i = 0; i < _gameLibs.size(); i++) {
-        if (event.x >= _gameLibs[i].pos.x - LIBS_PADDING &&
-            event.x <=
-                _gameLibs[i].pos.x + _gameLibs[i].pos.width + LIBS_PADDING &&
-            event.y <= (_gameLibs[i].pos.y + 15) + LIBS_PADDING &&
-            event.y >= (_gameLibs[i].pos.y + 15) - _gameLibs[i].pos.height -
-                           LIBS_PADDING) {
+        if (event.x >= _gameLibs[i].second.x - LIBS_PADDING &&
+            event.x <= _gameLibs[i].second.x + _gameLibs[i].second.width +
+                           LIBS_PADDING &&
+            event.y <= (_gameLibs[i].second.y + 15) + LIBS_PADDING &&
+            event.y >= (_gameLibs[i].second.y + 15) -
+                           _gameLibs[i].second.height - LIBS_PADDING) {
             _selectedGameLib = i;
             return;
         }
@@ -314,18 +144,26 @@ void Menu::checkGameClick(RawEvent event)
 void Menu::checkDisplayClick(RawEvent event)
 {
     for (size_t i = 0; i < _displayLibs.size(); i++) {
-        if (event.x >= _displayLibs[i].pos.x - LIBS_PADDING &&
-            event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width +
-                           LIBS_PADDING &&
-            event.y <= (_displayLibs[i].pos.y + 15) + LIBS_PADDING &&
-            event.y >= (_displayLibs[i].pos.y + 15) -
-                           _displayLibs[i].pos.height - LIBS_PADDING) {
+        if (event.x >= _displayLibs[i].second.x - LIBS_PADDING &&
+            event.x <= _displayLibs[i].second.x +
+                           _displayLibs[i].second.width + LIBS_PADDING &&
+            event.y <= (_displayLibs[i].second.y + 15) + LIBS_PADDING &&
+            event.y >= (_displayLibs[i].second.y + 15) -
+                           _displayLibs[i].second.height - LIBS_PADDING) {
             _selectedDisplayLib = i;
             return;
         }
     }
 }
 
+/**
+ * @brief Check if the mouse click is on the start button
+ *
+ * This function checks if the mouse click event is within the bounds
+ * of the start button. If so, it sets the _startGame variable to true.
+ *
+ * @param event The event to check
+ */
 void Menu::checkStartButton(RawEvent event)
 {
     if (event.x >= START_BUTTON_X - LIBS_PADDING &&
@@ -443,16 +281,16 @@ Entity Menu::renderDisplayTitle(void)
  * This function sets up the position of a library button based on
  * its name and the specified coordinates.
  *
- * @param lib The library information
+ * @param libPos The library information
  * @param x The x-coordinate of the button
  * @param y The y-coordinate of the button
  */
-void Menu::setupLibButton(LibInfo &lib, int x, int y)
+void Menu::setupLibButton(LibPos &libPos, int x, int y)
 {
-    lib.pos.x = x;
-    lib.pos.y = y;
-    lib.pos.width = lib.name.length() * TEXT_WIDTH_MULTIPLIER;
-    lib.pos.height = LIBS_HEIGHT;
+    libPos.second.x = x;
+    libPos.second.y = y;
+    libPos.second.width = libPos.first.name.length() * TEXT_WIDTH_MULTIPLIER;
+    libPos.second.height = LIBS_HEIGHT;
 }
 
 void Menu::setEntityColor(Entity &entity, int r, int g, int b)
@@ -476,34 +314,36 @@ void Menu::setEntityColor(Entity &entity, int r, int g, int b)
  * @return std::map<EntityName, Entity> A map of Entity objects representing
  * the libraries
  */
-std::map<IGame::EntityName, Entity> Menu::renderLibs(
-    std::vector<LibInfo> &libs,
-    size_t selectedLib,
-    size_t x,
-    std::string libPrefix)
+std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
 {
     std::map<EntityName, Entity> entities;
     std::string prefix;
     Entity libEntity;
+    std::string libPrefix = (libType == DISPLAY) ? "display_" : "game_";
+    std::vector<LibPos> &libs = (libType == DISPLAY) ? _displayLibs : _gameLibs;
+    size_t selectedLib =
+        (libType == DISPLAY) ? _selectedDisplayLib : _selectedGameLib;
 
+    int x = (libType == DISPLAY) ? DISPLAY_LIB_X : GAME_LIB_X;
     int yPos = LIBS_HEIGHT_START;
     for (size_t i = 0; i < libs.size(); i++) {
         libEntity.type = TEXT;
         libEntity.x = x;
         libEntity.y = yPos;
-        libEntity.width = 30;
+        libEntity.width = 20;
         libEntity.height = 0;
         libEntity.rotate = 0;
         setupLibButton(libs[i], x, yPos);
         if (i == selectedLib) {
-            prefix = "> ";
+            prefix = " > ";
             setEntityColor(libEntity, 0, 255, 0);
         } else {
             prefix = "   ";
             setEntityColor(libEntity, 180, 180, 180);
         }
-        libEntity.sprites[DisplayType::GRAPHICAL] = prefix + libs[i].name;
-        libEntity.sprites[DisplayType::TERMINAL] = prefix + libs[i].name;
+        libEntity.sprites[DisplayType::GRAPHICAL] =
+            prefix + libs[i].first.name;
+        libEntity.sprites[DisplayType::TERMINAL] = prefix + libs[i].first.name;
         entities[libPrefix + std::to_string(i)] = libEntity;
         yPos += LIBS_HEIGHT_THRESHOLD;
     }
@@ -578,13 +418,12 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
 
     entities["title"] = renderTitle();
     entities["display_title"] = renderDisplayTitle();
-    tempEntities =
-        renderLibs(_displayLibs, _selectedDisplayLib, 200, "display_");
+    tempEntities = renderLibs(DISPLAY);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
     entities["games_title"] = renderGameTitle();
-    tempEntities = renderLibs(_gameLibs, _selectedGameLib, 600, "game_");
+    tempEntities = renderLibs(GAME);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
