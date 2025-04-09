@@ -69,7 +69,7 @@ void Core::startEmergencyMenu(void)
  */
 bool Core::checkQuit(std::vector<RawEvent> events)
 {
-    for (const auto& event : events) {
+    for (const auto &event : events) {
         if (event.type == QUIT) {
             return true;
         }
@@ -85,7 +85,7 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
 {
     if (entities.size() > 0) {
         _display->clear();
-        for (const auto& pair : entities) {
+        for (const auto &pair : entities) {
             Entity val = pair.second;
             renderObject obj;
             obj.x = val.x;
@@ -108,7 +108,8 @@ void Core::renderEntities(std::map<std::string, Entity> entities)
 }
 
 /**
- * @brief Main loop of the Core class. Handles game logic, events, and rendering.
+ * @brief Main loop of the Core class. Handles game logic, events, and
+ * rendering.
  */
 void Core::run()
 {
@@ -152,8 +153,9 @@ int Core::load_display(std::string path)
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
         _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
         return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Error loading display library: " << e.what() << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Error loading display library: " << e.what()
+                  << std::endl;
         return 1;
     }
 }
@@ -169,7 +171,7 @@ int Core::load_game(std::string path)
         _gameLoader = DLLoader<IGame>("GameEntryPoint");
         _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
         return 0;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Error loading game library: " << e.what() << std::endl;
         return 1;
     }
