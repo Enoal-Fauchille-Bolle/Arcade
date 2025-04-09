@@ -77,6 +77,20 @@ class Snake : public IGame {
         void shouldIncreaseSpeed();
         void setDirection(std::vector<RawEvent> events);
         void setFrameRate(bool speed, bool up);
+        std::map<std::string, Entity> domenu();
+        void handleMenuEvent(std::vector<RawEvent> events);
+        void resetGrid();
+        Entity createEntity(Shape type, int x, int y, int width, int height, int r, int g, int b,
+                            const std::string& terminalSprite, const std::string& graphicalSprite,
+                            int rotate = 0, const std::string& id = "");
+        Entity createRectangleEntity(int x, int y, int width, int height, int r, int g, int b,
+                                      const std::string& terminalSprite, const std::string& graphicalSprite);
+        Entity createTextEntity(const std::string& text, int x, int y, int width, int height,
+                                 int r, int g, int b);
+        void addTitleEntities(std::map<std::string, Entity>& entities);
+        void addButtonEntities(std::map<std::string, Entity>& entities);
+        void addOptionEntities(std::map<std::string, Entity>& entities);
+        void addBackgroundEntity(std::map<std::string, Entity>& entities);
 
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
@@ -89,6 +103,7 @@ class Snake : public IGame {
         struct snake snake;
         std::chrono::steady_clock::time_point lastMoveTime;
         int _frameRate = 1;
+        bool _gameStart = false;
 };
 
 #endif /* !SNAKE_HPP_ */

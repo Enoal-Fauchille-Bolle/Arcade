@@ -63,10 +63,6 @@ void Snake::createGrid(int width, int height)
  */
 bool Snake::isGameOver(void)
 {
-    if (gameOver) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-        return true;
-    }
     return false;
 }
 
@@ -89,8 +85,7 @@ std::pair<float, std::string> Snake::getScore(void)
 
 bool Snake::isGameEnd(void)
 {
-    if (gameOver) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    if (gameEnd) {
         return true;
     }
     return false;
@@ -107,7 +102,7 @@ bool Snake::isGameEnd(void)
  */
 std::string Snake::getNewLib(void)
 {
-    if (gameOver) {
+    if (gameEnd) {
         return "lib/arcade_menu.so";
     }
     return "lib/arcade_snake.so";
@@ -222,10 +217,14 @@ void Snake::handleEvent(std::vector<RawEvent> events)
             setFrameRate(false, false);
         }
     }
-    // if (!_gameStart) {
-    //     domenu();
-    //     return;
-    // }
+    if (gameOver && _gameStart) {
+        moveSnake();
+        return;
+    }
+    if (!_gameStart || gameOver) {
+        handleMenuEvent(events);
+        return;
+    }
     if (shouldSpawnFruit()) {
         generateFood(true);
     }
@@ -347,8 +346,6 @@ void Snake::moveSnake()
 {
     Position newHead = snake.body[0];
 
-    if (gameOver)
-        return;
     switch (this->direction) {
         case UP:
             newHead.y--;
@@ -377,7 +374,7 @@ void Snake::moveSnake()
     if (foodEaten) {
         eatFood();
         if (snake.body.size() == static_cast<size_t>(gridWidth * gridHeight)) {
-            gameEnd = true;
+            gameOver = true;
             return;
         }
     } else {
@@ -481,6 +478,15 @@ std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
 
+    if (gameOver && !_gameStart) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+    if ((!_gameStart || gameOver) && !(_gameStart && gameOver)) {
+        return domenu();
+    }
+    if (gameOver) {
+        _gameStart = false;
+    }
     entities.clear();
     for (int y = 0; y < gridHeight; ++y) {
         for (int x = 0; x < gridWidth; ++x) {
@@ -496,6 +502,220 @@ std::map<std::string, Entity> Snake::renderGame()
             LoadFirstAssetPack(x, y, entity, entities);
         }
     }
+    return entities;
+}
+
+/**
+ * @brief Handles the menu events.
+ *
+ * This function processes the menu events and updates the game state
+ * accordingly. It handles starting the game and quitting the game.
+ *
+ * @param events A vector of events to handle.
+ */
+void Snake::handleMenuEvent(std::vector<RawEvent> events)
+{
+    for (const auto& event : events) {
+        if (event.type == EventType::PRESS) {
+            if (event.key == KEYBOARD_UP) {
+                _gameStart = true;
+            } else if (event.key == KEYBOARD_DOWN) {
+                gameEnd = true;
+            }
+        }
+    }
+}
+
+/**
+ * @brief Resets the game grid and state.
+ *
+ * This function resets the game grid and state to their initial values.
+ * It clears the grid, resets the snake's body, and sets the direction
+ * to UP.
+ */
+void Snake::resetGrid()
+{
+    for (int y = 0; y < gridHeight; ++y) {
+        for (int x = 0; x < gridWidth; ++x) {
+            grid[y][x].isWall = false;
+            grid[y][x].isSnake = false;
+            grid[y][x].isFood = false;
+            grid[y][x].isTimeFood = false;
+        }
+    }
+    snake.body.clear();
+    direction = UP;
+    createGrid(gridWidth, gridHeight);
+}
+
+/**
+ * @brief Creates an entity with the specified properties.
+ *
+ * This function creates an entity with the specified shape, position,
+ * size, color, and sprites. It returns the created entity.
+ *
+ * @param type The shape type for the entity.
+ * @param x The x-coordinate of the entity.
+ * @param y The y-coordinate of the entity.
+ * @param width The width of the entity.
+ * @param height The height of the entity.
+ * @param r The red component of the color.
+ * @param g The green component of the color.
+ * @param b The blue component of the color.
+ * @param terminalSprite The sprite for terminal display.
+ * @param graphicalSprite The sprite for graphical display.
+ * @param rotate The rotation angle for the entity (default is 0).
+ * @param id An optional ID for the entity (default is empty string).
+ * @return Entity The created entity.
+ */
+Entity Snake::createEntity(Shape type, int x, int y, int width, int height, int r, int g, int b,
+                          const std::string& terminalSprite, const std::string& graphicalSprite, 
+                          int rotate, const std::string& id)
+{
+    Entity entity;
+    entity.type = type;
+    entity.x = x;
+    entity.y = y;
+    entity.width = width;
+    entity.height = height;
+    entity.rotate = rotate;
+    entity.RGB[0] = r;
+    entity.RGB[1] = g;
+    entity.RGB[2] = b;
+    entity.sprites[DisplayType::TERMINAL] = terminalSprite;
+    entity.sprites[DisplayType::GRAPHICAL] = graphicalSprite;
+    (void)id;
+    return entity;
+}
+
+/**
+ * @brief Creates a text entity with the specified properties.
+ *
+ * This function creates a text entity with the specified position, size,
+ * color, and text. It returns the created entity.
+ *
+ * @param text The text to display.
+ * @param x The x-coordinate of the entity.
+ * @param y The y-coordinate of the entity.
+ * @param width The width of the entity.
+ * @param height The height of the entity.
+ * @param r The red component of the color.
+ * @param g The green component of the color.
+ * @param b The blue component of the color.
+ * @return Entity The created text entity.
+ */
+Entity Snake::createTextEntity(const std::string& text, int x, int y, int width, int height, 
+                              int r, int g, int b)
+{
+    return createEntity(Shape::TEXT, x, y, width, height, r, g, b, text, text);
+}
+
+/**
+ * @brief Creates a rectangle entity with the specified properties.
+ *
+ * This function creates a rectangle entity with the specified position,
+ * size, color, and sprites. It returns the created entity.
+ *
+ * @param x The x-coordinate of the entity.
+ * @param y The y-coordinate of the entity.
+ * @param width The width of the entity.
+ * @param height The height of the entity.
+ * @param r The red component of the color.
+ * @param g The green component of the color.
+ * @param b The blue component of the color.
+ * @param terminalSprite The sprite for terminal display.
+ * @param graphicalSprite The sprite for graphical display.
+ * @return Entity The created rectangle entity.
+ */
+Entity Snake::createRectangleEntity(int x, int y, int width, int height, int r, int g, int b,
+                                   const std::string& terminalSprite, const std::string& graphicalSprite)
+{
+    return createEntity(Shape::RECTANGLE, x, y, width, height, r, g, b, terminalSprite, graphicalSprite);
+}
+
+/**
+ * @brief Adds title entities to the map.
+ *
+ * This function creates and adds title entities to the map of entities.
+ *
+ * @param entities The map of entities to which the title entities will be added.
+ */
+void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
+{
+    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 100, 768 / 2 - 200, 
+                                        200, 50, 255, 255, 255);
+    
+    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 105, 768 / 2 - 195, 
+                                               200, 50, 0, 0, 0);
+}
+
+/**
+ * @brief Adds button entities to the map.
+ *
+ * This function creates and adds button entities to the map of entities.
+ *
+ * @param entities The map of entities to which the button entities will be added.
+ */
+void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
+{
+    entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 12, 
+                                               120, 60, 0, 0, 0, "no sprite", "");
+    
+    entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 85, 
+                                                   120, 60, 0, 0, 0, "no sprite", "");
+}
+
+/**
+ * @brief Adds option entities to the map.
+ *
+ * This function creates and adds option entities to the map of entities.
+ *
+ * @param entities The map of entities to which the option entities will be added.
+ */
+void Snake::addOptionEntities(std::map<std::string, Entity>& entities)
+{
+    entities["play"] = createTextEntity("Play", 1024 / 2 - 50, 768 / 2, 
+                                       60, 30, 255, 255, 255);
+    entities["quit"] = createTextEntity("Quit", 1024 / 2 - 50, 768 / 2 + 75, 
+                                       60, 30, 255, 255, 255);
+}
+
+/**
+ * @brief Adds a background entity to the map.
+ *
+ * This function creates and adds a background entity to the map of entities.
+ *
+ * @param entities The map of entities to which the background entity will be added.
+ */
+void Snake::addBackgroundEntity(std::map<std::string, Entity>& entities)
+{
+    entities["ZZZZZbackground"] = createRectangleEntity(0, 0, 1024, 768, 0, 0, 0, 
+                                                     " ", "assets/snake/wall.png");
+}
+
+/**
+ * @brief Creates the menu entities.
+ *
+ * This function creates the menu entities for the game. It sets up the
+ * background, title, buttons, and options for the game menu.
+ *
+ * @return std::map<std::string, Entity> A map of entities representing
+ * the game menu.
+ */
+std::map<std::string, Entity> Snake::domenu()
+{
+    std::map<std::string, Entity> entities;
+    
+    if (gameOver) {
+        _gameStart = false;
+    }
+    gameOver = false;
+    resetGrid();
+
+    addBackgroundEntity(entities);
+    addTitleEntities(entities);
+    addButtonEntities(entities);
+    addOptionEntities(entities);
 
     return entities;
 }
