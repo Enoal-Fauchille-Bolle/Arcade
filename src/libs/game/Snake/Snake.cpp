@@ -20,6 +20,16 @@ Snake::~Snake()
 
 }
 
+/**
+ * @brief Creates the game grid with walls and snake body.
+ *
+ * This function initializes the game grid with the specified width and height.
+ * It sets up walls around the edges and places the snake's initial body segments
+ * in the center of the grid.
+ *
+ * @param width The width of the grid.
+ * @param height The height of the grid.
+ */
 void Snake::createGrid(int width, int height)
 {
     grid.resize(height, std::vector<Cell>(width));
@@ -42,6 +52,15 @@ void Snake::createGrid(int width, int height)
     generateFood(false);
 }
 
+/**
+ * @brief Checks if the game is over.
+ *
+ * This function checks if the game is over by checking if the snake has collided
+ * with itself or a wall. If the game is over, it resets the game state and
+ * returns true.
+ *
+ * @return true if the game is over, false otherwise.
+ */
 bool Snake::isGameOver(void)
 {
     if (gameOver) {
@@ -51,12 +70,22 @@ bool Snake::isGameOver(void)
     return false;
 }
 
+/**
+ * @brief Returns the current score of the game.
+ *
+ * This function returns a pair containing the score and a string
+ * representation of the score. If the game is over, it returns the final score.
+ *
+ * @return std::pair<float, std::string> A pair containing the score and its
+ * string representation.
+ */
 std::pair<float, std::string> Snake::getScore(void)
 {
     if (gameOver)
         return _score;
     return std::pair<float, std::string>(0, "0");
 }
+
 
 bool Snake::isGameEnd(void)
 {
@@ -67,6 +96,15 @@ bool Snake::isGameEnd(void)
     return false;
 }
 
+/**
+ * @brief Returns the name of the new library.
+ *
+ * This function returns the name of the new library based on the game state.
+ * If the game is over, it returns the menu library. Otherwise, it returns
+ * the snake library.
+ *
+ * @return std::string The name of the new library.
+ */
 std::string Snake::getNewLib(void)
 {
     if (gameOver) {
@@ -75,6 +113,13 @@ std::string Snake::getNewLib(void)
     return "lib/arcade_snake.so";
 }
 
+/**
+ * @brief Returns the name of the game.
+ *
+ * This function returns the name of the game.
+ *
+ * @return std::string The name of the game.
+ */
 void Snake::setDirection(std::vector<RawEvent> events)
 {
     for (const auto& event : events) {
@@ -107,6 +152,16 @@ void Snake::setDirection(std::vector<RawEvent> events)
     }
 }
 
+/**
+ * @brief Sets the frame rate for the game.
+ *
+ * This function sets the frame rate for the game based on the speed and
+ * whether to increase it. It ensures that the frame rate does not exceed
+ * a maximum value.
+ *
+ * @param speed Indicates whether to set the frame rate to maximum.
+ * @param up Indicates whether to increase the frame rate.
+ */
 void Snake::setFrameRate(bool speed, bool up)
 {
     static int frameRate = 10;
@@ -125,7 +180,13 @@ void Snake::setFrameRate(bool speed, bool up)
     
 }
 
-void Snake::shouldIncreaseSpeed()
+/**
+ * @brief Increases the speed of the game.
+ *
+ * This function increases the speed of the game by adjusting the frame rate
+ * based on the elapsed time since the last speed increase.
+ */
+void Snake::shouldIncreaseSpeed(void)
 {
     static auto lastSpeedIncreaseTime = std::chrono::steady_clock::now();
     auto currentTime = std::chrono::steady_clock::now();
@@ -137,6 +198,14 @@ void Snake::shouldIncreaseSpeed()
     }
 }
 
+/**
+ * @brief Handles the game events.
+ *
+ * This function processes the game events and updates the game state
+ * accordingly. It handles quitting the game, pausing, and moving the snake.
+ *
+ * @param events A vector of events to handle.
+ */
 void Snake::handleEvent(std::vector<RawEvent> events)
 {
     if (events.empty()) {
@@ -153,6 +222,10 @@ void Snake::handleEvent(std::vector<RawEvent> events)
             setFrameRate(false, false);
         }
     }
+    if (!_gameStart) {
+        domenu();
+        return;
+    }
     if (shouldSpawnFruit()) {
         generateFood(true);
     }
@@ -162,7 +235,16 @@ void Snake::handleEvent(std::vector<RawEvent> events)
     }
 }
 
-bool Snake::shouldMoveSnake()
+/**
+ * @brief Use the chrono library to check if the snake should move.
+ *
+ * This function checks if the snake should move based on the elapsed time
+ * since the last move. It returns true if the snake should move, false
+ * otherwise.
+ *
+ * @return true if the snake should move, false otherwise.
+ */
+bool Snake::shouldMoveSnake(void)
 {
     auto currentTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
@@ -175,6 +257,15 @@ bool Snake::shouldMoveSnake()
     return false;
 }
 
+/**
+ * @brief Checks if the fruit should spawn.
+ *
+ * This function checks if the fruit should spawn based on the elapsed time
+ * since the last fruit spawn. It returns true if the fruit should spawn,
+ * false otherwise.
+ *
+ * @return true if the fruit should spawn, false otherwise.
+ */
 bool Snake::shouldSpawnFruit()
 {
     static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
@@ -188,6 +279,15 @@ bool Snake::shouldSpawnFruit()
     return false;
 }
 
+/**
+ * @brief Generates food on the grid.
+ *
+ * This function generates food on the grid at a random position that is not
+ * occupied by a wall, snake, or existing food. It also sets the type of food
+ * (normal or time food) based on the timeFood parameter.
+ *
+ * @param timeFood Indicates whether to generate time food.
+ */
 void Snake::generateFood(bool timeFood)
 {
     int foodCount = 0;
@@ -215,6 +315,12 @@ void Snake::generateFood(bool timeFood)
     grid[y][x].isFood = true;
 }
 
+/**
+ * @brief Handles the snake eating food.
+ *
+ * This function handles the snake eating food by updating the score,
+ * removing the food from the grid, and generating new food if necessary.
+ */
 void Snake::eatFood()
 {
     bool isTimeFood = grid[snake.body[0].y][snake.body[0].x].isTimeFood;
@@ -230,6 +336,13 @@ void Snake::eatFood()
     generateFood(false);
 }
 
+/**
+ * @brief Moves the snake in the current direction.
+ *
+ * This function moves the snake in the current direction by updating its
+ * position and checking for collisions with walls, itself, or food. It also
+ * handles the game over state if necessary.
+ */
 void Snake::moveSnake()
 {
     Position newHead = snake.body[0];
@@ -274,6 +387,17 @@ void Snake::moveSnake()
     }
 }
 
+/**
+ * @brief Sets the color of the grid cell.
+ *
+ * This function sets the color of the grid cell based on the RGB values
+ * provided. It updates the RGB values of the entity.
+ *
+ * @param entity The entity representing the grid cell.
+ * @param r The red component of the color.
+ * @param g The green component of the color.
+ * @param b The blue component of the color.
+ */
 void Snake::setGridColor(Entity& entity, int r, int g, int b)
 {
     entity.RGB[0] = r;
@@ -281,7 +405,18 @@ void Snake::setGridColor(Entity& entity, int r, int g, int b)
     entity.RGB[2] = b;
 }
 
-
+/**
+ * @brief Loads the first asset pack for the grid cell.
+ *
+ * This function loads the first asset pack for the grid cell based on its
+ * properties (wall, snake, food, etc.). It sets the appropriate sprites and
+ * colors for the entity representing the grid cell.
+ *
+ * @param x The x-coordinate of the grid cell.
+ * @param y The y-coordinate of the grid cell.
+ * @param entity The entity representing the grid cell.
+ * @param entities The map of entities to store the loaded assets.
+ */
 void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities)
 {
     if (grid[y][x].isWall) {
@@ -332,6 +467,16 @@ void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::strin
     entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
 }
 
+/**
+ * @brief Renders the game grid and returns the entities to display.
+ *
+ * This function creates a map of entities representing the game grid.
+ * It sets the position, color, and sprite of each entity based on its
+ * properties (wall, snake, food, etc.).
+ *
+ * @return std::map<std::string, Entity> A map of entities representing
+ * the game grid.
+ */
 std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
@@ -355,11 +500,22 @@ std::map<std::string, Entity> Snake::renderGame()
     return entities;
 }
 
+/**
+ * @brief Get the name of the library
+ *
+ * @return std::string
+ */
 std::string Snake::getName(void)
 {
     return LIBRARY_NAME;
 }
 
+/**
+ * @brief Get the new display
+ *
+ * @param success
+ * @return std::string
+ */
 std::string Snake::getNewDisplay(void)
 {
     return "";
