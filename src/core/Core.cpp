@@ -134,6 +134,7 @@ void Core::nextDisplayLibrary(void)
 {
     std::string newDisplayPath;
 
+    delete_display();
     _selectedDisplayLib++;
     if (_selectedDisplayLib >= _displayLibs.size()) {
         _selectedDisplayLib = 0;
@@ -154,6 +155,7 @@ void Core::previousDisplayLibrary(void)
 {
     std::string newDisplayPath;
 
+    delete_display();
     if (_selectedDisplayLib == 0) {
         _selectedDisplayLib = _displayLibs.size() - 1;
     } else {
