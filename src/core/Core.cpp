@@ -144,6 +144,12 @@ void Core::nextDisplayLibrary(void)
     }
 }
 
+/**
+ * @brief Switches to the previous display library.
+ * This function decrements the selected display library index and loads
+ * the corresponding library. If it reaches the beginning of the list, it
+ * wraps around to the last library.
+ */
 void Core::previousDisplayLibrary(void)
 {
     std::string newDisplayPath;
@@ -295,7 +301,11 @@ void Core::saveScore(std::pair<float, std::string> score)
     }
 }
 
-
+/**
+ * @brief Gets the display library path from the index.
+ * @param index The index of the display library.
+ * @return The path of the display library.
+ */
 std::string Core::getDisplayLibPathFromIndex(size_t index)
 {
     if (index >= _displayLibs.size()) {
@@ -304,6 +314,11 @@ std::string Core::getDisplayLibPathFromIndex(size_t index)
     return _displayLibs[index].path;
 }
 
+/**
+ * @brief Gets the index of the display library from the path.
+ * @param path The path of the display library.
+ * @return The index of the display library.
+ */
 size_t Core::getDisplayLibIndexFromPath(std::string path)
 {
     for (size_t i = 0; i < _displayLibs.size(); i++) {
