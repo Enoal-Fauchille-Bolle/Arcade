@@ -61,7 +61,7 @@ class Minesweeper : public IGame {
         void flagCell(int x, int y);
         bool checkWin();
         bool checkLose();
-        void revelBombs();
+        void revealBombs();
         void setCellColor(Entity &cell, int r, int g, int b);
 
         void addRemainingMinesEntity(std::map<std::string, Entity> &entities);
@@ -72,6 +72,7 @@ class Minesweeper : public IGame {
 
         std::pair<int, int> handleClick(RawEvent event);
 
+        void addSmileyEntity(std::map<std::string, Entity> &entities);
         std::map<std::string, Entity> printESC();
         std::map<std::string, Entity> printWinOrLose();
         std::map<std::string, Entity> printMenu();
@@ -89,6 +90,13 @@ class Minesweeper : public IGame {
             ESC
         };
 
+        enum SmileyState {
+            SMILEY,
+            CLICK,
+            WIN,
+            LOSE
+        };
+
         GameState _state = MENU;
 
         int _width;
@@ -99,11 +107,13 @@ class Minesweeper : public IGame {
 
         std::vector<std::vector<Cell>> _board;
         std::pair<float, std::string> _score;
+        SmileyState _smileyState = SMILEY;
         std::string _name;
+
 
         bool isFirstClick = false;
 
-        bool _isGameTermiated = false;
+        bool _isGameTerminated = false;
 
         bool _isGameOver = false;
 
