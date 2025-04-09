@@ -140,6 +140,16 @@ void Snake::setDirection(std::vector<RawEvent> events)
                         direction = RIGHT;
                     }
                     break;
+                case KEYBOARD_V:
+                    if (assetPack == 0) {
+                        assetPack = 1;
+                    }
+                    break;
+                case KEYBOARD_B:
+                    if (assetPack == 1) {
+                        assetPack = 0;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -464,6 +474,58 @@ void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::strin
     entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
 }
 
+void Snake::LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities)
+{
+    if (grid[y][x].isWall) {
+        setGridColor(entity, 255, 0, 0);
+        entity.sprites[DisplayType::TERMINAL] = "A";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+    } else if (grid[y][x].isSnake) {
+        setGridColor(entity, 0, 255, 255);
+        entity.sprites[DisplayType::TERMINAL] = "S";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_2.jpg";
+        if (snake.body.front().x == x && snake.body.front().y == y) {
+            setGridColor(entity, 255, 0, 255);
+            entity.sprites[DisplayType::TERMINAL] = "H";
+            switch (this->direction) {
+                case UP:
+                    entity.rotate = 180;
+                    break;
+                case DOWN:
+                    entity.rotate = 0;
+                    break;
+                case LEFT:
+                    entity.rotate = 90;
+                    break;
+                case RIGHT:
+                    entity.rotate = 270;
+                    break;
+            }
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_1.jpg";
+        }
+        if (gameOver) {
+            setGridColor(entity, 255, 0, 0);
+            entity.sprites[DisplayType::TERMINAL] = "X";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_4.jpg";
+            if (snake.body.front().x == x && snake.body.front().y == y) {
+                setGridColor(entity, 255, 0, 255);
+                entity.sprites[DisplayType::TERMINAL] = "H";
+                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_3.jpg";
+            }
+        }
+    } else if (grid[y][x].isFood) {
+        setGridColor(entity, 0, 255, 0);
+        entity.sprites[DisplayType::TERMINAL] = "F";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
+    } else {
+        entity.sprites[DisplayType::TERMINAL] = " ";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+    }
+    entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
+}
+
+
+
 /**
  * @brief Renders the game grid and returns the entities to display.
  *
@@ -499,7 +561,11 @@ std::map<std::string, Entity> Snake::renderGame()
             entity.height = 38;
             entity.rotate = 0;
             setGridColor(entity, 255, 255, 255);
-            LoadFirstAssetPack(x, y, entity, entities);
+            if (assetPack == 0) {
+                LoadFirstAssetPack(x, y, entity, entities);
+            } else if (assetPack == 1) {
+                LoadSecondAssetPack(x, y, entity, entities);
+            }
         }
     }
     return entities;

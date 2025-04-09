@@ -72,6 +72,7 @@ class Snake : public IGame {
         void createGrid(int width, int height);
         void setGridColor(Entity& entity, int r, int g, int b);
         void LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
+        void LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
         bool shouldSpawnFruit();
         bool shouldMoveSnake();
         void shouldIncreaseSpeed();
@@ -104,6 +105,7 @@ class Snake : public IGame {
         std::chrono::steady_clock::time_point lastMoveTime;
         int _frameRate = 1;
         bool _gameStart = false;
+        int assetPack = 0;
 };
 
 #endif /* !SNAKE_HPP_ */
