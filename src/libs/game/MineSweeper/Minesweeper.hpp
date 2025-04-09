@@ -19,10 +19,16 @@
 
     #define LIBRARY_NAME "Minesweeper"
 
+enum CellState {
+    NONE,
+    QMARK,
+    FLAGGED
+};
+
 struct Cell {
     bool isMine = false;
+    CellState State = NONE;
     bool isRevealed = false;
-    bool isFlagged = false;
     int adjacentMines = 0;
 };
 
@@ -58,6 +64,7 @@ class Minesweeper : public IGame {
         void revelBombs();
         void setCellColor(Entity &cell, int r, int g, int b);
 
+        void addRemainingMinesEntity(std::map<std::string, Entity> &entities);
         void handleEventGame(std::vector<RawEvent> events);
         void handleEventMenu(std::vector<RawEvent> events);
         void handleEventGameOver(std::vector<RawEvent> events);
@@ -94,12 +101,16 @@ class Minesweeper : public IGame {
         std::pair<float, std::string> _score;
         std::string _name;
 
-
         bool isFirstClick = false;
 
         bool _isGameTermiated = false;
 
         bool _isGameOver = false;
+
+        int _timeLimit = 300;
+        int _remainingMines = 0;
+        int _flaggedMines = 0;
+        int _revealedCells = 0;
 };
 
 #endif /* !MINESWEEPER_HPP_ */
