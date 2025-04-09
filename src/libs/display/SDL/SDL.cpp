@@ -66,7 +66,8 @@ static const std::unordered_map<SDL_Keycode, EventKey> eventTypeMap = {
     {SDLK_LCTRL, KEYBOARD_LCTRL},
     {SDLK_RCTRL, KEYBOARD_RCTRL},
     {SDLK_LALT, KEYBOARD_LALT},
-    {SDLK_RALT, KEYBOARD_RALT}
+    {SDLK_RALT, KEYBOARD_RALT},
+    {SDLK_RETURN, KEYBOARD_ENTER},
 };
 
 SDL::SDL()
@@ -133,6 +134,7 @@ std::vector<RawEvent> SDL::pollEvent(void)
     SDL_Event event;
     _hasEvent = false;
 
+    _event.clear();
     while (SDL_PollEvent(&event)) {
         _hasEvent = true;
         if (event.type == SDL_QUIT) {
@@ -226,7 +228,7 @@ void SDL::drawCircle(renderObject obj)
 
 void SDL::drawText(renderObject obj)
 {
-    TTF_Font *font = TTF_OpenFont("assets/arial.ttf", 14);
+    TTF_Font *font = TTF_OpenFont("assets/arial.ttf", obj.width);
     if (!font) {
         std::cerr << "TTF_OpenFont Error: " << TTF_GetError() << std::endl;
         return;
