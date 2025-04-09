@@ -94,12 +94,13 @@ std::string Menu::getNewLib(void)
  *
  * @return std::string The name of the menu
  */
-std::string Menu::getNewDisplay(bool success)
+std::string Menu::getNewDisplay(void)
 {
-    if (success == true) {
+    if (!_startGame)
         return "";
-    }
-    return "";
+    return (_selectedDisplayLib >= _displayLibs.size())
+               ? _displayLibs[0].path
+               : _displayLibs[_selectedDisplayLib].path;
 }
 
 ////////////////////////////// Library Getting //////////////////////////////
@@ -293,8 +294,8 @@ void Menu::checkGameClick(RawEvent event)
             event.x <=
                 _gameLibs[i].pos.x + _gameLibs[i].pos.width + LIBS_PADDING &&
             event.y <= (_gameLibs[i].pos.y + 15) + LIBS_PADDING &&
-            event.y >=
-                (_gameLibs[i].pos.y + 15) - _gameLibs[i].pos.height - LIBS_PADDING) {
+            event.y >= (_gameLibs[i].pos.y + 15) - _gameLibs[i].pos.height -
+                           LIBS_PADDING) {
             _selectedGameLib = i;
             return;
         }
@@ -317,8 +318,8 @@ void Menu::checkDisplayClick(RawEvent event)
             event.x <= _displayLibs[i].pos.x + _displayLibs[i].pos.width +
                            LIBS_PADDING &&
             event.y <= (_displayLibs[i].pos.y + 15) + LIBS_PADDING &&
-            event.y >= (_displayLibs[i].pos.y + 15) - _displayLibs[i].pos.height -
-                           LIBS_PADDING) {
+            event.y >= (_displayLibs[i].pos.y + 15) -
+                           _displayLibs[i].pos.height - LIBS_PADDING) {
             _selectedDisplayLib = i;
             return;
         }
@@ -330,7 +331,8 @@ void Menu::checkStartButton(RawEvent event)
     if (event.x >= START_BUTTON_X - LIBS_PADDING &&
         event.x <= START_BUTTON_X + START_BUTTON_WIDTH + LIBS_PADDING &&
         event.y <= (START_BUTTON_Y + 15) + LIBS_PADDING &&
-        event.y >= (START_BUTTON_Y + 15) - START_BUTTON_HEIGHT - LIBS_PADDING) {
+        event.y >=
+            (START_BUTTON_Y + 15) - START_BUTTON_HEIGHT - LIBS_PADDING) {
         _startGame = true;
     }
 }

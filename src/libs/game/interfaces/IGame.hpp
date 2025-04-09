@@ -38,7 +38,7 @@ class IGame {
         virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
-        virtual std::string getNewDisplay(bool sucsess) = 0;
+        virtual std::string getNewDisplay(void) = 0;
 
         virtual void handleEvent(std::vector<RawEvent>) = 0;
 

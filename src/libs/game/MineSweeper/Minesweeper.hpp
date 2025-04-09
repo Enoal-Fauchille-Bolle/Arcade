@@ -43,7 +43,7 @@ class Minesweeper : public IGame {
 
         std::map<std::string, Entity> renderGame() override;
 
-        std::string getNewDisplay(bool sucsess) override;
+        std::string getNewDisplay(void) override;
 
         std::string getName(void) override;
 

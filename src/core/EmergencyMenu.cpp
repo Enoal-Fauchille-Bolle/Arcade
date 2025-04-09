@@ -85,12 +85,13 @@ std::string EmergencyMenu::getNewLib(void)
  *
  * @return std::string The name of the menu
  */
-std::string EmergencyMenu::getNewDisplay(bool success)
+std::string EmergencyMenu::getNewDisplay(void)
 {
-    if (success == true) {
+    if (!_startGame)
         return "";
-    }
-    return "";
+    return (_selectedDisplayLib >= _displayLibs.size())
+               ? _displayLibs[0].path
+               : _displayLibs[_selectedDisplayLib].path;
 }
 
 ////////////////////////////// Library Getting //////////////////////////////
@@ -364,7 +365,6 @@ void EmergencyMenu::handleEnter(void)
         _selectedGameLib = _selectingGameLib;
     }
 }
-
 
 /**
  * @brief Handle a single event

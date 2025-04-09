@@ -60,7 +60,7 @@ class EmergencyMenu : public IGame {
 
         std::string getNewLib(void) final;
 
-        std::string getNewDisplay(bool success) final;
+        std::string getNewDisplay(void) final;
 
         void handleEvent(std::vector<RawEvent>) final;
 

@@ -56,7 +56,7 @@ class Snake : public IGame {
         void handleEvent(std::vector<RawEvent>) override;
         std::map<std::string, Entity> renderGame() override;
 
-        std::string getNewDisplay(bool success) override;
+        std::string getNewDisplay(void) override;
 
         std::string getName(void) override;
 

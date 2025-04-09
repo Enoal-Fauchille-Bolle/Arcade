@@ -71,12 +71,9 @@ std::string Minesweeper::getNewLib(void)
     return "lib/arcade_menu.so";
 }
 
-std::string Minesweeper::getNewDisplay(bool sucsess)
+std::string Minesweeper::getNewDisplay(void)
 {
-    if (sucsess == true) {
-        _lib = "";
-    }
-    return _lib;
+    return "";
 }
 
 /**
