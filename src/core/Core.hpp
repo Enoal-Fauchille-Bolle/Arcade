@@ -17,6 +17,7 @@
     #include "LibLoader.hpp"
     #include "../libs/display/interfaces/IDisplay.hpp"
     #include "../libs/game/interfaces/IGame.hpp"
+    #include "./EmergencyMenu.hpp"
 
 class Core {
     public:
@@ -32,6 +33,8 @@ class Core {
 
         int delete_display(void);
         int delete_game(void);
+
+        void startEmergencyMenu(void);
 
         bool checkQuit(std::vector<RawEvent> events);
 

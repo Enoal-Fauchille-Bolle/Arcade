@@ -35,6 +35,7 @@ MAIN = $(SRCDIR)main.cpp
 CORE_SRC = \
 		$(SRCDIR)core/Core.cpp	\
 		$(SRCDIR)core/LibLoader.cpp	\
+		$(SRCDIR)core/EmergencyMenu.cpp	\
 
 NCURSES_SRC = \
 		$(SRCDIR)libs/display/Ncurses/Ncurses.cpp	\

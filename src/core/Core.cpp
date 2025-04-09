@@ -6,6 +6,7 @@
 */
 
 #include "Core.hpp"
+
 #include "LibLoader.hpp"
 
 /**
@@ -14,10 +15,16 @@
  */
 Core::Core(std::string path)
 {
-
-    running = true;
-    load_display(path);
-    load_game("./lib/arcade_menu.so");
+    if (load_display(path) != 0) {
+        std::cerr << "Error loading display library" << std::endl;
+        running = false;
+        return;
+    }
+    if (load_game("./lib/arcade_menu.so") == 1) {
+        std::cerr << "Error loading default menu" << std::endl;
+        std::cerr << "Launching emergency menu..." << std::endl;
+        startEmergencyMenu();
+    }
 }
 
 /**
@@ -25,6 +32,34 @@ Core::Core(std::string path)
  */
 Core::~Core()
 {
+}
+
+void Core::startEmergencyMenu(void)
+{
+    bool gameSelected = false;
+
+    _game = std::make_unique<EmergencyMenu>();
+    while (!gameSelected && running) {
+        std::vector<RawEvent> events = _display->pollEvent();
+        if (checkQuit(events)) {
+            running = false;
+            break;
+        }
+        _game->handleEvent(events);
+        std::map<std::string, Entity> entities = _game->renderGame();
+        renderEntities(entities);
+        if (dynamic_cast<EmergencyMenu *>(_game.get())->isGameEnd()) {
+            std::string newGamePath = _game->getNewLib();
+            _game.reset();
+            if (load_game(newGamePath) == 0) {
+                gameSelected = true;
+            } else {
+                std::cerr << "Failed to load selected game: " << newGamePath
+                          << std::endl;
+                _game = std::make_unique<EmergencyMenu>();
+            }
+        }
+    }
 }
 
 /**
