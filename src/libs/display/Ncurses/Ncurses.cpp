@@ -373,7 +373,7 @@ void Ncurses::drawObject(renderObject obj)
 
     _screenHeight = screenSize.height;
     _screenWidth = screenSize.width;
-    if (!checkScreenSize())
+    if (!checkScreenSize() || obj.sprite.empty())
         return;
     if (obj.type == RECTANGLE)
         drawRectangle(obj);
