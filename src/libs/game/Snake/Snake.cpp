@@ -222,10 +222,10 @@ void Snake::handleEvent(std::vector<RawEvent> events)
             setFrameRate(false, false);
         }
     }
-    if (!_gameStart) {
-        domenu();
-        return;
-    }
+    // if (!_gameStart) {
+    //     domenu();
+    //     return;
+    // }
     if (shouldSpawnFruit()) {
         generateFood(true);
     }
