@@ -175,7 +175,6 @@ fclean: libclean
 	rm -f $(ROOT_LIBS)$(MINESWEEPER_NAME)
 	rm -f $(ROOT_LIBS)$(SNAKE_NAME)
 	rm -f $(ROOT_LIBS)$(TESTS_NAME)
-	find -name "lib*.a" -delete
 
 re: fclean all
 
