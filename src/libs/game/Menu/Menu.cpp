@@ -453,11 +453,11 @@ void Menu::setupLibButton(LibInfo &lib, int x, int y)
     lib.pos.height = LIBS_HEIGHT;
 }
 
-void Menu::setEntityColor(Entity &entoty, int r, int g, int b)
+void Menu::setEntityColor(Entity &entity, int r, int g, int b)
 {
-    entoty.RGB[0] = r;
-    entoty.RGB[1] = g;
-    entoty.RGB[2] = b;
+    entity.RGB[0] = r;
+    entity.RGB[1] = g;
+    entity.RGB[2] = b;
 }
 
 /**
