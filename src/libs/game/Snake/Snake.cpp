@@ -170,18 +170,23 @@ void Snake::setDirection(std::vector<RawEvent> events)
  */
 void Snake::setFrameRate(bool speed, bool up)
 {
-    static int frameRate = 10;
+    static int previousFrameRate = 10;
 
     if (up) {
-        frameRate += 2;
+        _frameRate += 2;
+        previousFrameRate = _frameRate;
     }
-    if (frameRate > 35) {
-        frameRate = 35;
+    if (_frameRate > 35) {
+        _frameRate = 35;
+        previousFrameRate = _frameRate;
     }
     if (speed) {
+        if (_frameRate < 35) {
+            previousFrameRate = _frameRate;
+        }
         _frameRate = 35;
     } else {
-        _frameRate = frameRate;
+        _frameRate = previousFrameRate;
     }
     
 }
@@ -198,7 +203,7 @@ void Snake::shouldIncreaseSpeed(void)
     auto currentTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastSpeedIncreaseTime).count();
 
-    if (elapsedTime >= 5) {
+    if (elapsedTime >= 10) {
         setFrameRate(false, true);
         lastSpeedIncreaseTime = currentTime;
     }
@@ -218,7 +223,7 @@ void Snake::handleEvent(std::vector<RawEvent> events)
         setFrameRate(false, false);
     }
     for (const auto& event : events) {
-        if (event.type == EventType::QUIT) {
+        if (event.type == EventType::QUIT) {_frameRate = 35;
             gameOver = true;
             return;
         }
@@ -239,6 +244,7 @@ void Snake::handleEvent(std::vector<RawEvent> events)
     if (shouldSpawnFruit()) {
         generateFood(true);
     }
+    shouldIncreaseSpeed();
     setDirection(events);
     if (shouldMoveSnake()) {
         moveSnake();
@@ -611,8 +617,7 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
  */
 void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
 {
-    if (segmentIndex == 0) { // Head
-        // Calculate position offset for the head based on direction and animation progress
+    if (segmentIndex == 0) {
         int moveX = 0, moveY = 0;
         switch (direction) {
             case UP:    moveY = -1; break;
@@ -624,18 +629,14 @@ void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
         entity.x += static_cast<int>(moveX * 38 * _animationProgress);
         entity.y += static_cast<int>(moveY * 38 * _animationProgress);
     } else {
-        // For all body segments including tail, calculate the target position
         int x = snake.body[segmentIndex].x;
         int y = snake.body[segmentIndex].y;
         int moveX = snake.body[segmentIndex-1].x - x;
-        int moveY = snake.body[segmentIndex-1].y - y;
-        
-        // Handle edge cases for wrapping around the grid
+        int moveY = snake.body[segmentIndex-1].y - y;        
         if (moveX > 1) moveX = -1;
         if (moveX < -1) moveX = 1;
         if (moveY > 1) moveY = -1;
         if (moveY < -1) moveY = 1;
-        
         entity.x += static_cast<int>(moveX * 38 * _animationProgress);
         entity.y += static_cast<int>(moveY * 38 * _animationProgress);
     }
@@ -700,17 +701,11 @@ void Snake::renderSnake(std::map<std::string, Entity>& entities)
         entity.width = 38;
         entity.height = 38;
         entity.rotate = 0;
-        
-        // Apply animation only when game is active
         if (_gameStart && !gameOver) {
             applySnakeAnimation(entity, i);
         }
-        
-        // Set snake-specific properties
         grid[y][x].isSnake = true;
         configureSnakeSegment(entity, isHead);
-        
-        // Add snake segment to entities with a unique ID
         entities["snake_" + std::to_string(i)] = entity;
     }
 }
@@ -729,20 +724,13 @@ std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
 
-    // Update animation progress
-    updateAnimationProgress();
-    
-    // Check if we should show menu instead of gameplay
+    updateAnimationProgress();    
     if (shouldShowMenu()) {
         return domenu();
     }
 
-    entities.clear();
-    
-    // Render grid elements (walls, empty space, food)
-    renderGridElements(entities);
-    
-    // Render snake with animation
+    entities.clear();    
+    renderGridElements(entities);    
     renderSnake(entities);
     
     return entities;
@@ -954,6 +942,7 @@ std::map<std::string, Entity> Snake::domenu()
     }
     gameOver = false;
     resetGrid();
+    _frameRate = 10;
 
     addBackgroundEntity(entities);
     addTitleEntities(entities);
