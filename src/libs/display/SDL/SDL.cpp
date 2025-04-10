@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <unordered_map>
 
@@ -80,7 +81,7 @@ SDL::SDL()
 {
     _window = nullptr;
     _renderer = nullptr;
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         exit(84);
     }
@@ -95,10 +96,32 @@ SDL::SDL()
         SDL_Quit();
         exit(84);
     }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cerr << "SDL_mixer could not initialize! Error: " << Mix_GetError() << std::endl;
+    } else {
+        _audioInitialized = true;
+        Mix_AllocateChannels(16);
+    }
 }
 
 SDL::~SDL()
 {
+    for (auto& pair : _soundCache) {
+        if (pair.second) {
+            Mix_FreeChunk(pair.second);
+        }
+    }
+    _soundCache.clear();
+    
+    if (_currentMusic) {
+        Mix_FreeMusic(_currentMusic);
+        _currentMusic = nullptr;
+    }
+    
+    if (_audioInitialized) {
+        Mix_CloseAudio();
+    }
 }
 
 /**
@@ -212,14 +235,24 @@ std::vector<RawEvent> SDL::pollEvent(void)
     return _event;
 }
 
-/**
- * @brief Destroys all SDL resources.
- *
- * This function destroys the SDL window and renderer, and quits SDL,
- * TTF, and IMG subsystems.
- */
 void SDL::destroyAll(void)
 {
+    for (auto& pair : _soundCache) {
+        if (pair.second) {
+            Mix_FreeChunk(pair.second);
+        }
+    }
+    _soundCache.clear();
+    
+    if (_currentMusic) {
+        Mix_FreeMusic(_currentMusic);
+        _currentMusic = nullptr;
+    }
+    
+    if (_audioInitialized) {
+        Mix_CloseAudio();
+    }
+    
     if (_renderer)
         SDL_DestroyRenderer(_renderer);
     if (_window)
@@ -228,8 +261,8 @@ void SDL::destroyAll(void)
     _renderer = nullptr;
     _window = nullptr;
     TTF_Quit();
-    SDL_Quit();
     IMG_Quit();
+    SDL_Quit();
 }
 
 /**
@@ -348,4 +381,55 @@ void SDL::drawText(renderObject obj)
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
     TTF_CloseFont(font);
+}
+
+/**
+ * @brief Processes sound events from a renderObject.
+ *
+ * This method plays sound based on parameters in the renderObject.
+ * - Use "sound:" prefix in obj.sound to play temporary sound effects
+ * - Use "music:" prefix in obj.sound to play background music
+ *
+ * @param obj The renderObject containing sound information
+ */
+void SDL::drawMusic(renderObject obj)
+{
+    if (!_audioInitialized || obj.sprite.empty()) {
+        return;
+    }
+    if (obj.sprite.length() >= 13 && obj.sprite.substr(0, 12) == "assets/music_") {
+        std::string musicPath = obj.sprite;
+        
+        if (_currentMusic != nullptr) {
+            Mix_HaltMusic();
+            Mix_FreeMusic(_currentMusic);
+            _currentMusic = nullptr;
+        }
+        
+        _currentMusic = Mix_LoadMUS(musicPath.c_str());
+        if (!_currentMusic) {
+            std::cerr << "Failed to load music: " << Mix_GetError() << std::endl;
+            return;
+        }
+        
+        if (Mix_PlayMusic(_currentMusic, -1) == -1) {
+            std::cerr << "Failed to play music: " << Mix_GetError() << std::endl;
+        }
+        return;
+    } else {
+        std::string soundPath = obj.sprite;
+        
+        if (_soundCache.find(soundPath) == _soundCache.end()) {
+            Mix_Chunk* chunk = Mix_LoadWAV(soundPath.c_str());
+            if (!chunk) {
+                std::cerr << "Failed to load sound effect: " << Mix_GetError() << std::endl;
+                return;
+            }
+            _soundCache[soundPath] = chunk;
+        }
+        
+        if (Mix_PlayChannel(-1, _soundCache[soundPath], 0) == -1) {
+            std::cerr << "Failed to play sound effect: " << Mix_GetError() << std::endl;
+        }
+    }
 }

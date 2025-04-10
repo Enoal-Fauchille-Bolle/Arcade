@@ -59,6 +59,10 @@ void LibSDL::drawObject(renderObject obj)
         _sdl->drawCircle(obj);
     else if (obj.type == TEXT)
         _sdl->drawText(obj);
+    else if (obj.type == MUSIC)
+        _sdl->drawMusic(obj);
+    else
+        std::cerr << "Unknown object type: " << obj.type << std::endl;
 }
 
 /**

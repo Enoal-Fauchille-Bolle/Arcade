@@ -10,8 +10,10 @@
 
     #include <iostream>
     #include <SDL2/SDL.h>
+    #include <SDL2/SDL_mixer.h>
     #include "../interfaces/IDisplay.hpp"
     #include <vector>
+    #include <map>
 
     #define CENTER SDL_WINDOWPOS_CENTERED
     #define SCREEN_WIDTH 1024
@@ -36,12 +38,17 @@ class SDL {
         void drawRectangle(renderObject obj);
         void drawCircle(renderObject obj);
         void drawText(renderObject obj);
+        void drawMusic(renderObject obj);
 
     private:
         SDL_Window* _window = nullptr;
         SDL_Renderer* _renderer = nullptr;
         std::vector<RawEvent> _event;
         bool _hasEvent = false;
+
+        bool _audioInitialized = false;
+        Mix_Music* _currentMusic = nullptr;
+        std::map<std::string, Mix_Chunk*> _soundCache;
 };
 
 #endif /* !SDL_HPP_ */
