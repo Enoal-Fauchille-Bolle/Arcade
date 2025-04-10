@@ -771,13 +771,6 @@ void Snake::handleMenuEvent(std::vector<RawEvent> events)
 {
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
-            if (event.key == KEYBOARD_UP) {
-                _sounds.push_back("assets/launch.mp3");
-                _sounds.push_back("assets/music_snake_rock.mp3");
-                _gameStart = true;
-            } else if (event.key == KEYBOARD_DOWN) {
-                gameEnd = true;
-            }
             if (event.key == MOUSE_LEFT) {
                 if (event.x >= 1024 / 2 - 50 && event.x <= 1024 / 2 - 50 + 60 + 200 &&
                     event.y >= 768 / 2 && event.y <= 768 / 2 + 30 + 50) {
