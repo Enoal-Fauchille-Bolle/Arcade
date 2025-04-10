@@ -80,6 +80,7 @@ static const std::unordered_map<SDL_Keycode, EventKey> eventTypeMap = {
     {SDLK_HOME, KEYBOARD_HOME},
     {SDLK_END, KEYBOARD_END},
     {SDLK_INSERT, KEYBOARD_INSERT},
+    {SDLK_F1, KEYBOARD_F1},
     {SDLK_F2, KEYBOARD_F2},
     {SDLK_F3, KEYBOARD_F3},
     {SDLK_F4, KEYBOARD_F4},

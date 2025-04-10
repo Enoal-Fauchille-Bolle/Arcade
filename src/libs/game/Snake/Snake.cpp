@@ -141,12 +141,12 @@ void Snake::setDirection(std::vector<RawEvent> events)
                         direction = RIGHT;
                     }
                     break;
-                case KEYBOARD_V:
+                case KEYBOARD_F1:
                     if (assetPack == 0) {
                         assetPack = 1;
                     }
                     break;
-                case KEYBOARD_B:
+                case KEYBOARD_F2:
                     if (assetPack == 1) {
                         assetPack = 0;
                     }
