@@ -387,7 +387,7 @@ std::map<std::string, Entity> Minesweeper::printWinOrLose()
         Shape::RECTANGLE, 0, 0, backBtnWidth, backBtnHeight,
         backBtnX, backBtnY,
         {
-            {DisplayType::TERMINAL, " "},
+            {DisplayType::TERMINAL, ""},
             {DisplayType::GRAPHICAL, ""}
         }
     );
@@ -465,7 +465,7 @@ void Minesweeper::addNameInputEntity(std::map<std::string, Entity> &entities)
         Shape::RECTANGLE, 0, 0, 300, 50,
         nameX, nameY,
         {
-            {DisplayType::TERMINAL, " "},
+            {DisplayType::TERMINAL, ""},
             {DisplayType::GRAPHICAL, ""}
         }
     );
@@ -477,7 +477,7 @@ void Minesweeper::addNameInputEntity(std::map<std::string, Entity> &entities)
         Shape::RECTANGLE, 0, 0, 304, 44,
         nameX - 2, nameY - 2,
         {
-            {DisplayType::TERMINAL, " "},
+            {DisplayType::TERMINAL, ""},
             {DisplayType::GRAPHICAL, ""}
         }
     );
@@ -515,7 +515,7 @@ void Minesweeper::addMenuButtonEntities(std::map<std::string, Entity> &entities)
         Shape::RECTANGLE, 0, 0, 120, 60,
         playX, playY,
         {
-            {DisplayType::TERMINAL, " "},
+            {DisplayType::TERMINAL, ""},
             {DisplayType::GRAPHICAL, ""}
         }
     );
@@ -526,7 +526,7 @@ void Minesweeper::addMenuButtonEntities(std::map<std::string, Entity> &entities)
         Shape::RECTANGLE, 0, 0, 120, 60,
         playX, quitY,
         {
-            {DisplayType::TERMINAL, " "},
+            {DisplayType::TERMINAL, ""},
             {DisplayType::GRAPHICAL, ""}
         }
     );

@@ -911,10 +911,10 @@ void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
 void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
 {
     entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 12, 
-                                               120, 60, 0, 0, 0, " ", "");
+                                               120, 60, 0, 0, 0, "", "");
     
     entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 85, 
-                                                   120, 60, 0, 0, 0, " ", "");
+                                                   120, 60, 0, 0, 0, "", "");
 }
 
 /**

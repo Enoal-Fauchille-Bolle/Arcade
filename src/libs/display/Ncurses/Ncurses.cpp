@@ -373,7 +373,7 @@ void Ncurses::drawObject(renderObject obj)
 
     _screenHeight = screenSize.height;
     _screenWidth = screenSize.width;
-    if (!checkScreenSize() || obj.sprite.empty())
+    if (!checkScreenSize())
         return;
     if (obj.type == RECTANGLE)
         drawRectangle(obj);
@@ -385,6 +385,51 @@ void Ncurses::drawObject(renderObject obj)
         drawMusic(obj);
     if (checkScreenBox())
         displayScreenBox();
+}
+
+void Ncurses::drawRectangleSprite(renderObject obj,
+    Coordinates terminalCoordinates,
+    Coordinates terminalSize)
+{
+    for (int i = 0; i < terminalSize.y; i++) {
+        for (int j = 0; j < terminalSize.x / getCharWidth(obj.sprite); j++) {
+            drawCharacter(Coordinates{terminalCoordinates.x + j,
+                              terminalCoordinates.y + i},
+                obj.sprite);
+        }
+    }
+}
+
+void Ncurses::drawRealRectangle(renderObject obj,
+    Coordinates terminalCoordinates,
+    Coordinates terminalSize)
+{
+    (void)obj;
+    int x = terminalCoordinates.x;
+    int y = terminalCoordinates.y;
+    int width = terminalSize.x;
+    int height = terminalSize.y;
+
+    // Adjust offsets to center the rectangle properly
+    int offsetX = (this->_screenWidth / 2) - (SCREEN_WIDTH / 2);
+    int offsetY = (this->_screenHeight / 2) - (SCREEN_HEIGHT / 2);
+
+    x += offsetX;
+    y += offsetY;
+
+    // Draw top border
+    mvwaddch(_buffer, y - 1, x - 1, ACS_ULCORNER);
+    mvwhline(_buffer, y - 1, x, ACS_HLINE, width);
+    mvwaddch(_buffer, y - 1, x + width, ACS_URCORNER);
+
+    // Draw side borders
+    mvwvline(_buffer, y, x - 1, ACS_VLINE, height);
+    mvwvline(_buffer, y, x + width, ACS_VLINE, height);
+
+    // Draw bottom border
+    mvwaddch(_buffer, y + height, x - 1, ACS_LLCORNER);
+    mvwhline(_buffer, y + height, x, ACS_HLINE, width);
+    mvwaddch(_buffer, y + height, x + width, ACS_LRCORNER);
 }
 
 /**
@@ -402,12 +447,10 @@ void Ncurses::drawRectangle(renderObject obj)
         static_cast<uint8_t>(obj.RGB[2])});
 
     wattron(_buffer, COLOR_PAIR(color));
-    for (int i = 0; i < terminalSize.y; i++) {
-        for (int j = 0; j < terminalSize.x / getCharWidth(obj.sprite); j++) {
-            drawCharacter(Coordinates{terminalCoordinates.x + j,
-                              terminalCoordinates.y + i},
-                obj.sprite);
-        }
+    if (!obj.sprite.empty()) {
+        drawRectangleSprite(obj, terminalCoordinates, terminalSize);
+    } else {
+        drawRealRectangle(obj, terminalCoordinates, terminalSize);
     }
     wattroff(_buffer, COLOR_PAIR(color));
 }

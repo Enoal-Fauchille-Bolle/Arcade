@@ -65,6 +65,12 @@ class Ncurses : public IDisplay {
         void drawCharacter(
             Coordinates terminalCoordinates, const std::string &sprite);
 
+        void drawRectangleSprite(renderObject obj,
+            Coordinates terminalCoordinates,
+            Coordinates terminalSize);
+        void drawRealRectangle(renderObject obj,
+            Coordinates terminalCoordinates,
+            Coordinates terminalSize);
         void drawRectangle(renderObject obj);
         void drawCircle(renderObject obj);
         void drawText(renderObject obj);
