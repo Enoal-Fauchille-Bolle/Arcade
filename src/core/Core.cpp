@@ -337,44 +337,119 @@ int Core::delete_game()
 }
 
 /**
+ * @brief Creates the score directory if it doesn't exist.
+ */
+void Core::createScoreDirectory() 
+{
+    if (!std::filesystem::exists("score")) {
+        std::filesystem::create_directory("score");
+    }
+}
+
+/**
+ * @brief Loads existing scores from a file.
+ * @param fileName The name of the file to load scores from.
+ * @return A vector containing pairs of scores and player names.
+ */
+std::vector<std::pair<float, std::string>> Core::loadScoresFromFile(const std::string& fileName)
+{
+    std::vector<std::pair<float, std::string>> scores;
+    
+    if (!std::filesystem::exists(fileName)) {
+        return scores;
+    }
+    
+    std::ifstream infile(fileName);
+    if (infile.is_open()) {
+        std::string line;
+        while (std::getline(infile, line)) {
+            size_t playerStart = line.find("Player: ");
+            size_t scoreStart = line.find(" - Score: ");
+            
+            if (playerStart != std::string::npos && scoreStart != std::string::npos) {
+                std::string playerName = line.substr(playerStart + 8, scoreStart - (playerStart + 8));
+                std::string scoreStr = line.substr(scoreStart + 10);
+                try {
+                    float scoreValue = std::stof(scoreStr);
+                    scores.emplace_back(scoreValue, playerName);
+                } catch (...) {
+                }
+            }
+        }
+        infile.close();
+    }
+    return scores;
+}
+
+/**
+ * @brief Updates a player's score or adds a new score.
+ * @param scores The vector of current scores.
+ * @param newScore The new score to add or update.
+ */
+void Core::updatePlayerScore(std::vector<std::pair<float, std::string>>& scores, 
+                            const std::pair<float, std::string>& newScore)
+{
+    bool playerExists = false;
+    
+    for (auto& entry : scores) {
+        if (entry.second == newScore.second) {
+            playerExists = true;
+            if (newScore.first > entry.first) {
+                entry.first = newScore.first;
+            }
+            break;
+        }
+    }
+    
+    if (!playerExists) {
+        scores.push_back(newScore);
+    }
+    
+    std::sort(scores.begin(), scores.end(), [](const auto &a, const auto &b) {
+        return a.first > b.first;
+    });
+}
+
+/**
+ * @brief Writes scores to a file.
+ * @param fileName The name of the file to write scores to.
+ * @param scores The vector of scores to write.
+ * @return true if successful, false otherwise.
+ */
+bool Core::writeScoresToFile(const std::string& fileName, 
+                           const std::vector<std::pair<float, std::string>>& scores)
+{
+    std::ofstream outfile(fileName, std::ios::trunc);
+    if (!outfile.is_open()) {
+        std::cerr << "Unable to open score file for writing: " << fileName << std::endl;
+        return false;
+    }
+    
+    for (const auto &entry : scores) {
+        outfile << "Player: " << entry.second << " - Score: " << entry.first << "\n";
+    }
+    outfile.close();
+    return true;
+}
+
+/**
  * @brief Saves the score to a file.
  * @param score The score to save, as a pair of float and string.
  */
 void Core::saveScore(std::pair<float, std::string> score)
 {
+    if (score.second.empty()) {
+        return;
+    }
+    
     std::string gameName = _game->getName();
     std::string fileName = "score/score_" + gameName + ".txt";
-    std::vector<std::pair<float, std::string>> scores;
-
-    if (!std::filesystem::exists("score")) {
-        std::filesystem::create_directory("score");
-    }
-    std::ifstream infile(fileName);
-    std::string line;
-    while (std::getline(infile, line)) {
-        std::istringstream iss(line);
-        std::string label, playerName;
-        float value;
-        if (iss >> label >> playerName >> label >> value) {
-            if (!playerName.empty() && playerName.back() == ':')
-                playerName.pop_back();
-            scores.emplace_back(value, playerName);
-        }
-    }
-    infile.close();
-    scores.push_back(score);
-    std::sort(scores.begin(), scores.end(), [](const auto &a, const auto &b) {
-        return a.first > b.first;
-    });
-    std::ofstream outfile(fileName, std::ios::trunc);
-    if (outfile.is_open()) {
-        for (const auto &entry : scores) {
-            outfile << "Player: " << entry.second << " - Score: " << entry.first << "\n";
-        }
-        outfile.close();
-    } else {
-        std::cerr << "Unable to open score file: " << fileName << std::endl;
-    }
+    
+    createScoreDirectory();
+    
+    auto scores = loadScoresFromFile(fileName);
+    updatePlayerScore(scores, score);
+    writeScoresToFile(fileName, scores);
 }
 
 /**
