@@ -166,11 +166,11 @@ void Menu::checkDisplayClick(RawEvent event)
  */
 void Menu::checkStartButton(RawEvent event)
 {
-    if (event.x >= START_BUTTON_X - LIBS_PADDING &&
-        event.x <= START_BUTTON_X + START_BUTTON_WIDTH + LIBS_PADDING &&
-        event.y <= (START_BUTTON_Y + 15) + LIBS_PADDING &&
-        event.y >=
-            (START_BUTTON_Y + 15) - START_BUTTON_HEIGHT - LIBS_PADDING) {
+    if (event.x >= START_BUTTON_X - 105 &&
+        event.x <= (START_BUTTON_X - 105) + 629 / 2 &&
+        event.y >= START_BUTTON_Y - 20 &&
+        event.y <=
+            (START_BUTTON_Y - 20) + 197 / 2) {
         _startGame = true;
     }
 }
@@ -231,22 +231,26 @@ void Menu::handleEvent(std::vector<RawEvent> events)
  *
  * @return Entity The title entity
  */
-Entity Menu::renderTitle(void)
+void Menu::renderTitle(std::map<EntityName, Entity> &entities)
 {
     Entity titleText;
+    Entity titleFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 1.75,
+        197 / 1.75, ARCADE_TITLE_X - 38, ARCADE_TITLE_Y - 25,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL, std::string(ASSETS_DIR) + "button.png"}});
 
     titleText.type = TEXT;
     titleText.x = ARCADE_TITLE_X;
     titleText.y = ARCADE_TITLE_Y;
-    titleText.width = 30;
+    titleText.width = 50;
     titleText.height = 0;
     titleText.rotate = 0;
-    titleText.RGB[0] = 255;
-    titleText.RGB[1] = 255;
-    titleText.RGB[2] = 255;
+    setEntityColor(titleText, 78, 200, 245);
     titleText.sprites[DisplayType::GRAPHICAL] = "Arcade Menu";
     titleText.sprites[DisplayType::TERMINAL] = "Arcade Menu";
-    return titleText;
+    entities["C-title"] = titleText;
+    setEntityColor(titleFrame, 0, 0, 0);
+    entities["B-arcadeMenu"] = titleFrame;
 }
 
 /**
@@ -257,9 +261,13 @@ Entity Menu::renderTitle(void)
  *
  * @return Entity The display title entity
  */
-Entity Menu::renderDisplayTitle(void)
+void Menu::renderDisplayTitle(std::map<EntityName, Entity> &entities)
 {
     Entity displaysTitle;
+    Entity displaysFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2.4,
+        197 / 2.4, DISPLAY_TITLE_X - 20, DISPLAY_TITLE_Y - 21,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL, std::string(ASSETS_DIR) + "button.png"}});
 
     displaysTitle.type = TEXT;
     displaysTitle.x = DISPLAY_TITLE_X;
@@ -267,12 +275,42 @@ Entity Menu::renderDisplayTitle(void)
     displaysTitle.width = 30;
     displaysTitle.height = 0;
     displaysTitle.rotate = 0;
-    displaysTitle.RGB[0] = 255;
-    displaysTitle.RGB[1] = 255;
-    displaysTitle.RGB[2] = 255;
-    displaysTitle.sprites[DisplayType::GRAPHICAL] = "Display Libraries:";
-    displaysTitle.sprites[DisplayType::TERMINAL] = "Display Libraries:";
-    return displaysTitle;
+    setEntityColor(displaysTitle, 78, 200, 245);
+    displaysTitle.sprites[DisplayType::GRAPHICAL] = "Display Libraries";
+    displaysTitle.sprites[DisplayType::TERMINAL] = "Display Libraries";
+    entities["C-displayTitle"] = displaysTitle;
+    setEntityColor(displaysFrame, 0, 0, 0);
+    entities["B-displayMenu"] = displaysFrame;
+}
+
+/**
+ * @brief Render the game title
+ *
+ * This function creates an Entity object representing the game title.
+ * It sets the position, color, and text of the game title.
+ *
+ * @return Entity The game title entity
+ */
+void Menu::renderGameTitle(std::map<EntityName, Entity> &entities)
+{
+    Entity gamesTitle;
+    Entity gamesFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2.4,
+        197 / 2.4, GAME_TITLE_X - 20, GAME_TITLE_Y - 21,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL, std::string(ASSETS_DIR) + "button.png"}});
+
+    gamesTitle.type = TEXT;
+    gamesTitle.x = GAME_TITLE_X + 10;
+    gamesTitle.y = GAME_TITLE_Y;
+    gamesTitle.width = 30;
+    gamesTitle.height = 0;
+    gamesTitle.rotate = 0;
+    setEntityColor(gamesTitle, 78, 200, 245);
+    gamesTitle.sprites[DisplayType::GRAPHICAL] = "Game Libraries";
+    gamesTitle.sprites[DisplayType::TERMINAL] = "Game Libraries";
+    entities["C-gameTitle"] = gamesTitle;
+    setEntityColor(gamesFrame, 0, 0, 0);
+    entities["B-gameMenu"] = gamesFrame;
 }
 
 /**
@@ -293,6 +331,16 @@ void Menu::setupLibButton(LibPos &libPos, int x, int y)
     libPos.second.height = LIBS_HEIGHT;
 }
 
+/**
+ * @brief Set the color of an entity
+ *
+ * This function sets the RGB color of an entity.
+ *
+ * @param entity The entity to set the color for
+ * @param r The red component
+ * @param g The green component
+ * @param b The blue component
+ */
 void Menu::setEntityColor(Entity &entity, int r, int g, int b)
 {
     entity.RGB[0] = r;
@@ -320,7 +368,8 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
     std::string prefix;
     Entity libEntity;
     std::string libPrefix = (libType == DISPLAY) ? "display_" : "game_";
-    std::vector<LibPos> &libs = (libType == DISPLAY) ? _displayLibs : _gameLibs;
+    std::vector<LibPos> &libs =
+        (libType == DISPLAY) ? _displayLibs : _gameLibs;
     size_t selectedLib =
         (libType == DISPLAY) ? _selectedDisplayLib : _selectedGameLib;
 
@@ -351,30 +400,6 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
 }
 
 /**
- * @brief Render the game title
- *
- * This function creates an Entity object representing the game title.
- * It sets the position, color, and text of the game title.
- *
- * @return Entity The game title entity
- */
-Entity Menu::renderGameTitle(void)
-{
-    Entity gamesTitle;
-
-    gamesTitle.type = TEXT;
-    gamesTitle.x = GAME_TITLE_X;
-    gamesTitle.y = GAME_TITLE_Y;
-    gamesTitle.width = 30;
-    gamesTitle.height = 0;
-    gamesTitle.rotate = 0;
-    setEntityColor(gamesTitle, 255, 255, 255);
-    gamesTitle.sprites[DisplayType::GRAPHICAL] = "Game Libraries:";
-    gamesTitle.sprites[DisplayType::TERMINAL] = "Game Libraries:";
-    return gamesTitle;
-}
-
-/**
  * @brief Render the selected libraries
  *
  * This function creates an Entity object representing the selected
@@ -385,20 +410,26 @@ Entity Menu::renderGameTitle(void)
  * @param displayName The name of the display library
  * @return Entity The selected libraries entity
  */
-Entity Menu::renderStartButton(void)
+void Menu::renderStartButton(std::map<EntityName, Entity> &entities)
 {
-    Entity selectedLibs;
+    Entity startText;
+    Entity startFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2, 197 / 2,
+        START_BUTTON_X - 105, START_BUTTON_Y - 20,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL, std::string(ASSETS_DIR) + "button.png"}});
 
-    selectedLibs.type = TEXT;
-    selectedLibs.x = START_BUTTON_X;
-    selectedLibs.y = START_BUTTON_Y;
-    selectedLibs.width = 30;
-    selectedLibs.height = 0;
-    selectedLibs.rotate = 0;
-    setEntityColor(selectedLibs, 255, 255, 0);
-    selectedLibs.sprites[DisplayType::GRAPHICAL] = "Start";
-    selectedLibs.sprites[DisplayType::TERMINAL] = "Start";
-    return selectedLibs;
+    startText.type = TEXT;
+    startText.x = START_BUTTON_X - 5;
+    startText.y = START_BUTTON_Y;
+    startText.width = 50;
+    startText.height = 0;
+    startText.rotate = 0;
+    setEntityColor(startText, 78, 200, 245);
+    startText.sprites[DisplayType::GRAPHICAL] = "Start";
+    startText.sprites[DisplayType::TERMINAL] = "Start";
+    entities["C-startText"] = startText;
+    setEntityColor(startFrame, 0, 0, 0);
+    entities["B-startFrame"] = startFrame;
 }
 
 /**
@@ -416,19 +447,59 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
     std::map<EntityName, Entity> entities;
     std::map<EntityName, Entity> tempEntities;
 
-    entities["title"] = renderTitle();
-    entities["display_title"] = renderDisplayTitle();
+    renderTitle(entities);
+    renderDisplayTitle(entities);
+
     tempEntities = renderLibs(DISPLAY);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-    entities["games_title"] = renderGameTitle();
+
+    renderGameTitle(entities);
+
     tempEntities = renderLibs(GAME);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-    entities["start_button"] = renderStartButton();
+
+    renderStartButton(entities);
+
+    // Background
+    Entity background =
+        createEntity(Shape::RECTANGLE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0,
+            {{DisplayType::TERMINAL, " "},
+                {DisplayType::GRAPHICAL,
+                    std::string(ASSETS_DIR) + "background.jpg"}});
+    setEntityColor(background, 0, 0, 0);
+    entities["A-background"] = background;
+
     return entities;
+}
+
+Entity Menu::createEntity(Shape shape,
+    int x,
+    int y,
+    int cellWidth,
+    int cellHeight,
+    int offsetX,
+    int offsetY,
+    std::map<DisplayType, std::string> sprite)
+{
+    Entity cell;
+
+    cell.type = shape;
+    cell.x = offsetX + x * cellWidth;
+    cell.y = offsetY + y * cellHeight;
+    cell.width = cellWidth;
+    cell.height = cellHeight;
+    cell.rotate = 0;
+    cell.RGB[0] = 255;
+    cell.RGB[1] = 255;
+    cell.RGB[2] = 255;
+    for (auto &it : sprite) {
+        cell.sprites[it.first] = it.second;
+    }
+    return cell;
 }
 
 /**

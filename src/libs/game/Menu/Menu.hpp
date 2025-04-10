@@ -22,16 +22,18 @@
 
     #define LIBRARY_NAME "Menu"
 
-    #define ARCADE_TITLE_X 425
-    #define ARCADE_TITLE_Y 150
+    #define ASSETS_DIR "./assets/menu/"
+
+    #define ARCADE_TITLE_X 375
+    #define ARCADE_TITLE_Y 60
 
     #define GAME_TITLE_X 600
-    #define GAME_TITLE_Y 250
+    #define GAME_TITLE_Y 220
 
     #define DISPLAY_TITLE_X 200
-    #define DISPLAY_TITLE_Y 250
+    #define DISPLAY_TITLE_Y 220
 
-    #define LIBS_HEIGHT_START 300
+    #define LIBS_HEIGHT_START 320
     #define LIBS_HEIGHT_THRESHOLD 45
     #define LIBS_HEIGHT 25
     #define LIBS_PADDING 10
@@ -42,7 +44,7 @@
     #define GAME_LIB_X 600
 
     #define START_BUTTON_X 480
-    #define START_BUTTON_Y 600
+    #define START_BUTTON_Y 660
     #define START_BUTTON_WIDTH 75
     #define START_BUTTON_HEIGHT 25
 
@@ -86,13 +88,22 @@ class Menu : public IGame {
         void handleOneEvent(RawEvent event);
 
         // Rendering
-        Entity renderTitle(void);
-        Entity renderDisplayTitle(void);
+        void renderTitle(std::map<EntityName, Entity> &entities);
+        void renderDisplayTitle(std::map<EntityName, Entity> &entities);
+        void renderGameTitle(std::map<EntityName, Entity> &entities);
         void setupLibButton(LibPos &libPos, int x, int y);
         void setEntityColor(Entity &cell, int r, int g, int b);
         std::map<EntityName, Entity> renderLibs(LibType libType);
-        Entity renderGameTitle(void);
-        Entity renderStartButton(void);
+        void renderStartButton(std::map<EntityName, Entity> &entities);
+
+        Entity createEntity(Shape shape,
+            int x,
+            int y,
+            int cellWidth,
+            int cellHeight,
+            int offsetX,
+            int offsetY,
+            std::map<DisplayType, std::string> sprite);
 
         std::vector<LibPos> _gameLibs;
         std::vector<LibPos> _displayLibs;
