@@ -14,7 +14,7 @@ libSFML::libSFML()
 {
     _name = LIBRARY_NAME;
     _dtype = LIBRARY_DTYPE;
-    this->_window.create(sf::VideoMode(1024, 768), "Arcade");
+    this->_window.create(sf::VideoMode(1024, 768), "Arcade", sf::Style::Titlebar | sf::Style::Close);
     this->_window.setFramerateLimit(60);
 }
 
@@ -325,12 +325,47 @@ void libSFML::drawText(renderObject obj)
  */
 void libSFML::drawMusic(renderObject obj)
 {
-    if (!_music.openFromFile(obj.sprite)) {
-        std::cerr << "Error loading sound file: " << obj.sprite << std::endl;
-        return;
+    static sf::Music backgroundMusic;
+    static bool isBackgroundMusicPlaying = false;
+
+    if (obj.sprite.find("assets/music_") == 0) {
+        if (!isBackgroundMusicPlaying || backgroundMusic.getStatus() != sf::Music::Playing) {
+            if (!backgroundMusic.openFromFile(obj.sprite)) {
+                std::cerr << "Error loading background music file: " << obj.sprite << std::endl;
+                return;
+            }
+            backgroundMusic.setLoop(true);
+            backgroundMusic.setVolume(12);
+            backgroundMusic.play();
+            isBackgroundMusicPlaying = true;
+        }
+    } else if (obj.sprite == "assets/gameover.mp3") {
+        if (isBackgroundMusicPlaying) {
+            backgroundMusic.stop();
+            isBackgroundMusicPlaying = false;
+        }
+        sf::Music gameOverSound;
+        if (!gameOverSound.openFromFile(obj.sprite)) {
+            std::cerr << "Error loading game over sound file: " << obj.sprite << std::endl;
+            return;
+        }
+        gameOverSound.setVolume(12);
+        gameOverSound.play();
+        while (gameOverSound.getStatus() == sf::Music::Playing) {
+            sf::sleep(sf::milliseconds(100));
+        }
+    } else {
+        sf::Music soundEffect;
+        if (!soundEffect.openFromFile(obj.sprite)) {
+            std::cerr << "Error loading sound effect file: " << obj.sprite << std::endl;
+            return;
+        }
+        soundEffect.setVolume(12);
+        soundEffect.play();
+        while (soundEffect.getStatus() == sf::Music::Playing) {
+            sf::sleep(sf::milliseconds(100));
+        }
     }
-    _music.setVolume(12);
-    _music.play();
 }
 
 /**
