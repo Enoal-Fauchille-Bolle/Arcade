@@ -80,6 +80,7 @@ enum EventKey {
     KEYBOARD_9,
 
     // Function keys
+    KEYBOARD_F1,
     KEYBOARD_F2,
     KEYBOARD_F3,
     KEYBOARD_F4,
