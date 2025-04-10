@@ -48,6 +48,10 @@ class Core {
         void previousDisplayLibrary(void);
         void displayLibrarySwitching(std::vector<RawEvent> events);
 
+        void reloadGameLibrary(void);
+        void reloadDisplayLibrary(void);
+        void libraryReloading(std::vector<RawEvent> events);
+
         std::string getDisplayLibPathFromIndex(size_t index);
         size_t getDisplayLibIndexFromPath(std::string path);
 
@@ -58,6 +62,8 @@ class Core {
         bool _running = true;
         std::vector<LibInfo> _displayLibs;
         size_t _selectedDisplayLib = 0;
+        std::string _currentGamePath = "";
+        std::string _currentDisplayPath = "";
 };
 
 #endif /* !CORE_HPP_ */

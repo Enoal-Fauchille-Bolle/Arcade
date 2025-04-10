@@ -186,3 +186,20 @@ LibType DLLoader<T>::getType(const std::string &libname)
     // Call the function and return the result
     return getTypeFunc();
 }
+
+/**
+ * @brief Reset the handle of the shared library
+ *
+ * This function closes the shared library handle if it is open and
+ * sets it to nullptr.
+ *
+ * @tparam T The type of the object to be loaded from the shared library.
+ */
+template <typename T>
+void DLLoader<T>::resetHandle(void)
+{
+    if (_handle) {
+        dlclose(_handle);
+        _handle = nullptr;
+    }
+}

@@ -30,6 +30,8 @@ class DLLoader {
         std::string getName(const std::string &libname);
         LibType getType(const std::string &libname);
 
+        void resetHandle(void);
+
     private:
         void *_handle;
         std::string _entryPoint;

@@ -186,6 +186,56 @@ void Core::displayLibrarySwitching(std::vector<RawEvent> events)
 }
 
 /**
+ * @brief Reloads the game library.
+ * This function deletes the current game library and loads the
+ * previously loaded game library again.
+ */
+void Core::reloadGameLibrary(void)
+{
+    delete_game();
+    _gameLoader.resetHandle();
+    if (load_game(_currentGamePath) == 1) {
+        std::cerr << "Failed to reload game library: " << _currentGamePath << std::endl;
+        startEmergencyMenu();
+    }
+}
+
+/**
+ * @brief Reloads the display library.
+ * This function deletes the current display library and loads the
+ * previously loaded display library again.
+ */
+void Core::reloadDisplayLibrary(void)
+{
+    delete_display();
+    _graphicLoader.resetHandle();
+    if (load_display(_currentDisplayPath) == 1) {
+        std::cerr << "Failed to reload game library: " << _currentDisplayPath << std::endl;
+        startEmergencyMenu();
+    }
+}
+
+/**
+ * @brief Reloads the game and display libraries when F5, F6, or F7 is pressed.
+ * @param events The vector of RawEvent objects to check for reload events.
+ */
+void Core::libraryReloading(std::vector<RawEvent> events)
+{
+    for (const auto &event : events) {
+        if (event.type == PRESS && event.key == KEYBOARD_F5) {
+            reloadGameLibrary();
+            reloadDisplayLibrary();
+        }
+        if (event.type == PRESS && event.key == KEYBOARD_F6) {
+            reloadGameLibrary();
+        }
+        if (event.type == PRESS && event.key == KEYBOARD_F7) {
+            reloadDisplayLibrary();
+        }
+    }
+}
+
+/**
  * @brief Main loop of the Core class. Handles game logic, events, and
  * rendering.
  */
@@ -215,6 +265,7 @@ void Core::run()
             break;
         }
         displayLibrarySwitching(events);
+        libraryReloading(events);
         _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
         renderEntities(entities);
@@ -231,6 +282,7 @@ int Core::load_display(std::string path)
     try {
         _graphicLoader = DLLoader<IDisplay>("DisplayEntryPoint");
         _display = std::unique_ptr<IDisplay>(_graphicLoader.getInstance(path));
+        _currentDisplayPath = path;
         _selectedDisplayLib = getDisplayLibIndexFromPath(path);
         return 0;
     } catch (const std::exception &e) {
@@ -250,6 +302,7 @@ int Core::load_game(std::string path)
     try {
         _gameLoader = DLLoader<IGame>("GameEntryPoint");
         _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
+        _currentGamePath = path;
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Error loading game library: " << e.what() << std::endl;
