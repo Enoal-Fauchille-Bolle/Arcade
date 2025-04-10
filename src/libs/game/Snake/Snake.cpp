@@ -740,7 +740,17 @@ std::map<std::string, Entity> Snake::renderGame()
     entities.clear();    
     renderGridElements(entities);    
     renderSnake(entities);
-    
+    if (gameOver) {
+        
+        _sounds.push_back("assets/gameover.mp3");
+    }
+    for (size_t i = 0; i < _sounds.size(); i++) {
+        Entity sound;
+        sound = createEntity(Shape::MUSIC, 0, 0, 0, 0, 0, 0, 0,
+                          _sounds[i], _sounds[i]);
+        entities["sound" + std::to_string(i)] = sound;
+    }
+    _sounds.clear();
     return entities;
 }
 
@@ -757,6 +767,8 @@ void Snake::handleMenuEvent(std::vector<RawEvent> events)
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
             if (event.key == KEYBOARD_UP) {
+                _sounds.push_back("assets/launch.mp3");
+                _sounds.push_back("assets/music_snake_rock.mp3");
                 _gameStart = true;
             } else if (event.key == KEYBOARD_DOWN) {
                 gameEnd = true;
