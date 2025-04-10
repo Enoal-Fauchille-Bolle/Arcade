@@ -168,10 +168,14 @@ void Snake::setDirection(std::vector<RawEvent> events)
  * @param speed Indicates whether to set the frame rate to maximum.
  * @param up Indicates whether to increase the frame rate.
  */
-void Snake::setFrameRate(bool speed, bool up)
+void Snake::setFrameRate(bool speed, bool up, bool reset)
 {
     static int previousFrameRate = 10;
 
+    if (reset) {
+        previousFrameRate = 10;
+        _frameRate = 10;
+    }
     if (up) {
         _frameRate += 2;
         previousFrameRate = _frameRate;
@@ -188,7 +192,6 @@ void Snake::setFrameRate(bool speed, bool up)
     } else {
         _frameRate = previousFrameRate;
     }
-    
 }
 
 /**
@@ -204,7 +207,7 @@ void Snake::shouldIncreaseSpeed(void)
     auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastSpeedIncreaseTime).count();
 
     if (elapsedTime >= 10) {
-        setFrameRate(false, true);
+        setFrameRate(false, true, false);
         lastSpeedIncreaseTime = currentTime;
     }
 }
@@ -220,17 +223,17 @@ void Snake::shouldIncreaseSpeed(void)
 void Snake::handleEvent(std::vector<RawEvent> events)
 {
     if (events.empty()) {
-        setFrameRate(false, false);
+        setFrameRate(false, false, false);
     }
     for (const auto& event : events) {
-        if (event.type == EventType::QUIT) {_frameRate = 35;
+        if (event.type == EventType::QUIT) {
             gameOver = true;
             return;
         }
         if (event.type == EventType::PRESS && event.key == KEYBOARD_SPACE) {
-            setFrameRate(true, false);
+            setFrameRate(true, false, false);
         } else {
-            setFrameRate(false, false);
+            setFrameRate(false, false, false);
         }
     }
     if (gameOver && _gameStart) {
@@ -390,6 +393,7 @@ void Snake::moveSnake()
     grid[newHead.y][newHead.x].isSnake = true;
     if (foodEaten) {
         eatFood();
+        _sounds.push_back("assets/food.mp3");
         if (snake.body.size() == static_cast<size_t>(gridWidth * gridHeight)) {
             gameOver = true;
             return;
@@ -531,8 +535,6 @@ void Snake::LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::stri
     entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
 }
 
-
-
 /**
  * @brief Updates the animation progress based on the game state.
  * 
@@ -593,8 +595,7 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
             entity.height = 38;
             entity.rotate = 0;
             setGridColor(entity, 255, 255, 255);
-            
-            // Temporarily mark as not snake to render other elements
+
             bool isSnake = grid[y][x].isSnake;
             grid[y][x].isSnake = false;
             
@@ -604,7 +605,7 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
                 LoadSecondAssetPack(x, y, entity, entities);
             }
             
-            grid[y][x].isSnake = isSnake; // Restore snake status
+            grid[y][x].isSnake = isSnake;
         }
     }
 }
@@ -620,10 +621,18 @@ void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
     if (segmentIndex == 0) {
         int moveX = 0, moveY = 0;
         switch (direction) {
-            case UP:    moveY = -1; break;
-            case DOWN:  moveY = 1; break;
-            case LEFT:  moveX = -1; break;
-            case RIGHT: moveX = 1; break;
+            case UP:
+                moveY = -1;
+                break;
+            case DOWN:
+                moveY = 1;
+                break;
+            case LEFT:
+                moveX = -1;
+                break;
+            case RIGHT:
+                moveX = 1;
+                break;
         }
         
         entity.x += static_cast<int>(moveX * 38 * _animationProgress);
@@ -728,7 +737,6 @@ std::map<std::string, Entity> Snake::renderGame()
     if (shouldShowMenu()) {
         return domenu();
     }
-
     entities.clear();    
     renderGridElements(entities);    
     renderSnake(entities);
@@ -776,6 +784,7 @@ void Snake::resetGrid()
     }
     snake.body.clear();
     direction = UP;
+    setFrameRate(false, false, true);
     createGrid(gridWidth, gridHeight);
 }
 
@@ -890,10 +899,10 @@ void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
 void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
 {
     entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 12, 
-                                               120, 60, 0, 0, 0, "no sprite", "");
+                                               120, 60, 0, 0, 0, " ", "");
     
     entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 85, 
-                                                   120, 60, 0, 0, 0, "no sprite", "");
+                                                   120, 60, 0, 0, 0, " ", "");
 }
 
 /**
@@ -942,7 +951,6 @@ std::map<std::string, Entity> Snake::domenu()
     }
     gameOver = false;
     resetGrid();
-    _frameRate = 10;
 
     addBackgroundEntity(entities);
     addTitleEntities(entities);

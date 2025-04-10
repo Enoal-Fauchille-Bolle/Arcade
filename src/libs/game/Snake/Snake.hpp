@@ -77,7 +77,7 @@ class Snake : public IGame {
         bool shouldMoveSnake();
         void shouldIncreaseSpeed();
         void setDirection(std::vector<RawEvent> events);
-        void setFrameRate(bool speed, bool up);
+        void setFrameRate(bool speed, bool up, bool reset);
         std::map<std::string, Entity> domenu();
         void handleMenuEvent(std::vector<RawEvent> events);
         void resetGrid();
@@ -103,6 +103,7 @@ class Snake : public IGame {
 
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
+        std::vector<std::string> _sounds;
         bool gameOver = false;
         bool gameEnd = false;
         bool _win;
@@ -114,7 +115,7 @@ class Snake : public IGame {
         int _frameRate = 1;
         bool _gameStart = false;
         int assetPack = 0;
-        float _animationProgress = 0.0f; // 0.0 to 1.0 tracking movement progress
+        float _animationProgress = 0.0f;
         std::chrono::steady_clock::time_point _lastFrameTime;
 };
 
