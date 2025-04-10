@@ -176,10 +176,10 @@ void Core::previousDisplayLibrary(void)
 void Core::displayLibrarySwitching(std::vector<RawEvent> events)
 {
     for (const auto &event : events) {
-        if (event.type == PRESS && event.key == KEYBOARD_N) {
+        if (event.type == PRESS && event.key == KEYBOARD_F4) {
             nextDisplayLibrary();
         }
-        if (event.type == PRESS && event.key == KEYBOARD_P) {
+        if (event.type == PRESS && event.key == KEYBOARD_F3) {
             previousDisplayLibrary();
         }
     }
