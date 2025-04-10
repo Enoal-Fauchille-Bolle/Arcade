@@ -368,7 +368,7 @@ void SDL::drawCircle(renderObject obj)
  */
 void SDL::drawText(renderObject obj)
 {
-    TTF_Font *font = TTF_OpenFont("assets/arial.ttf", obj.width);
+    TTF_Font *font = TTF_OpenFont("assets/Tahoma.ttf", obj.width);
     if (!font) {
         std::cerr << "TTF_OpenFont Error: " << TTF_GetError() << std::endl;
         return;
