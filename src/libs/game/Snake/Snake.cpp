@@ -81,8 +81,6 @@ bool Snake::isGameOver(void)
  */
 std::pair<float, std::string> Snake::getScore(void)
 {
-    std::cout << "Score: " << _score.first << std::endl;
-    std::cout << "Player: " << _score.second << std::endl;
     if (gameOver)
         return _score;
     return std::pair<float, std::string>(0, "0");
