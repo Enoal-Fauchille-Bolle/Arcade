@@ -43,6 +43,10 @@ class Core {
         void renderEntities(std::map<std::string, Entity> entities);
 
         void saveScore(std::pair<float, std::string> score);
+        void createScoreDirectory(void);
+        std::vector<std::pair<float, std::string>> loadScoresFromFile(const std::string& fileName);
+        void updatePlayerScore(std::vector<std::pair<float, std::string>>& scores, const std::pair<float, std::string>& score);
+        bool writeScoresToFile(const std::string& fileName, const std::vector<std::pair<float, std::string>>& scores);
 
         void nextDisplayLibrary(void);
         void previousDisplayLibrary(void);
