@@ -103,6 +103,18 @@ std::vector<RawEvent> libSFML::pollEvent(void)
                     case sf::Keyboard::Insert: raw.key = KEYBOARD_INSERT; break;
                     case sf::Keyboard::PageUp: raw.key = KEYBOARD_PAGEUP; break;
                     case sf::Keyboard::PageDown: raw.key = KEYBOARD_PAGEDOWN; break;
+                    case sf::Keyboard::F1: raw.key = KEYBOARD_F1; break;
+                    case sf::Keyboard::F2: raw.key = KEYBOARD_F2; break;
+                    case sf::Keyboard::F3: raw.key = KEYBOARD_F3; break;
+                    case sf::Keyboard::F4: raw.key = KEYBOARD_F4; break;
+                    case sf::Keyboard::F5: raw.key = KEYBOARD_F5; break;
+                    case sf::Keyboard::F6: raw.key = KEYBOARD_F6; break;
+                    case sf::Keyboard::F7: raw.key = KEYBOARD_F7; break;
+                    case sf::Keyboard::F8: raw.key = KEYBOARD_F8; break;
+                    case sf::Keyboard::F9: raw.key = KEYBOARD_F9; break;
+                    case sf::Keyboard::F10: raw.key = KEYBOARD_F10; break;
+                    case sf::Keyboard::F11: raw.key = KEYBOARD_F11; break;
+                    case sf::Keyboard::F12: raw.key = KEYBOARD_F12; break;
                     default:
                         continue; // Skip unmapped keys
                 }
@@ -168,6 +180,18 @@ std::vector<RawEvent> libSFML::pollEvent(void)
                     case sf::Keyboard::Insert: raw.key = KEYBOARD_INSERT; break;
                     case sf::Keyboard::PageUp: raw.key = KEYBOARD_PAGEUP; break;
                     case sf::Keyboard::PageDown: raw.key = KEYBOARD_PAGEDOWN; break;
+                    case sf::Keyboard::F1: raw.key = KEYBOARD_F1; break;
+                    case sf::Keyboard::F2: raw.key = KEYBOARD_F2; break;
+                    case sf::Keyboard::F3: raw.key = KEYBOARD_F3; break;
+                    case sf::Keyboard::F4: raw.key = KEYBOARD_F4; break;
+                    case sf::Keyboard::F5: raw.key = KEYBOARD_F5; break;
+                    case sf::Keyboard::F6: raw.key = KEYBOARD_F6; break;
+                    case sf::Keyboard::F7: raw.key = KEYBOARD_F7; break;
+                    case sf::Keyboard::F8: raw.key = KEYBOARD_F8; break;
+                    case sf::Keyboard::F9: raw.key = KEYBOARD_F9; break;
+                    case sf::Keyboard::F10: raw.key = KEYBOARD_F10; break;
+                    case sf::Keyboard::F11: raw.key = KEYBOARD_F11; break;
+                    case sf::Keyboard::F12: raw.key = KEYBOARD_F12; break;
                     default:
                         continue;
                 }
