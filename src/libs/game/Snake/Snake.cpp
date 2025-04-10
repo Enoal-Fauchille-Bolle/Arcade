@@ -64,6 +64,9 @@ void Snake::createGrid(int width, int height)
  */
 bool Snake::isGameOver(void)
 {
+    if (gameOver) {
+        return true;
+    }
     return false;
 }
 
@@ -78,6 +81,8 @@ bool Snake::isGameOver(void)
  */
 std::pair<float, std::string> Snake::getScore(void)
 {
+    std::cout << "Score: " << _score.first << std::endl;
+    std::cout << "Player: " << _score.second << std::endl;
     if (gameOver)
         return _score;
     return std::pair<float, std::string>(0, "0");
@@ -242,6 +247,9 @@ void Snake::handleEvent(std::vector<RawEvent> events)
     }
     if (!_gameStart || gameOver) {
         handleMenuEvent(events);
+        if (_typeName) {
+            typeName(events);
+        }
         return;
     }
     if (shouldSpawnFruit()) {
@@ -345,7 +353,6 @@ void Snake::eatFood()
     bool isTimeFood = grid[snake.body[0].y][snake.body[0].x].isTimeFood;
 
     _score.first += 10;
-    _score.second = std::to_string(_score.first);
     grid[snake.body[0].y][snake.body[0].x].isFood = false;
     grid[snake.body[0].y][snake.body[0].x].isTimeFood = false;
 
@@ -779,10 +786,16 @@ void Snake::handleMenuEvent(std::vector<RawEvent> events)
                     _sounds.push_back("assets/launch.mp3");
                     _sounds.push_back("assets/music_snake_rock.mp3");
                     _gameStart = true;
+                    _score.second = _playerName;
                 }
                 else if (event.x >= 1024 / 2 - 50 && event.x <= 1024 / 2 - 50 + 60  + 200 &&
                          event.y >= 768 / 2 + 75 && event.y <= 768 / 2 + 75 + 30 + 50) {
                     gameEnd = true;
+                } else if (event.x >= 1024 / 2 - 50 && event.x <= 1024 / 2 - 50 + 60 + 200 &&
+                           event.y >= 768 / 2 - 100 && event.y <= 768 / 2 - 100 + 30 + 50) {
+                    _typeName = true;
+                } else {
+                    _typeName = false;
                 }
             }
         }
@@ -808,6 +821,8 @@ void Snake::resetGrid()
     }
     snake.body.clear();
     direction = UP;
+    _score.first = 0;
+    _score.second = "\0";
     setFrameRate(false, false, true);
     createGrid(gridWidth, gridHeight);
 }
@@ -906,11 +921,11 @@ Entity Snake::createRectangleEntity(int x, int y, int width, int height, int r, 
  */
 void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
 {
-    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 100, 768 / 2 - 200, 
-                                        200, 50, 255, 255, 255);
+    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 200, 768 / 2 - 300, 
+                                        100, 50, 255, 255, 255);
     
-    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 105, 768 / 2 - 195, 
-                                               200, 50, 0, 0, 0);
+    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 200, 768 / 2 - 295, 
+                                               100, 50, 0, 0, 0);
 }
 
 /**
@@ -944,6 +959,15 @@ void Snake::addOptionEntities(std::map<std::string, Entity>& entities)
                                        60, 30, 255, 255, 255);
 }
 
+void Snake::addInputBox(std::map<std::string, Entity>& entities)
+{
+    entities["input"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 - 100, 
+                                             200, 50, 0, 0, 0, "", "");
+    entities["input_text"] = createTextEntity(_playerName , 1024 / 2 - 50, 
+                                             768 / 2 - 100, 40, 40, 255, 255, 255);
+
+}
+
 /**
  * @brief Adds a background entity to the map.
  *
@@ -955,6 +979,34 @@ void Snake::addBackgroundEntity(std::map<std::string, Entity>& entities)
 {
     entities["ZZZZZbackground"] = createRectangleEntity(0, 0, 1024, 768, 0, 0, 0, 
                                                      " ", "assets/snake/wall.png");
+}
+
+/**
+ * @brief Handles typing the player's name.
+ *
+ * This function processes the events related to typing the player's name.
+ * It handles backspace, enter, and character input events.
+ *
+ * @param events A vector of events to handle.
+ */
+void Snake::typeName(std::vector<RawEvent> events)
+{
+    for (const auto& event : events) {
+        if (event.type == EventType::PRESS) {
+            if (event.key == KEYBOARD_BACKSPACE) {
+                if (!_playerName.empty()) {
+                    _playerName.pop_back();
+                }
+            } else if (event.key == KEYBOARD_ENTER) {
+                _typeName = false;
+            } else {
+                if (event.key >= KEYBOARD_A && event.key <= KEYBOARD_Z) {
+                    char letter = 'a' + (event.key - KEYBOARD_A);
+                    _playerName += letter;
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -980,6 +1032,7 @@ std::map<std::string, Entity> Snake::domenu()
     addTitleEntities(entities);
     addButtonEntities(entities);
     addOptionEntities(entities);
+    addInputBox(entities);
 
     return entities;
 }
