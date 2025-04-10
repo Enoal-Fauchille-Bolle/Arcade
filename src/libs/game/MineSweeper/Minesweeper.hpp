@@ -39,48 +39,72 @@ class Minesweeper : public IGame {
         ~Minesweeper();
 
         bool isGameOver(void) override;
-
         std::pair<float, std::string> getScore(void) override;
-
         bool isGameEnd(void) override;
-
         std::string getNewLib(void) override;
-
         void handleEvent(std::vector<RawEvent>) override;
-
         std::map<std::string, Entity> renderGame() override;
-
         std::string getNewDisplay(void) override;
-
         std::string getName(void) override;
 
     protected:
+        // Board initialization and calculation
         void initBoard(int width, int height);
         void placeMines(int firstx, int firsty);
         void calculateAdjacentMines();
+
+        // Game action methods
         void revealCell(int x, int y);
         void flagCell(int x, int y);
         bool checkWin();
         bool checkLose();
         void revealBombs();
-        void setCellColor(Entity &cell, int r, int g, int b);
 
-        void addRemainingMinesEntity(std::map<std::string, Entity> &entities);
-        void handleEventGame(std::vector<RawEvent> events);
-        void handleEventMenu(std::vector<RawEvent> events);
-        void handleEventGameOver(std::vector<RawEvent> events);
-        void handleEventESC(std::vector<RawEvent> events);
-
+        // Event handling helpers
+        void updateSmileyState();
+        void handleLeftClick(const RawEvent &event);
+        void handleRightClick(const RawEvent &event);
+        void checkTimeLimit();
         std::pair<int, int> handleClick(RawEvent event);
 
+        // UI and rendering helpers
+        void setCellColor(Entity &cell, int r, int g, int b);
+        Entity createEntity(Shape shape, int x, int y, int cellWidth, int cellHeight, 
+                           int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
+        Entity createTextEntity(const std::string &text, int x, int y, int size);
+        Entity createBackgroundEntity(const std::string &spritePath);
+
+        // Board rendering methods
+        void addSoundEntities(std::map<std::string, Entity> &entities);
+        void addMenuTitleEntities(std::map<std::string, Entity> &entities);
+        void addMenuButtonEntities(std::map<std::string, Entity> &entities);
+        void addCellEntities(std::map<std::string, Entity> &entities);
+        void addGameUIElements(std::map<std::string, Entity> &entities);
+        std::map<DisplayType, std::string> getCellSprite(int x, int y);
+        void addRemainingMinesEntity(std::map<std::string, Entity> &entities);
         void addSmileyEntity(std::map<std::string, Entity> &entities);
+
+        // Board state calculation helpers
+        int countCellsWithState(CellState state);
+        int countFlaggedMines();
+        int calculateBonusScore();
+        void resetGame();
+
+        // Game rendering methods
         std::map<std::string, Entity> printESC();
         std::map<std::string, Entity> printWinOrLose();
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
 
-        Entity createEntity(Shape shape,int x, int y, int cellWidth, int cellHeight, int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
+        // Event handling methods
+        void handleEventGame(std::vector<RawEvent> events);
+        void handleEventMenu(std::vector<RawEvent> events);
+        void handleEventGameOver(std::vector<RawEvent> events);
+        void handleEventESC(std::vector<RawEvent> events);
 
+        // Player name input handling
+        void handleNameInput(const RawEvent &event);
+        void addNameInputEntity(std::map<std::string, Entity> &entities);
 
     private:
         enum GameState {
@@ -125,7 +149,11 @@ class Minesweeper : public IGame {
         int _flaggedMines = 0;
         int _revealedCells = 0;
 
-        std::string _Sprite = "assets/Minesweeper_1/"; // Vos daronnes y boivent du _Sprite sa mère !
+        std::string _Sprite = "assets/Minesweeper_1/";
+
+
+        std::string _playerName = "Enter Name";
+        bool _isNameInputActive = false;
 };
 
 #endif /* !MINESWEEPER_HPP_ */

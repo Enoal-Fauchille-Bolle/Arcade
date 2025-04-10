@@ -8,6 +8,7 @@
 #include "Core.hpp"
 #include "LibLoader.hpp"
 #include <fstream>
+#include <filesystem>
 
 /**
  * @brief Constructor for the Core class.
@@ -244,6 +245,7 @@ void Core::run()
     while (_running) {
         if (_game->isGameOver() == true) {
             auto score = _game->getScore();
+            saveScore(score);
         }
         if (_game->getNewDisplay() != "") {
             std::string newDisplay = _game->getNewDisplay();
@@ -335,20 +337,41 @@ int Core::delete_game()
 }
 
 /**
- * @brief Saves the score to a text file based on the game’s name.
- *        The file will be named "score_<gameName>.txt" and will contain lines with the player's name and score.
- * @param score A pair containing the score (first element) and the player's name (second element).
+ * @brief Saves the score to a file.
+ * @param score The score to save, as a pair of float and string.
  */
 void Core::saveScore(std::pair<float, std::string> score)
 {
     std::string gameName = _game->getName();
+    std::string fileName = "score/score_" + gameName + ".txt";
+    std::vector<std::pair<float, std::string>> scores;
 
-    std::string fileName = "score_" + gameName + ".txt";
-
-    std::ofstream file(fileName, std::ios::app);
-    if (file.is_open()) {
-        file << "Player: " << score.second << " - Score: " << score.first << "\n";
-        file.close();
+    if (!std::filesystem::exists("score")) {
+        std::filesystem::create_directory("score");
+    }
+    std::ifstream infile(fileName);
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::istringstream iss(line);
+        std::string label, playerName;
+        float value;
+        if (iss >> label >> playerName >> label >> value) {
+            if (!playerName.empty() && playerName.back() == ':')
+                playerName.pop_back();
+            scores.emplace_back(value, playerName);
+        }
+    }
+    infile.close();
+    scores.push_back(score);
+    std::sort(scores.begin(), scores.end(), [](const auto &a, const auto &b) {
+        return a.first > b.first;
+    });
+    std::ofstream outfile(fileName, std::ios::trunc);
+    if (outfile.is_open()) {
+        for (const auto &entry : scores) {
+            outfile << "Player: " << entry.second << " - Score: " << entry.first << "\n";
+        }
+        outfile.close();
     } else {
         std::cerr << "Unable to open score file: " << fileName << std::endl;
     }
