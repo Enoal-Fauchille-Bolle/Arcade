@@ -28,7 +28,7 @@ Minesweeper::~Minesweeper()
 
 /**
  * @brief Checks if the game is over.
- * 
+ *
  * @return True if the game is over, false otherwise.
  */
 bool Minesweeper::isGameOver(void)
@@ -42,7 +42,7 @@ bool Minesweeper::isGameOver(void)
 
 /**
  * @brief Retrieves the current game score.
- * 
+ *
  * @return A pair containing the score (float) and its string representation.
  */
 std::pair<float, std::string> Minesweeper::getScore(void)
@@ -53,7 +53,7 @@ std::pair<float, std::string> Minesweeper::getScore(void)
 
 /**
  * @brief Checks if the game has terminated.
- * 
+ *
  * @return True if the game has terminated, false otherwise.
  */
 bool Minesweeper::isGameEnd(void)
@@ -63,7 +63,7 @@ bool Minesweeper::isGameEnd(void)
 
 /**
  * @brief Retrieves the library name to load the menu.
- * 
+ *
  * @return The library name as a string.
  */
 std::string Minesweeper::getNewLib(void)
@@ -73,7 +73,7 @@ std::string Minesweeper::getNewLib(void)
 
 /**
  * @brief Retrieves the new display library.
- * 
+ *
  * @return An empty string.
  */
 std::string Minesweeper::getNewDisplay(void)
@@ -212,6 +212,13 @@ void Minesweeper::handleEventGameOver(std::vector<RawEvent> events)
     }
 }
 
+void Minesweeper::select_dificulty(int mines, int width, int height)
+{
+    _dificulty.mines = mines;
+    _dificulty.size_x = width;
+    _dificulty.size_y = height;
+}
+
 /**
  * @brief Handles events from the menu.
  *
@@ -253,7 +260,7 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
                 initBoard(20, 20);
             }
             else if (event.x >= quitX && event.x <= quitX + quitW &&
-                     event.y >= quitY && event.y <= quitY + quitH) {
+                    event.y >= quitY && event.y <= quitY + quitH) {
                 _isGameTerminated = true;
                 _state = MENU;
             }
@@ -533,11 +540,11 @@ void Minesweeper::addMenuButtonEntities(std::map<std::string, Entity> &entities)
     setCellColor(quitButton, 0, 0, 0);
     entities["ZZquitButton"] = quitButton;
 
-    Entity play = createTextEntity("Play", playX, SCREEN_HEIGHT / 2, 60);
+    Entity play = createTextEntity("Play", playX, SCREEN_HEIGHT / 2, 58);
     setCellColor(play, 255, 255, 255);
     entities["play"] = play;
 
-    Entity quit = createTextEntity("Quit", playX, SCREEN_HEIGHT / 2 + 75, 60);
+    Entity quit = createTextEntity("Quit", playX, SCREEN_HEIGHT / 2 + 75, 58);
     setCellColor(quit, 255, 255, 255);
     entities["quit"] = quit;
 }
@@ -672,12 +679,10 @@ void Minesweeper::addGameUIElements(std::map<std::string, Entity> &entities)
 {
     int sidebarWidth = (SCREEN_WIDTH - (_width * (SCREEN_HEIGHT / _width)) - 5);
 
-    auto currentTime = std::chrono::steady_clock::now();
-    std::chrono::duration<float> elapsed = currentTime - _startTime;
-    int elapsedSeconds = static_cast<int>(elapsed.count());
-
-    entities["timer"] = createTextEntity("Time: " + std::to_string(elapsedSeconds) + "s", 20, 350, 30);
-    entities["score"] = createTextEntity("Score: " + std::to_string(static_cast<int>(_score.first)), 20, 200, 30);
+    // Remove text-based entities and use sprites for timer, score, and remaining bombs
+    addTimerEntity(entities);
+    addScoreEntity(entities);
+    addRemainingBombEntity(entities);
 
     Entity background = createEntity(
         Shape::RECTANGLE, 0, 0, sidebarWidth, SCREEN_HEIGHT,
@@ -690,22 +695,87 @@ void Minesweeper::addGameUIElements(std::map<std::string, Entity> &entities)
     setCellColor(background, 0, 0, 0);
     entities["background"] = background;
     
-    addRemainingMinesEntity(entities);
     addSmileyEntity(entities);
     entities["player_name"] = createTextEntity("Player: " + _playerName, 20, 250, 30);
 }
 
 /**
- * @brief Adds the entity displaying the remaining mines counter.
+ * @brief Helper function: Draws an integer number as a series of digit sprites.
  *
- * @param entities The map of entities to which the counter will be added.
+ * @param entities The map to add digit entities to.
+ * @param idPrefix Prefix for the entity keys.
+ * @param value The number to draw.
+ * @param startX X position of the first digit.
+ * @param startY Y position of the first digit.
+ * @param digitWidth Width for each digit sprite.
+ * @param digitHeight Height for each digit sprite.
  */
-void Minesweeper::addRemainingMinesEntity(std::map<std::string, Entity> &entities)
+void Minesweeper::drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight)
+{
+    std::string valueStr = std::to_string(value);
+    for (size_t i = 0; i < valueStr.size(); i++) {
+        std::string digit(1, valueStr[i]);
+        std::string spritePath = _Sprite + "digit" + digit + ".png";
+        Entity digitEntity = createEntity(
+            Shape::RECTANGLE, 0, 0, digitWidth, digitHeight,
+            startX + i * digitWidth, startY,
+            {
+                {DisplayType::TERMINAL, digit},
+                {DisplayType::GRAPHICAL, spritePath}
+            }
+        );
+        setCellColor(digitEntity, 255, 255, 255);
+        entities[idPrefix + std::to_string(i)] = digitEntity;
+    }
+}
+
+/**
+ * @brief Adds the score display as digit sprites.
+ *
+ * @param entities The map of entities to which the score digits will be added.
+ */
+void Minesweeper::addScoreEntity(std::map<std::string, Entity> &entities)
+{
+    // Convert score to an integer and render with digit sprites
+    int scoreValue = static_cast<int>(_score.first);
+    int digitWidth = 30;
+    int digitHeight = 40;
+    int startX = 20;
+    int startY = 200;
+    drawNumber(entities, "score_digit_", scoreValue, startX, startY, digitWidth, digitHeight);
+}
+
+/**
+ * @brief Adds the timer display as digit sprites.
+ *
+ * @param entities The map of entities to which the timer digits will be added.
+ */
+void Minesweeper::addTimerEntity(std::map<std::string, Entity> &entities)
+{
+    auto currentTime = std::chrono::steady_clock::now();
+    std::chrono::duration<float> elapsed = currentTime - _startTime;
+    int elapsedSeconds = static_cast<int>(elapsed.count());
+    int digitWidth = 30;
+    int digitHeight = 40;
+    int startX = 20;
+    int startY = 350;
+    drawNumber(entities, "timer_digit_", elapsedSeconds, startX, startY, digitWidth, digitHeight);
+}
+
+/**
+ * @brief Adds the remaining bombs display as digit sprites.
+ *
+ * @param entities The map of entities to which the bomb counter digits will be added.
+ */
+void Minesweeper::addRemainingBombEntity(std::map<std::string, Entity> &entities)
 {
     int flaggedCount = countCellsWithState(FLAGGED);
     int remaining = _mines - flaggedCount;
-
-    entities["remaining"] = createTextEntity("Remaining: " + std::to_string(remaining), 20, 300, 30);
+    int digitWidth = 30;
+    int digitHeight = 40;
+    int startX = 20;
+    int startY = 300;
+    drawNumber(entities, "remaining_digit_", remaining, startX, startY, digitWidth, digitHeight);
 }
 
 /**
@@ -841,8 +911,8 @@ std::string Minesweeper::getName(void)
  */
 void Minesweeper::initBoard(int width, int height)
 {
-    _width = width;
-    _height = height;
+    _width = _dificulty.size_x;
+    _height = _dificulty.size_y;
     _board.clear();
     _board.erase(_board.begin(), _board.end());
     _board.assign(height, std::vector<Cell>(width));
@@ -955,7 +1025,6 @@ void Minesweeper::flagCell(int x, int y)
         _board[y][x].State = NONE;
     }
 }
-
 
 /**
  * @brief Checks whether all non-mine cells have been revealed.

@@ -57,8 +57,14 @@ class Minesweeper : public IGame {
         void revealCell(int x, int y);
         void flagCell(int x, int y);
         bool checkWin();
+        void select_dificulty(int width, int height, int mines);
         bool checkLose();
         void revealBombs();
+
+        void addTimerEntity(std::map<std::string, Entity> &entities);
+        void drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight);
+        void addRemainingBombEntity(std::map<std::string, Entity> &entities);
+        void addScoreEntity(std::map<std::string, Entity> &entities);
 
         // Event handling helpers
         void updateSmileyState();
@@ -115,6 +121,13 @@ class Minesweeper : public IGame {
             ESC
         };
 
+        struct Minesweeper_dificulty
+        {
+            int size_x;
+            int size_y;
+            int mines;
+        };
+
         std::vector<std::string> _sounds;
 
         enum SmileyState {
@@ -137,6 +150,7 @@ class Minesweeper : public IGame {
         SmileyState _smileyState = SMILEY;
         std::string _name;
 
+        Minesweeper_dificulty _dificulty = {20, 20, 70};
 
         bool isFirstClick = false;
 
