@@ -92,6 +92,14 @@ class Snake : public IGame {
         void addButtonEntities(std::map<std::string, Entity>& entities);
         void addOptionEntities(std::map<std::string, Entity>& entities);
         void addBackgroundEntity(std::map<std::string, Entity>& entities);
+        void addSnakeEntities(std::map<std::string, Entity>& entities);
+        void renderGridElements(std::map<std::string, Entity>& entities);
+        void renderSnake(std::map<std::string, Entity>& entities);
+        void configureSnakeSegment(Entity& entity, bool isHead);
+        void applySnakeAnimation(Entity& entity, size_t segmentIndex);
+        void updateAnimationProgress();
+        bool shouldShowMenu();
+        
 
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
@@ -106,6 +114,8 @@ class Snake : public IGame {
         int _frameRate = 1;
         bool _gameStart = false;
         int assetPack = 0;
+        float _animationProgress = 0.0f; // 0.0 to 1.0 tracking movement progress
+        std::chrono::steady_clock::time_point _lastFrameTime;
 };
 
 #endif /* !SNAKE_HPP_ */

@@ -12,6 +12,7 @@ Snake::Snake()
 {
     createGrid(gridWidth, gridHeight);
     lastMoveTime = std::chrono::steady_clock::now();
+    _lastFrameTime = std::chrono::steady_clock::now();
     direction = UP;
 }
 
@@ -479,11 +480,11 @@ void Snake::LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::stri
     if (grid[y][x].isWall) {
         setGridColor(entity, 255, 0, 0);
         entity.sprites[DisplayType::TERMINAL] = "A";
-        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_bomb.jpg";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_bomb.jpg";
     } else if (grid[y][x].isSnake) {
         setGridColor(entity, 0, 255, 255);
         entity.sprites[DisplayType::TERMINAL] = "S";
-        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_2.jpg";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_2.jpg";
         if (snake.body.front().x == x && snake.body.front().y == y) {
             setGridColor(entity, 255, 0, 255);
             entity.sprites[DisplayType::TERMINAL] = "H";
@@ -501,30 +502,218 @@ void Snake::LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::stri
                     entity.rotate = 270;
                     break;
             }
-            entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_1.jpg";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_1.jpg";
         }
         if (gameOver) {
             setGridColor(entity, 255, 0, 0);
             entity.sprites[DisplayType::TERMINAL] = "X";
-            entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_4.jpg";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_4.jpg";
             if (snake.body.front().x == x && snake.body.front().y == y) {
                 setGridColor(entity, 255, 0, 255);
                 entity.sprites[DisplayType::TERMINAL] = "H";
-                entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_3.jpg";
+                entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_3.jpg";
             }
         }
     } else if (grid[y][x].isFood) {
         setGridColor(entity, 0, 255, 0);
         entity.sprites[DisplayType::TERMINAL] = "F";
-        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_flag.jpg";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_flag.jpg";
     } else {
         entity.sprites[DisplayType::TERMINAL] = " ";
-        entity.sprites[DisplayType::GRAPHICAL] = "assets/minesweeper_empty.jpg";
+        entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_empty.jpg";
     }
     entities[std::to_string(x) + "_" + std::to_string(y)] = entity;
 }
 
 
+
+/**
+ * @brief Updates the animation progress based on the game state.
+ * 
+ * Calculates how far along we are in the animation between moves based on
+ * the time since the last move and the current frame rate.
+ */
+void Snake::updateAnimationProgress()
+{
+    auto currentTime = std::chrono::steady_clock::now();
+    _lastFrameTime = currentTime;
+    
+    if (_gameStart && !gameOver) {
+        int moveInterval = 1000 / _frameRate;
+        auto timeSinceLastMove = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
+        _animationProgress = std::min(1.0f, static_cast<float>(timeSinceLastMove) / moveInterval);
+    } else {
+        _animationProgress = 0.0f;
+    }
+}
+
+/**
+ * @brief Checks if the game should display the menu instead of gameplay.
+ * 
+ * @return true if the menu should be displayed, false otherwise
+ */
+bool Snake::shouldShowMenu()
+{
+    if (gameOver && !_gameStart) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+    
+    if ((!_gameStart || gameOver) && !(_gameStart && gameOver)) {
+        return true;
+    }
+    
+    if (gameOver) {
+        _gameStart = false;
+    }
+    
+    return false;
+}
+
+/**
+ * @brief Renders the basic grid elements (walls, empty spaces, food).
+ * 
+ * @param entities The map of entities to which grid elements will be added.
+ */
+void Snake::renderGridElements(std::map<std::string, Entity>& entities)
+{
+    for (int y = 0; y < gridHeight; ++y) {
+        for (int x = 0; x < gridWidth; ++x) {
+            Entity entity;
+            entity.type = Shape::RECTANGLE;
+            int offsetX = (1024 - (gridWidth * 38)) / 2;
+            entity.x = x * 38 + offsetX;
+            entity.y = y * 38;
+            entity.width = 38;
+            entity.height = 38;
+            entity.rotate = 0;
+            setGridColor(entity, 255, 255, 255);
+            
+            // Temporarily mark as not snake to render other elements
+            bool isSnake = grid[y][x].isSnake;
+            grid[y][x].isSnake = false;
+            
+            if (assetPack == 0) {
+                LoadFirstAssetPack(x, y, entity, entities);
+            } else if (assetPack == 1) {
+                LoadSecondAssetPack(x, y, entity, entities);
+            }
+            
+            grid[y][x].isSnake = isSnake; // Restore snake status
+        }
+    }
+}
+
+/**
+ * @brief Applies animation to a snake segment.
+ * 
+ * @param entity The entity to animate.
+ * @param segmentIndex The index of the segment in the snake body.
+ */
+void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
+{
+    if (segmentIndex == 0) { // Head
+        // Calculate position offset for the head based on direction and animation progress
+        int moveX = 0, moveY = 0;
+        switch (direction) {
+            case UP:    moveY = -1; break;
+            case DOWN:  moveY = 1; break;
+            case LEFT:  moveX = -1; break;
+            case RIGHT: moveX = 1; break;
+        }
+        
+        entity.x += static_cast<int>(moveX * 38 * _animationProgress);
+        entity.y += static_cast<int>(moveY * 38 * _animationProgress);
+    } else {
+        // For all body segments including tail, calculate the target position
+        int x = snake.body[segmentIndex].x;
+        int y = snake.body[segmentIndex].y;
+        int moveX = snake.body[segmentIndex-1].x - x;
+        int moveY = snake.body[segmentIndex-1].y - y;
+        
+        // Handle edge cases for wrapping around the grid
+        if (moveX > 1) moveX = -1;
+        if (moveX < -1) moveX = 1;
+        if (moveY > 1) moveY = -1;
+        if (moveY < -1) moveY = 1;
+        
+        entity.x += static_cast<int>(moveX * 38 * _animationProgress);
+        entity.y += static_cast<int>(moveY * 38 * _animationProgress);
+    }
+}
+
+/**
+ * @brief Configures appearance properties for a snake segment.
+ * 
+ * @param entity The entity to configure.
+ * @param isHead Whether this segment is the snake's head.
+ */
+void Snake::configureSnakeSegment(Entity& entity, bool isHead)
+{
+    if (isHead) {
+        setGridColor(entity, 255, 0, 255);
+        entity.sprites[DisplayType::TERMINAL] = "H";
+        switch (direction) {
+            case UP:    entity.rotate = 180; break;
+            case DOWN:  entity.rotate = 0; break;
+            case LEFT:  entity.rotate = 90; break;
+            case RIGHT: entity.rotate = 270; break;
+        }
+        
+        if (assetPack == 0) {
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+                "assets/snake/dead_head.png" : "assets/snake/head.png";
+        } else {
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+                "assets/Minesweeper_1/minesweeper_3.jpg" : "assets/Minesweeper_1/minesweeper_1.jpg";
+        }
+    } else {
+        setGridColor(entity, 0, 255, 255);
+        entity.sprites[DisplayType::TERMINAL] = "S";
+        
+        if (assetPack == 0) {
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+                "assets/snake/dead_snake.png" : "assets/snake/snake.png";
+        } else {
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+                "assets/Minesweeper_1/minesweeper_4.jpg" : "assets/Minesweeper_1/minesweeper_2.jpg";
+        }
+    }
+}
+
+/**
+ * @brief Renders the snake with animation effects.
+ * 
+ * @param entities The map of entities to which snake elements will be added.
+ */
+void Snake::renderSnake(std::map<std::string, Entity>& entities)
+{
+    for (size_t i = 0; i < snake.body.size(); i++) {
+        int x = snake.body[i].x;
+        int y = snake.body[i].y;
+        bool isHead = (i == 0);
+        
+        Entity entity;
+        entity.type = Shape::RECTANGLE;
+        int offsetX = (1024 - (gridWidth * 38)) / 2;
+        entity.x = x * 38 + offsetX;
+        entity.y = y * 38;
+        entity.width = 38;
+        entity.height = 38;
+        entity.rotate = 0;
+        
+        // Apply animation only when game is active
+        if (_gameStart && !gameOver) {
+            applySnakeAnimation(entity, i);
+        }
+        
+        // Set snake-specific properties
+        grid[y][x].isSnake = true;
+        configureSnakeSegment(entity, isHead);
+        
+        // Add snake segment to entities with a unique ID
+        entities["snake_" + std::to_string(i)] = entity;
+    }
+}
 
 /**
  * @brief Renders the game grid and returns the entities to display.
@@ -540,34 +729,22 @@ std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
 
-    if (gameOver && !_gameStart) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-    if ((!_gameStart || gameOver) && !(_gameStart && gameOver)) {
+    // Update animation progress
+    updateAnimationProgress();
+    
+    // Check if we should show menu instead of gameplay
+    if (shouldShowMenu()) {
         return domenu();
     }
-    if (gameOver) {
-        _gameStart = false;
-    }
+
     entities.clear();
-    for (int y = 0; y < gridHeight; ++y) {
-        for (int x = 0; x < gridWidth; ++x) {
-            Entity entity;
-            entity.type = Shape::RECTANGLE;
-            int offsetX = (1024 - (gridWidth * 38)) / 2;
-            entity.x = x * 38 + offsetX;
-            entity.y = y * 38;
-            entity.width = 38;
-            entity.height = 38;
-            entity.rotate = 0;
-            setGridColor(entity, 255, 255, 255);
-            if (assetPack == 0) {
-                LoadFirstAssetPack(x, y, entity, entities);
-            } else if (assetPack == 1) {
-                LoadSecondAssetPack(x, y, entity, entities);
-            }
-        }
-    }
+    
+    // Render grid elements (walls, empty space, food)
+    renderGridElements(entities);
+    
+    // Render snake with animation
+    renderSnake(entities);
+    
     return entities;
 }
 
