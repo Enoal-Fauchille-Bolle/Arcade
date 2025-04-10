@@ -115,7 +115,7 @@ ncurses: $(NCURSES_OBJ)
 
 sdl: $(SDL_OBJ)
 	$(CC) -o $(SDL_NAME) $^ $(LDFLAGS) -l SDL2 -l SDL2_ttf \
-		-l SDL2_image
+		-l SDL2_image -l SDL2_mixer
 	mv $(SDL_NAME) $(ROOT_LIBS)
 
 sfml: $(SFML_OBJ)
