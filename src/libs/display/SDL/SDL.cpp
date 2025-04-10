@@ -129,7 +129,7 @@ SDL::SDL()
         std::cerr << "SDL_mixer could not initialize! Error: " << Mix_GetError() << std::endl;
     } else {
         _audioInitialized = true;
-        Mix_AllocateChannels(16);
+        Mix_AllocateChannels(128);
     }
 }
 
@@ -425,7 +425,7 @@ void SDL::drawMusic(renderObject obj)
     if (!_audioInitialized || obj.sprite.empty()) {
         return;
     }
-    if (obj.sprite.length() >= 13 && obj.sprite.substr(0, 12) == "assets/music_") {
+    if (obj.sprite.length() >= 13 && obj.sprite.substr(0, 13) == "assets/music_") {
         std::string musicPath = obj.sprite;
         
         if (_currentMusic != nullptr) {
@@ -447,6 +447,11 @@ void SDL::drawMusic(renderObject obj)
     } else {
         std::string soundPath = obj.sprite;
         
+        if (soundPath == "assets/gameover.mp3" && _currentMusic != nullptr) {
+            Mix_HaltMusic();
+            Mix_FreeMusic(_currentMusic);
+            _currentMusic = nullptr;
+        }
         if (_soundCache.find(soundPath) == _soundCache.end()) {
             Mix_Chunk* chunk = Mix_LoadWAV(soundPath.c_str());
             if (!chunk) {
