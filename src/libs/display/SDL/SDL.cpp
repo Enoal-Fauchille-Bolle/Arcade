@@ -412,58 +412,86 @@ void SDL::drawText(renderObject obj)
 }
 
 /**
+ * @brief Plays background music from the given renderObject.
+ *
+ * This function handles the playback of background music specified in the renderObject.
+ * It stops any currently playing music before starting the new one.
+ *
+ * @param obj The renderObject containing the music file path.
+ */
+void SDL::playBackgroundMusic(const renderObject& obj)
+{
+    if (_currentMusic != nullptr) {
+        Mix_HaltMusic();
+        Mix_FreeMusic(_currentMusic);
+        _currentMusic = nullptr;
+    }
+
+    _currentMusic = Mix_LoadMUS(obj.sprite.c_str());
+    if (!_currentMusic) {
+        std::cerr << "Failed to load music: " << Mix_GetError() << std::endl;
+        return;
+    }
+
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+    if (Mix_PlayMusic(_currentMusic, -1) == -1) {
+        std::cerr << "Failed to play music: " << Mix_GetError() << std::endl;
+    }
+}
+
+/**
+ * @brief Plays a sound effect from the given renderObject.
+ *
+ * This function handles the playback of sound effects specified in the renderObject.
+ * It caches the sound effect for future use to avoid reloading.
+ *
+ * @param obj The renderObject containing the sound effect file path.
+ */
+void SDL::playSoundEffect(const renderObject& obj)
+{
+    if ((obj.sprite == "assets/gameover.mp3" || obj.sprite == "assets/Minesweeper_1/boom.ogg") && _currentMusic != nullptr) {
+        Mix_HaltMusic();
+        Mix_FreeMusic(_currentMusic);
+        _currentMusic = nullptr;
+    }
+
+    if (_soundCache.find(obj.sprite) == _soundCache.end()) {
+        Mix_Chunk* chunk = Mix_LoadWAV(obj.sprite.c_str());
+        if (!chunk) {
+            std::cerr << "Failed to load sound effect: " << Mix_GetError() << std::endl;
+            return;
+        }
+        _soundCache[obj.sprite] = chunk;
+    }
+    Mix_VolumeChunk(_soundCache[obj.sprite], MIX_MAX_VOLUME / 2);
+    if (Mix_PlayChannel(-1, _soundCache[obj.sprite], 0) == -1) {
+        std::cerr << "Failed to play sound effect: " << Mix_GetError() << std::endl;
+    }
+}
+
+/**
  * @brief Processes sound events from a renderObject.
  *
  * This method plays sound based on parameters in the renderObject.
- * - Use "sound:" prefix in obj.sound to play temporary sound effects
- * - Use "music:" prefix in obj.sound to play background music
+ * - Use "assets/music_" prefix in obj.sprite to play background music.
+ * - Use other paths in obj.sprite to play sound effects.
  *
- * @param obj The renderObject containing sound information
+ * @param obj The renderObject containing sound information.
  */
 void SDL::drawMusic(renderObject obj)
 {
     if (!_audioInitialized || obj.sprite.empty()) {
+        Mix_HaltMusic();
+        if (_currentMusic) {
+            Mix_FreeMusic(_currentMusic);
+            _currentMusic = nullptr;
+        }
         return;
     }
+
     if (obj.sprite.length() >= 13 && obj.sprite.substr(0, 13) == "assets/music_") {
-        std::string musicPath = obj.sprite;
-        
-        if (_currentMusic != nullptr) {
-            Mix_HaltMusic();
-            Mix_FreeMusic(_currentMusic);
-            _currentMusic = nullptr;
-        }
-        
-        _currentMusic = Mix_LoadMUS(musicPath.c_str());
-        if (!_currentMusic) {
-            std::cerr << "Failed to load music: " << Mix_GetError() << std::endl;
-            return;
-        }
-        
-        if (Mix_PlayMusic(_currentMusic, -1) == -1) {
-            std::cerr << "Failed to play music: " << Mix_GetError() << std::endl;
-        }
-        return;
+        playBackgroundMusic(obj);
     } else {
-        std::string soundPath = obj.sprite;
-        
-        if ((soundPath == "assets/gameover.mp3" || soundPath == "assets/Minesweeper_1/boom.ogg")
-            && _currentMusic != nullptr) {
-            Mix_HaltMusic();
-            Mix_FreeMusic(_currentMusic);
-            _currentMusic = nullptr;
-        }
-        if (_soundCache.find(soundPath) == _soundCache.end()) {
-            Mix_Chunk* chunk = Mix_LoadWAV(soundPath.c_str());
-            if (!chunk) {
-                std::cerr << "Failed to load sound effect: " << Mix_GetError() << std::endl;
-                return;
-            }
-            _soundCache[soundPath] = chunk;
-        }
-        
-        if (Mix_PlayChannel(-1, _soundCache[soundPath], 0) == -1) {
-            std::cerr << "Failed to play sound effect: " << Mix_GetError() << std::endl;
-        }
+        playSoundEffect(obj);
     }
 }

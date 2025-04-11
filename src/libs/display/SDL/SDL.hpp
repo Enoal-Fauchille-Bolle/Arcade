@@ -39,6 +39,8 @@ class SDL {
         void drawCircle(renderObject obj);
         void drawText(renderObject obj);
         void drawMusic(renderObject obj);
+        void playBackgroundMusic(const renderObject& obj);
+        void playSoundEffect(const renderObject& obj);
 
     private:
         SDL_Window* _window = nullptr;

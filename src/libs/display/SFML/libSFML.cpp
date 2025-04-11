@@ -337,7 +337,8 @@ void libSFML::drawMusic(renderObject obj)
     if (obj.sprite.find("assets/music_") == 0) {
         playBackgroundMusic(obj.sprite, backgroundMusic, isBackgroundMusicPlaying);
     } 
-    else if (obj.sprite == "assets/gameover.mp3" || obj.sprite == "assets/Minesweeper_1/boom.ogg") {
+    else if (obj.sprite == "assets/gameover.mp3" || obj.sprite == "assets/Minesweeper_1/boom.ogg"
+             || obj.sprite.empty()) {
         if (isBackgroundMusicPlaying) {
             backgroundMusic.stop();
             isBackgroundMusicPlaying = false;

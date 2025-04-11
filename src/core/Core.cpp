@@ -315,6 +315,10 @@ bool Core::checkGoToMenu(std::vector<RawEvent> events)
     for (auto it = events.begin(); it != events.end(); ++it) {
         if (it->type == PRESS && it->key == GO_TO_MENU_KEY) {
             events.erase(it);
+            renderObject musicObj;
+            musicObj.type = MUSIC;
+            musicObj.sprite = "";
+            _display->drawObject(musicObj);
             return true;
         }
     }
