@@ -144,7 +144,7 @@ games: menu snake minesweeper
 core: $(CORE_OBJ) $(MAIN:.cpp=.o)
 	$(CC) -o $(NAME) $(CORE_OBJ) $(MAIN:.cpp=.o) $(FLAGS)
 
-$(NAME): core games display
+$(NAME): core games graphicals
 
 $(TESTS)%.o: $(TESTS)%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)
