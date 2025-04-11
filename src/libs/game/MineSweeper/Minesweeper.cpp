@@ -605,6 +605,41 @@ std::map<std::string, Entity> Minesweeper::printBoard()
     return entities;
 }
 
+void Minesweeper::setCellColor(Entity &entity, int x, int y)
+{
+    if (_board[y][x].isRevealed) {
+        if (_board[y][x].isMine && _board[y][x].State == LOSER) {
+            setCellColor(entity, 255, 0, 0);
+        } else if (_board[y][x].isMine) {
+            setCellColor(entity, 255, 0, 0);
+        } else if (_board[y][x].adjacentMines == 1) {
+            setCellColor(entity, 0, 255, 0);
+        } else if (_board[y][x].adjacentMines == 2) {
+            setCellColor(entity, 0, 0, 255);
+        } else if (_board[y][x].adjacentMines == 3) {
+            setCellColor(entity, 255, 255, 0);
+        } else if (_board[y][x].adjacentMines == 4) {
+            setCellColor(entity, 255, 0, 255);
+        } else if (_board[y][x].adjacentMines == 5) {
+            setCellColor(entity, 0, 255, 255);
+        } else if (_board[y][x].adjacentMines == 6) {
+            setCellColor(entity, 255, 255, 255);
+        } else if (_board[y][x].adjacentMines == 7) {
+            setCellColor(entity, 255, 0, 0);
+        } else if (_board[y][x].adjacentMines == 8) {
+            setCellColor(entity, 0, 0, 0);
+        } else {
+            setCellColor(entity, 200, 200, 200);
+        }
+    } else if (_board[y][x].State == FLAGGED) {
+        setCellColor(entity, 255, 0, 0);
+    } else if (_board[y][x].State == QMARK) {
+        setCellColor(entity, 0, 0, 255);
+    } else {
+        setCellColor(entity, 255, 255, 255);
+    }
+}
+
 /**
  * @brief Adds all cell entities to the board
  *
@@ -626,7 +661,7 @@ void Minesweeper::addCellEntities(std::map<std::string, Entity> &entities)
                 offsetX, offsetY,
                 sprite
             );
-            setCellColor(cell, 255, 255, 255);
+            setCellColor(cell, x, y);
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
         }
     }
@@ -696,7 +731,7 @@ void Minesweeper::addGameUIElements(std::map<std::string, Entity> &entities)
     entities["background"] = background;
     
     addSmileyEntity(entities);
-    entities["player_name"] = createTextEntity("Player: " + _playerName, 20, 250, 30);
+    entities["player_name"] = createTextEntity("Player: " + _playerName, 20, 150, 30);
 }
 
 /**

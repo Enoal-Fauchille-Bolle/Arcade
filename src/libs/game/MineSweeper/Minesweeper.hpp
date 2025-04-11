@@ -101,6 +101,7 @@ class Minesweeper : public IGame {
         std::map<std::string, Entity> printWinOrLose();
         std::map<std::string, Entity> printMenu();
         std::map<std::string, Entity> printBoard();
+        void setCellColor(Entity &entity, int x, int y);
 
         // Event handling methods
         void handleEventGame(std::vector<RawEvent> events);
