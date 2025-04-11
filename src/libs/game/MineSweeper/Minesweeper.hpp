@@ -124,11 +124,18 @@ class Minesweeper : public IGame {
             ESC
         };
 
+        enum Dificulty {
+            EASY,
+            MEDIUM,
+            HARD
+        };
+
         struct Minesweeper_dificulty
         {
             int size_x;
             int size_y;
             int mines;
+            Dificulty difficulty;
         };
 
         std::vector<std::string> _sounds;
@@ -153,7 +160,7 @@ class Minesweeper : public IGame {
         SmileyState _smileyState = SMILEY;
         std::string _name;
 
-        Minesweeper_dificulty _dificulty = {20, 20, 70};
+        Minesweeper_dificulty _dificulty = {30, 16, 99, HARD};
 
         bool isFirstClick = false;
 

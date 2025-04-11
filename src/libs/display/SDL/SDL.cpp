@@ -447,7 +447,7 @@ void SDL::drawMusic(renderObject obj)
     } else {
         std::string soundPath = obj.sprite;
         
-        if ((soundPath == "assets/gameover.mp3" || soundPath == "assets/Minesweeper_1/boom.mp3")
+        if ((soundPath == "assets/gameover.mp3" || soundPath == "assets/Minesweeper_1/boom.ogg")
             && _currentMusic != nullptr) {
             Mix_HaltMusic();
             Mix_FreeMusic(_currentMusic);

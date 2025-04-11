@@ -282,9 +282,22 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
             if (event.x >= playX && event.x <= playX + playW &&
                 event.y >= playY && event.y <= playY + playH) {
                 _state = GAME;
-                _mines = 70;
+                _mines = _dificulty.mines;
                 isFirstClick = false;
                 initBoard(20, 20);
+            }
+            if (event.x >= playX - 200 && event.x <= playX - 200 + 120 &&
+                event.y >= SCREEN_HEIGHT / 2 + 150 && event.y <= SCREEN_HEIGHT / 2 + 150 + 60) {
+                _dificulty.difficulty = EASY;
+                select_dificulty(10, 9, 9);
+            } else if (event.x >= playX - 50 && event.x <= playX - 50 + 120 &&
+                       event.y >= SCREEN_HEIGHT / 2 + 150 && event.y <= SCREEN_HEIGHT / 2 + 150 + 60) {
+                _dificulty.difficulty = MEDIUM;
+                select_dificulty(40, 16, 16);
+            } else if (event.x >= playX + 200 && event.x <= playX + 200 + 120 &&
+                       event.y >= SCREEN_HEIGHT / 2 + 150 && event.y <= SCREEN_HEIGHT / 2 + 150 + 60) {
+                _dificulty.difficulty = HARD;
+                select_dificulty(99, 30, 16);
             }
             else if (event.x >= quitX && event.x <= quitX + quitW &&
                     event.y >= quitY && event.y <= quitY + quitH) {
@@ -574,6 +587,27 @@ void Minesweeper::addMenuButtonEntities(std::map<std::string, Entity> &entities)
     Entity quit = createTextEntity("Quit", playX, SCREEN_HEIGHT / 2 + 75, 58);
     setCellColor(quit, 255, 255, 255);
     entities["quit"] = quit;
+
+    Entity easy = createTextEntity("Easy", playX - 200, SCREEN_HEIGHT / 2 + 150, 58);
+    if (_dificulty.difficulty == EASY)
+        setCellColor(easy, 255, 0, 0);
+    else
+        setCellColor(easy, 255, 255, 255);
+    entities["easy"] = easy;
+
+    Entity medium = createTextEntity("Medium", playX - 50, SCREEN_HEIGHT / 2 + 150, 58);
+    if (_dificulty.difficulty == MEDIUM)
+        setCellColor(medium, 255, 0, 0);
+    else
+        setCellColor(medium, 255, 255, 255);
+    entities["medium"] = medium;
+
+    Entity hard = createTextEntity("Hard", playX + 200, SCREEN_HEIGHT / 2 + 150, 58);
+    if (_dificulty.difficulty == HARD)
+        setCellColor(hard, 255, 0, 0);
+    else
+        setCellColor(hard, 255, 255, 255);
+    entities["hard"] = hard;
 }
 
 /**
@@ -674,9 +708,9 @@ void Minesweeper::setCellColor(Entity &entity, int x, int y)
  */
 void Minesweeper::addCellEntities(std::map<std::string, Entity> &entities)
 {
-    int cellWidth = SCREEN_HEIGHT / _width;
-    int cellHeight = SCREEN_HEIGHT / _height;
-    int offsetX = (SCREEN_WIDTH - (_width * cellWidth)) - 5;
+    int cellWidth = SCREEN_HEIGHT / std::max(_width, _height);
+    int cellHeight = SCREEN_HEIGHT / std::max(_width, _height);
+    int offsetX = (SCREEN_WIDTH - (_width * cellWidth)) -5;
     int offsetY = (SCREEN_HEIGHT - (_height * cellHeight)) / 2;
 
     for (int y = 0; y < _height; y++) {
@@ -690,6 +724,22 @@ void Minesweeper::addCellEntities(std::map<std::string, Entity> &entities)
             );
             setCellColor(cell, x, y);
             entities["cell_" + std::to_string(x) + "_" + std::to_string(y)] = cell;
+        }
+    }
+    for (int y = 0; y < SCREEN_HEIGHT / cellHeight; y++) {
+        for (int x = 0; x < SCREEN_WIDTH / cellWidth; x++) {
+            if (x >= _width || y >= _height) {
+                Entity emptyCell = createEntity(
+                    Shape::RECTANGLE, x, y, cellWidth, cellHeight,
+                    offsetX, offsetY,
+                    {
+                        {DisplayType::TERMINAL, " "},
+                        {DisplayType::GRAPHICAL, ""}
+                    }
+                );
+                setCellColor(emptyCell, 0, 0, 0); // Black or transparent
+                entities["empty_" + std::to_string(x) + "_" + std::to_string(y)] = emptyCell;
+            }
         }
     }
 }
@@ -1158,7 +1208,7 @@ bool Minesweeper::checkLose()
         for (int x = 0; x < _width; x++) {
             if (_board[y][x].isMine && _board[y][x].isRevealed) {
                 _board[y][x].State = LOSER;
-                _sounds.push_back(_Sprite + "boom.mp3");
+                _sounds.push_back(_Sprite + "boom.ogg");
                 revealBombsEfficiently();
                 _score.first += countFlaggedMines() * 200;
                 _state = GAME_LOSE;
