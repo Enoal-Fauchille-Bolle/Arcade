@@ -127,6 +127,7 @@ void Menu::checkGameClick(RawEvent event)
             event.y >= (_gameLibs[i].second.y + 15) -
                            _gameLibs[i].second.height - LIBS_PADDING) {
             _selectedGameLib = i;
+            _reloadScoreboard = true;
             return;
         }
     }
@@ -451,6 +452,14 @@ void Menu::renderBackground(std::map<EntityName, Entity> &entities)
     entities["A-background"] = background;
 }
 
+/**
+ * @brief Get the content of the scoreboard
+ *
+ * This function retrieves the scores from the ScoreManager and
+ * formats them into a string for display.
+ *
+ * @return std::string The formatted scoreboard content
+ */
 std::string Menu::getScoreboardContent(void)
 {
     ScoreManager scoreManager;
@@ -458,19 +467,20 @@ std::string Menu::getScoreboardContent(void)
     std::string fileName = "score/score_" + gameName + ".txt";
     std::vector<std::pair<float, std::string>> scores =
         scoreManager.loadScoresFromFile(fileName);
-    std::string result = "";
 
-    for (size_t i = 0; i < scores.size(); i++) {
-        result += scores[i].second + ": " +
+    _scoreboardContent = "";
+    for (size_t i = 0; i < scores.size() && i < 20; i++) {
+        _scoreboardContent += scores[i].second + ": " +
                   std::to_string(static_cast<int>(scores[i].first)) + "\n";
     }
-    if (result.empty()) {
-        result = "No scores available";
+    if (!_scoreboardContent.empty() && _scoreboardContent.back() == '\n') {
+        _scoreboardContent.pop_back();
     }
-    if (!result.empty() && result.back() == '\n') {
-        result.pop_back();
+    if (_scoreboardContent.empty()) {
+        _scoreboardContent = "No scores available";
     }
-    return result;
+    _reloadScoreboard = false;
+    return _scoreboardContent;
 }
 
 /**
@@ -485,7 +495,8 @@ void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
 {
     Entity scoreboardTitle;
     Entity scoreboardContent;
-    std::string content = getScoreboardContent();
+    std::string content =
+        _reloadScoreboard ? getScoreboardContent() : _scoreboardContent;
     Entity scoreboardFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2.4,
         1380 / 2.4, SCOREBOARD_TITLE_X - 20, SCOREBOARD_TITLE_Y - 21,
         {{DisplayType::TERMINAL, ""},
@@ -493,14 +504,14 @@ void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
                 std::string(ASSETS_DIR) + "scoreboard.png"}});
 
     scoreboardTitle.type = TEXT;
-    scoreboardTitle.x = SCOREBOARD_TITLE_X + 35;
+    scoreboardTitle.x = SCOREBOARD_TITLE_X + 30;
     scoreboardTitle.y = SCOREBOARD_TITLE_Y;
     scoreboardTitle.width = 30;
     scoreboardTitle.height = 0;
     scoreboardTitle.rotate = 0;
     setEntityColor(scoreboardTitle, 78, 200, 245);
-    scoreboardTitle.sprites[DisplayType::GRAPHICAL] = "Scoreboard";
-    scoreboardTitle.sprites[DisplayType::TERMINAL] = "Scoreboard";
+    scoreboardTitle.sprites[DisplayType::GRAPHICAL] = "Leaderboard";
+    scoreboardTitle.sprites[DisplayType::TERMINAL] = "Leaderboard";
     entities["C-scoreboardTitle"] = scoreboardTitle;
     setEntityColor(scoreboardFrame, 0, 0, 0);
     entities["B-scoreboardMenu"] = scoreboardFrame;

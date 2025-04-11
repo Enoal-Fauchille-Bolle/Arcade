@@ -122,6 +122,8 @@ class Menu : public IGame {
         size_t _selectedDisplayLib = 0;
         bool _startGame;
         std::string _username = "Player";
+        std::string _scoreboardContent = "";
+        bool _reloadScoreboard = true;
 };
 
 #endif /* !MENU_HPP_ */
