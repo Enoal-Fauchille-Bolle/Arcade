@@ -22,6 +22,9 @@ Each game library must implement the following pure virtual functions:
 - **std::string getNewLib(void)**
   - Provides the name of a new library if the game requires switching (e.g., for dynamic behavior).
 
+- **std::string getNewDisplay(void)**
+  - Provides the name of a new display library if the game requires switching (e.g., for dynamic behavior).
+
 - **void handleEvent(std::vector<RawEvent>)**
   - Processes a list of raw events (user input or system events) for in-game actions.
 

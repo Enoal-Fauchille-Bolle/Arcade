@@ -74,6 +74,7 @@ classDiagram
         + pair<float, string> getScore()
         + bool isGameEnd()
         + string getNewLib()
+        + string getNewDisplay()
         + void handleEvent(vector~RawEvent~)
         + map~string, Entity~ renderGame()
         + string getName()
