@@ -88,6 +88,15 @@ The library must implement the `IGame` and `IDisplay` interfaces, which define t
 - [Game Interface Documentation](docs/game_interface.md)
 - [Display Interface Documentation](docs/display_interface.md)
 
+### Doxygen
+Doxygen is used to generate documentation for the project. To generate the documentation, run:
+
+```sh
+doxygen Doxyfile
+```
+
+This will create a `docs/doxygen` directory containing the generated documentation.
+
 ### Commit Format
 
 The Commit Format is inspired by [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and [Gitmoji](https://gitmoji.dev/). It is used to standardize commit messages across the project, making it easier to understand the purpose of each commit at a glance.
