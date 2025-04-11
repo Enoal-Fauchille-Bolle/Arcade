@@ -24,7 +24,7 @@ class AGame : public IGame {
         virtual bool isGameEnd(void) = 0;
         virtual std::string getNewLib(void) = 0;
 
-        virtual void handleEvent(std::vector<event>) = 0;
+        virtual void handleEvent(std::vector<evet>) = 0;
         virtual std::map<std::string, Entity> renderGame() = 0;
 
         std::string getName(void) override;

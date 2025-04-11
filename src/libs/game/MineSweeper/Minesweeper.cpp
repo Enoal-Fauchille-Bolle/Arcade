@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** Arcade
+** File description:
+** Minesweeper
+*/
+
 #include "Minesweeper.hpp"
 #include <iostream>
 #include <chrono>
@@ -5,6 +12,7 @@
 #include <cmath>
 
 /**
+ *
  * @brief Constructor for the Minesweeper class.
  */
 Minesweeper::Minesweeper()
@@ -284,7 +292,7 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
                 _state = GAME;
                 _mines = _dificulty.mines;
                 isFirstClick = false;
-                initBoard(20, 20);
+                initBoard(_dificulty.size_x, _dificulty.size_y);
             }
             if (event.x >= playX - 200 && event.x <= playX - 200 + 120 &&
                 event.y >= SCREEN_HEIGHT / 2 + 150 && event.y <= SCREEN_HEIGHT / 2 + 150 + 60) {
@@ -358,17 +366,19 @@ void Minesweeper::handleEventESC(std::vector<RawEvent> events)
  */
 void Minesweeper::resetGame()
 {
-    initBoard(_width, _height);
-
+    initBoard(_dificulty.size_x, _dificulty.size_y);
     isFirstClick = false;
     _score.first = 0;
     _smileyState = SMILEY;
 
     _sounds.clear();
     _sounds.push_back("assets/music_minesweeper.mp3");
+
+    _timerPaused = false;
+    _pausedElapsed = 0.0f;
+
     _state = GAME;
 }
-
 
 /**
  * @brief Renders the game entities according to the current state.
@@ -395,7 +405,7 @@ std::map<std::string, Entity> Minesweeper::renderGame()
 
 /**
  * @brief Adds sound entities to the entities map
- * 
+ *
  * @param entities The map to add sound entities to
  */
 void Minesweeper::addSoundEntities(std::map<std::string, Entity> &entities)
@@ -737,7 +747,7 @@ void Minesweeper::addCellEntities(std::map<std::string, Entity> &entities)
                         {DisplayType::GRAPHICAL, ""}
                     }
                 );
-                setCellColor(emptyCell, 0, 0, 0); // Black or transparent
+                setCellColor(emptyCell, 0, 0, 0);
                 entities["empty_" + std::to_string(x) + "_" + std::to_string(y)] = emptyCell;
             }
         }
@@ -791,7 +801,6 @@ void Minesweeper::addGameUIElements(std::map<std::string, Entity> &entities)
 {
     int sidebarWidth = (SCREEN_WIDTH - (_width * (SCREEN_HEIGHT / _width)) - 5);
 
-    // Remove text-based entities and use sprites for timer, score, and remaining bombs
     addTimerEntity(entities);
     addScoreEntity(entities);
     addRemainingBombEntity(entities);
@@ -806,40 +815,61 @@ void Minesweeper::addGameUIElements(std::map<std::string, Entity> &entities)
     );
     setCellColor(background, 0, 0, 0);
     entities["background"] = background;
-    
+
     addSmileyEntity(entities);
     entities["player_name"] = createTextEntity("Player: " + _playerName, 20, 150, 30);
 }
 
 /**
- * @brief Helper function: Draws an integer number as a series of digit sprites.
+ * @brief Helper function: Draws an integer number as a series of digit sprites,
+ *        right‑aligned within a fixed total number of digit slots. The overall
+ *        digit area starts at the original (startX, startY) position.
  *
  * @param entities The map to add digit entities to.
  * @param idPrefix Prefix for the entity keys.
  * @param value The number to draw.
- * @param startX X position of the first digit.
- * @param startY Y position of the first digit.
+ * @param startX X position of the left edge of the digit area.
+ * @param startY Y position of the digit area.
  * @param digitWidth Width for each digit sprite.
  * @param digitHeight Height for each digit sprite.
+ * @param totalDigits Total number of digit slots to draw.
  */
-void Minesweeper::drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight)
+void Minesweeper::drawNumber(std::map<std::string, Entity> &entities,
+    const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight,
+    int totalDigits)
 {
     std::string valueStr = std::to_string(value);
-    for (size_t i = 0; i < valueStr.size(); i++) {
-        std::string digit(1, valueStr[i]);
-        std::string spritePath = _Sprite + "digit" + digit + ".png";
+    int valueLength = static_cast<int>(valueStr.size());
+
+    int firstDigitSlot = totalDigits - valueLength;
+
+    for (int slot = 0; slot < totalDigits; slot++) {
+        std::string digit;
+        std::string spritePath;
+
+        if (slot < firstDigitSlot) {
+            digit = " ";
+            spritePath = _Sprite + "digit.png";
+        } else {
+        int digitIndex = slot - firstDigitSlot;
+        digit = std::string(1, valueStr[digitIndex]);
+        spritePath = _Sprite + "digit" + digit + ".png";
+        }
+        int xPos = startX + slot * digitWidth;
+
         Entity digitEntity = createEntity(
-            Shape::RECTANGLE, 0, 0, digitWidth, digitHeight,
-            startX + i * digitWidth, startY,
+        Shape::RECTANGLE, 0, 0, digitWidth, digitHeight,
+        xPos, startY,
             {
                 {DisplayType::TERMINAL, digit},
                 {DisplayType::GRAPHICAL, spritePath}
             }
         );
         setCellColor(digitEntity, 255, 255, 255);
-        entities[idPrefix + std::to_string(i)] = digitEntity;
+        entities[idPrefix + std::to_string(slot)] = digitEntity;
     }
 }
+
 
 /**
  * @brief Adds the score display as digit sprites.
@@ -854,7 +884,7 @@ void Minesweeper::addScoreEntity(std::map<std::string, Entity> &entities)
     int digitHeight = 40;
     int startX = 20;
     int startY = 200;
-    drawNumber(entities, "score_digit_", scoreValue, startX, startY, digitWidth, digitHeight);
+    drawNumber(entities, "score_digit_", scoreValue, startX, startY, digitWidth, digitHeight , 6);
 }
 
 /**
@@ -864,15 +894,25 @@ void Minesweeper::addScoreEntity(std::map<std::string, Entity> &entities)
  */
 void Minesweeper::addTimerEntity(std::map<std::string, Entity> &entities)
 {
-    auto currentTime = std::chrono::steady_clock::now();
-    std::chrono::duration<float> elapsed = currentTime - _startTime;
-    int elapsedSeconds = static_cast<int>(elapsed.count());
+    float elapsedSeconds = 0.0f;
+    if (_timerPaused) {
+        elapsedSeconds = _pausedElapsed;
+    } else {
+        auto currentTime = std::chrono::steady_clock::now();
+        std::chrono::duration<float> elapsed = currentTime - _startTime;
+        elapsedSeconds = elapsed.count();
+    }
+    int remainingSeconds = 300 - static_cast<int>(elapsedSeconds);
+    if (remainingSeconds < 0)
+        remainingSeconds = 0;
+
     int digitWidth = 30;
     int digitHeight = 40;
     int startX = 20;
     int startY = 350;
-    drawNumber(entities, "timer_digit_", elapsedSeconds, startX, startY, digitWidth, digitHeight);
+    drawNumber(entities, "timer_digit_", remainingSeconds, startX, startY, digitWidth, digitHeight, 3);
 }
+
 
 /**
  * @brief Adds the remaining bombs display as digit sprites.
@@ -887,12 +927,12 @@ void Minesweeper::addRemainingBombEntity(std::map<std::string, Entity> &entities
     int digitHeight = 40;
     int startX = 20;
     int startY = 300;
-    drawNumber(entities, "remaining_digit_", remaining, startX, startY, digitWidth, digitHeight);
+    drawNumber(entities, "remaining_digit_", remaining, startX, startY, digitWidth, digitHeight, 2);
 }
 
 /**
  * @brief Counts the number of cells with a specific state
- * 
+ *
  * @param state The state to count
  * @return Count of cells with the state
  */
@@ -1139,11 +1179,6 @@ void Minesweeper::flagCell(int x, int y)
     }
 }
 
-/**
- * @brief Checks whether all non-mine cells have been revealed.
- *
- * @return True if the win conditions are met, false otherwise.
- */
 bool Minesweeper::checkWin()
 {
     for (int y = 0; y < _height; y++) {
@@ -1152,14 +1187,18 @@ bool Minesweeper::checkWin()
                 return false;
         }
     }
-
+    if (!_timerPaused) {
+        auto currentTime = std::chrono::steady_clock::now();
+        std::chrono::duration<float> elapsed = currentTime - _startTime;
+        _pausedElapsed = elapsed.count();
+        _timerPaused = true;
+    }
     _score.first += calculateBonusScore();
     _state = GAME_WIN;
     _smileyState = WIN;
-    
-    std::cout << "GG" << std::endl;
     return true;
 }
+
 
 /**
  * @brief Calculate bonus score for winning
@@ -1197,11 +1236,6 @@ void Minesweeper::revealBombs()
     }
 }
 
-/**
- * @brief Checks if a losing condition has been met.
- *
- * @return True if the player has lost, false otherwise.
- */
 bool Minesweeper::checkLose()
 {
     for (int y = 0; y < _height; y++) {
@@ -1209,10 +1243,16 @@ bool Minesweeper::checkLose()
             if (_board[y][x].isMine && _board[y][x].isRevealed) {
                 _board[y][x].State = LOSER;
                 _sounds.push_back(_Sprite + "boom.ogg");
-                revealBombsEfficiently();
+                revealBombs();
                 _score.first += countFlaggedMines() * 200;
                 _state = GAME_LOSE;
                 _smileyState = LOSE;
+                if (!_timerPaused) {
+                    auto currentTime = std::chrono::steady_clock::now();
+                    std::chrono::duration<float> elapsed = currentTime - _startTime;
+                    _pausedElapsed = elapsed.count();
+                    _timerPaused = true;
+                }
                 return true;
             }
         }
@@ -1220,22 +1260,6 @@ bool Minesweeper::checkLose()
     return false;
 }
 
-/**
- * @brief Efficiently reveals all bombs on the board.
- */
-void Minesweeper::revealBombsEfficiently()
-{
-    std::vector<std::pair<int, int>> bombPositions;    
-    for (int y = 0; y < _height; y++) {
-        for (int x = 0; x < _width; x++) {
-            if (_board[y][x].isMine && !_board[y][x].isRevealed)
-                bombPositions.push_back({x, y});
-        }
-    }    
-    for (const auto& [x, y] : bombPositions) {
-        _board[y][x].isRevealed = true;
-    }
-}
 
 /**
  * @brief Converts a click event's coordinates into board coordinates.
@@ -1245,8 +1269,9 @@ void Minesweeper::revealBombsEfficiently()
  */
 std::pair<int, int> Minesweeper::handleClick(RawEvent event)
 {
-    int cellWidth = SCREEN_HEIGHT / _width;
-    int cellHeight = SCREEN_HEIGHT / _height;
+    int cellSize = SCREEN_HEIGHT / std::max(_width, _height);
+    int cellWidth = cellSize;
+    int cellHeight = cellSize;
     int offsetX = (SCREEN_WIDTH - (_width * cellWidth)) - 5;
     int offsetY = (SCREEN_HEIGHT - (_height * cellHeight)) / 2;
 

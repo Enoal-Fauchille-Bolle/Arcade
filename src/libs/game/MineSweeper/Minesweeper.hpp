@@ -60,10 +60,9 @@ class Minesweeper : public IGame {
         void select_dificulty(int width, int height, int mines);
         bool checkLose();
         void revealBombs();
-        void revealBombsEfficiently();
 
         void addTimerEntity(std::map<std::string, Entity> &entities);
-        void drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight);
+        void drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight, int totalDigits);
         void addRemainingBombEntity(std::map<std::string, Entity> &entities);
         void addScoreEntity(std::map<std::string, Entity> &entities);
 
@@ -89,7 +88,6 @@ class Minesweeper : public IGame {
         void addCellEntities(std::map<std::string, Entity> &entities);
         void addGameUIElements(std::map<std::string, Entity> &entities);
         std::map<DisplayType, std::string> getCellSprite(int x, int y);
-        void addRemainingMinesEntity(std::map<std::string, Entity> &entities);
         void addSmileyEntity(std::map<std::string, Entity> &entities);
 
         // Board state calculation helpers
@@ -154,6 +152,8 @@ class Minesweeper : public IGame {
         int _mines;
 
         std::chrono::steady_clock::time_point _startTime;
+        float _pausedElapsed = 0.0f;
+        bool _timerPaused = false;
 
         std::vector<std::vector<Cell>> _board;
         std::pair<float, std::string> _score;
