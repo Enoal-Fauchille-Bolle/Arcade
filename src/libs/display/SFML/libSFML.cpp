@@ -323,49 +323,77 @@ void libSFML::drawText(renderObject obj)
  * @brief Handles music-related rendering (currently a placeholder).
  * @param obj The renderObject containing music properties.
  */
+/**
+ * @brief Handles music and sound effects
+ * @param obj The renderObject containing music properties
+ */
 void libSFML::drawMusic(renderObject obj)
 {
     static sf::Music backgroundMusic;
+    static std::map<std::string, sf::SoundBuffer> soundBufferCache;
+    static std::map<std::string, sf::Sound> soundEffects;
     static bool isBackgroundMusicPlaying = false;
 
     if (obj.sprite.find("assets/music_") == 0) {
-        if (!isBackgroundMusicPlaying || backgroundMusic.getStatus() != sf::Music::Playing) {
-            if (!backgroundMusic.openFromFile(obj.sprite)) {
-                std::cerr << "Error loading background music file: " << obj.sprite << std::endl;
-                return;
-            }
-            backgroundMusic.setLoop(true);
-            backgroundMusic.setVolume(12);
-            backgroundMusic.play();
-            isBackgroundMusicPlaying = true;
-        }
-    } else if (obj.sprite == "assets/gameover.mp3" || obj.sprite == "assets/Minesweeper_1/boom.ogg") {
+        playBackgroundMusic(obj.sprite, backgroundMusic, isBackgroundMusicPlaying);
+    } 
+    else if (obj.sprite == "assets/gameover.mp3" || obj.sprite == "assets/Minesweeper_1/boom.ogg") {
         if (isBackgroundMusicPlaying) {
             backgroundMusic.stop();
             isBackgroundMusicPlaying = false;
         }
-        sf::Music gameOverSound;
-        if (!gameOverSound.openFromFile(obj.sprite)) {
-            std::cerr << "Error loading game over sound file: " << obj.sprite << std::endl;
-            return;
-        }
-        gameOverSound.setVolume(12);
-        gameOverSound.play();
-        while (gameOverSound.getStatus() == sf::Music::Playing) {
-            sf::sleep(sf::milliseconds(100));
-        }
-    } else {
-        sf::Music soundEffect;
-        if (!soundEffect.openFromFile(obj.sprite)) {
-            std::cerr << "Error loading sound effect file: " << obj.sprite << std::endl;
-            return;
-        }
-        soundEffect.setVolume(12);
-        soundEffect.play();
-        while (soundEffect.getStatus() == sf::Music::Playing) {
-            sf::sleep(sf::milliseconds(100));
-        }
+        playSoundEffect(obj.sprite, soundBufferCache, soundEffects);
+    } 
+    else {
+        playSoundEffect(obj.sprite, soundBufferCache, soundEffects);
     }
+}
+
+/**
+ * @brief Plays background music from a file
+ * @param filePath Path to the music file
+ * @param music Reference to the sf::Music object
+ * @param isPlaying Reference to the boolean tracking playback status
+ */
+void libSFML::playBackgroundMusic(const std::string& filePath, sf::Music& music, bool& isPlaying)
+{
+    if (!isPlaying || music.getStatus() != sf::Music::Playing) {
+        if (!music.openFromFile(filePath)) {
+            std::cerr << "Error loading background music file: " << filePath << std::endl;
+            return;
+        }
+        music.setLoop(true);
+        music.setVolume(12);
+        music.play();
+        isPlaying = true;
+    }
+}
+
+/**
+ * @brief Plays a sound effect from a file
+ * @param filePath Path to the sound effect file
+ * @param bufferCache Reference to the sound buffer cache
+ * @param soundCache Reference to the sound effect cache
+ */
+void libSFML::playSoundEffect(const std::string& filePath, 
+                             std::map<std::string, sf::SoundBuffer>& bufferCache,
+                             std::map<std::string, sf::Sound>& soundCache)
+{
+    if (bufferCache.find(filePath) == bufferCache.end()) {
+        sf::SoundBuffer buffer;
+        if (!buffer.loadFromFile(filePath)) {
+            std::cerr << "Error loading sound file: " << filePath << std::endl;
+            return;
+        }
+        bufferCache[filePath] = buffer;
+    }    
+    if (soundCache.find(filePath) == soundCache.end()) {
+        sf::Sound sound;
+        sound.setBuffer(bufferCache[filePath]);
+        sound.setVolume(12);
+        soundCache[filePath] = sound;
+    }
+    soundCache[filePath].play();
 }
 
 /**

@@ -39,6 +39,8 @@ class libSFML : public IDisplay {
         void drawMusic(renderObject obj);
 
     private:
+        void playBackgroundMusic(const std::string &filePath, sf::Music &music, bool &isPlaying);
+        void playSoundEffect(const std::string &filePath, std::map<std::string, sf::SoundBuffer> &soundBufferCache, std::map<std::string, sf::Sound> &soundEffects);
         std::string _name;
         DisplayType _dtype;
         sf::RenderWindow _window;
