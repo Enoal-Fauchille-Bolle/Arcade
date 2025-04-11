@@ -460,7 +460,7 @@ void Menu::renderBackground(std::map<EntityName, Entity> &entities)
  *
  * @return std::string The formatted scoreboard content
  */
-std::string Menu::getScoreboardContent(void)
+std::vector<std::string> Menu::getScoreboardContent(void)
 {
     ScoreManager scoreManager;
     std::string gameName = _gameLibs[_selectedGameLib].first.name;
@@ -468,19 +468,41 @@ std::string Menu::getScoreboardContent(void)
     std::vector<std::pair<float, std::string>> scores =
         scoreManager.loadScoresFromFile(fileName);
 
-    _scoreboardContent = "";
+    _scoreboardContent.clear();
     for (size_t i = 0; i < scores.size() && i < 20; i++) {
-        _scoreboardContent += scores[i].second + ": " +
-                  std::to_string(static_cast<int>(scores[i].first)) + "\n";
+        _scoreboardContent.push_back(
+            scores[i].second + ": " +
+            std::to_string(static_cast<int>(scores[i].first)));
     }
-    if (!_scoreboardContent.empty() && _scoreboardContent.back() == '\n') {
-        _scoreboardContent.pop_back();
-    }
+
     if (_scoreboardContent.empty()) {
-        _scoreboardContent = "No scores available";
+        _scoreboardContent.push_back("No scores available");
     }
+
     _reloadScoreboard = false;
     return _scoreboardContent;
+}
+
+void Menu::renderScoreboardContent(
+    std::map<EntityName, Entity> &entities, std::vector<std::string> content)
+{
+    Entity scoreboardContent;
+    size_t y = 0;
+
+    for (size_t i = 0; i < content.size(); i++) {
+        scoreboardContent.type = TEXT;
+        scoreboardContent.x = SCOREBOARD_CONTENT_X;
+        scoreboardContent.y = SCOREBOARD_CONTENT_Y + y;
+        scoreboardContent.width = 20;
+        scoreboardContent.height = 0;
+        scoreboardContent.rotate = 0;
+        setEntityColor(scoreboardContent, 78, 200, 245);
+        scoreboardContent.sprites[DisplayType::GRAPHICAL] = content[i];
+        scoreboardContent.sprites[DisplayType::TERMINAL] = content[i];
+        entities["C-scoreboardContent" + std::to_string(i)] =
+            scoreboardContent;
+        y += SCOREBOARD_CONTENT_THRESHOLD;
+    }
 }
 
 /**
@@ -494,8 +516,7 @@ std::string Menu::getScoreboardContent(void)
 void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
 {
     Entity scoreboardTitle;
-    Entity scoreboardContent;
-    std::string content =
+    std::vector<std::string> content =
         _reloadScoreboard ? getScoreboardContent() : _scoreboardContent;
     Entity scoreboardFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2.4,
         1380 / 2.4, SCOREBOARD_TITLE_X - 20, SCOREBOARD_TITLE_Y - 21,
@@ -515,16 +536,7 @@ void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
     entities["C-scoreboardTitle"] = scoreboardTitle;
     setEntityColor(scoreboardFrame, 0, 0, 0);
     entities["B-scoreboardMenu"] = scoreboardFrame;
-    scoreboardContent.type = TEXT;
-    scoreboardContent.x = SCOREBOARD_CONTENT_X;
-    scoreboardContent.y = SCOREBOARD_CONTENT_Y;
-    scoreboardContent.width = 20;
-    scoreboardContent.height = 0;
-    scoreboardContent.rotate = 0;
-    setEntityColor(scoreboardContent, 78, 200, 245);
-    scoreboardContent.sprites[DisplayType::GRAPHICAL] = content;
-    scoreboardContent.sprites[DisplayType::TERMINAL] = content;
-    entities["C-scoreboardContent"] = scoreboardContent;
+    renderScoreboardContent(entities, content);
 }
 
 /**

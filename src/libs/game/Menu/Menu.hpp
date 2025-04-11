@@ -44,16 +44,18 @@
     #define DISPLAY_LIB_X 70
     #define GAME_LIB_X 410
 
-    #define START_BUTTON_X 480
+    #define START_BUTTON_X 490
     #define START_BUTTON_Y 660
-    #define START_BUTTON_WIDTH 75
-    #define START_BUTTON_HEIGHT 25
+
+    #define USERNAME_INPUT_X 140
+    #define USERNAME_INPUT_Y 660
 
     #define SCOREBOARD_TITLE_X 750
     #define SCOREBOARD_TITLE_Y 190
 
     #define SCOREBOARD_CONTENT_X 755
     #define SCOREBOARD_CONTENT_Y 240
+    #define SCOREBOARD_CONTENT_THRESHOLD 23
 
 class Menu : public IGame {
     public:
@@ -104,7 +106,9 @@ class Menu : public IGame {
         void renderStartButton(std::map<EntityName, Entity> &entities);
         void renderBackground(std::map<EntityName, Entity> &entities);
         void renderUsernameInput(std::map<EntityName, Entity> &entities);
-        std::string getScoreboardContent(void);
+        std::vector<std::string> getScoreboardContent(void);
+        void renderScoreboardContent(std::map<EntityName, Entity> &entities,
+            std::vector<std::string> content);
         void renderScoreboard(std::map<EntityName, Entity> &entities);
 
         Entity createEntity(Shape shape,
@@ -123,6 +127,7 @@ class Menu : public IGame {
         bool _startGame;
         std::string _username = "Player";
         std::string _scoreboardContent = "";
+        std::vector<std::string> _scoreboardContent;
         bool _reloadScoreboard = true;
 };
 
