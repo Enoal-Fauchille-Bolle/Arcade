@@ -56,11 +56,17 @@ Run the program by specifying the initial display library:
 
 ### Controls
 
-- **Change Graphics Library**: [Key]
-- **Change Game**: [Key]
-- **Restart Game**: [Key]
-- **Return to Menu**: [Key]
-- **Exit**: [Key]
+- **F1**: Previous Sprite Set
+- **F2**: Next Sprite Set
+- **F3**: Previous Display Lib
+- **F4**: Next Display Lib
+- **F5**: Reload Game & Display Lib
+- **F6**: Reload Game
+- **F7**: Reload Display Lib
+- **F8**: Next Display Lib
+- **F9**: Next Display Lib
+- **10**: Go back to Menu
+- **11**: Exit
 
 ### Error Handling
 
