@@ -36,6 +36,7 @@ CORE_SRC = \
 		$(SRCDIR)core/Core.cpp	\
 		$(SRCDIR)core/LibLoader.cpp	\
 		$(SRCDIR)core/LibGetter.cpp	\
+		$(SRCDIR)core/ScoreManager.cpp	\
 		$(SRCDIR)core/EmergencyMenu.cpp	\
 
 NCURSES_SRC = \
@@ -52,6 +53,7 @@ MENU_SRC = \
 		$(SRCDIR)libs/game/Menu/Menu.cpp	\
 		$(SRCDIR)core/LibLoader.cpp	\
 		$(SRCDIR)core/LibGetter.cpp	\
+		$(SRCDIR)core/ScoreManager.cpp	\
 
 MINESWEEPER_SRC = \
 		$(SRCDIR)libs/game/MineSweeper/Minesweeper.cpp

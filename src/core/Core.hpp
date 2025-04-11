@@ -20,6 +20,7 @@
     #include "../libs/game/interfaces/IGame.hpp"
     #include "./EmergencyMenu.hpp"
     #include "LibLoader.hpp"
+    #include "ScoreManager.hpp"
 
     #define PREVIOUS_DISPLAY_KEY KEYBOARD_F3
     #define NEXT_DISPLAY_KEY KEYBOARD_F4
@@ -51,12 +52,7 @@ class Core {
         bool checkQuit(std::vector<RawEvent> events);
 
         void renderEntities(std::map<std::string, Entity> entities);
-
-        void saveScore(std::pair<float, std::string> score);
-        void createScoreDirectory(void);
-        std::vector<std::pair<float, std::string>> loadScoresFromFile(const std::string& fileName);
-        void updatePlayerScore(std::vector<std::pair<float, std::string>>& scores, const std::pair<float, std::string>& score);
-        bool writeScoresToFile(const std::string& fileName, const std::vector<std::pair<float, std::string>>& scores);
+        void handleScore(void);
 
         void nextDisplayLibrary(void);
         void previousDisplayLibrary(void);
@@ -90,6 +86,7 @@ class Core {
         size_t _selectedGameLib = 0;
         std::string _currentGamePath = "";
         std::string _currentDisplayPath = "";
+        std::string _username = "Player";
 };
 
 #endif /* !CORE_HPP_ */
