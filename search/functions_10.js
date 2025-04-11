@@ -7,6 +7,7 @@ var searchData=
   ['resetgame_4',['resetGame',['../classMinesweeper.html#a7a4a37a81753734caa8d2cc177acf685',1,'Minesweeper']]],
   ['resethandle_5',['resetHandle',['../classDLLoader.html#a8d050400493abcb91e805d153c565ca0',1,'DLLoader']]],
   ['revealbombs_6',['revealBombs',['../classMinesweeper.html#aee8d132e9d8261f4a25382be2b2467f4',1,'Minesweeper']]],
-  ['revealcell_7',['revealCell',['../classMinesweeper.html#a01e0ee681d06ff6693c279ecc7e9adf2',1,'Minesweeper']]],
-  ['run_8',['run',['../classCore.html#af968596fe136d8faebf8517de5411380',1,'Core']]]
+  ['revealbombsefficiently_7',['revealBombsEfficiently',['../classMinesweeper.html#a5fd66fee340bcfbaf130bd8c45d5ca60',1,'Minesweeper']]],
+  ['revealcell_8',['revealCell',['../classMinesweeper.html#a01e0ee681d06ff6693c279ecc7e9adf2',1,'Minesweeper']]],
+  ['run_9',['run',['../classCore.html#af968596fe136d8faebf8517de5411380',1,'Core']]]
 ];

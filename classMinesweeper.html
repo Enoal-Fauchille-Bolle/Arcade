@@ -171,6 +171,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aee8d132e9d8261f4a25382be2b2467f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#aee8d132e9d8261f4a25382be2b2467f4">revealBombs</a> ()</td></tr>
 <tr class="memdesc:aee8d132e9d8261f4a25382be2b2467f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reveals all mines on the board.  <br /></td></tr>
 <tr class="separator:aee8d132e9d8261f4a25382be2b2467f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fd66fee340bcfbaf130bd8c45d5ca60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#a5fd66fee340bcfbaf130bd8c45d5ca60">revealBombsEfficiently</a> ()</td></tr>
+<tr class="memdesc:a5fd66fee340bcfbaf130bd8c45d5ca60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Efficiently reveals all bombs on the board.  <br /></td></tr>
+<tr class="separator:a5fd66fee340bcfbaf130bd8c45d5ca60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dcee67b9a953da5b7747ab8e639b246"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#a0dcee67b9a953da5b7747ab8e639b246">addTimerEntity</a> (std::map&lt; std::string, <a class="el" href="structEntity.html">Entity</a> &gt; &amp;entities)</td></tr>
 <tr class="memdesc:a0dcee67b9a953da5b7747ab8e639b246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the timer display as digit sprites.  <br /></td></tr>
 <tr class="separator:a0dcee67b9a953da5b7747ab8e639b246"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -210,6 +213,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a1908417e9ba3286cca474159dc6e2507"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structEntity.html">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#a1908417e9ba3286cca474159dc6e2507">createBackgroundEntity</a> (const std::string &amp;spritePath)</td></tr>
 <tr class="memdesc:a1908417e9ba3286cca474159dc6e2507"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a background entity.  <br /></td></tr>
 <tr class="separator:a1908417e9ba3286cca474159dc6e2507"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16f723178f8636352e0338aa1aad67f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#a16f723178f8636352e0338aa1aad67f0">setSprite</a> ()</td></tr>
+<tr class="memdesc:a16f723178f8636352e0338aa1aad67f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the sprite path based on the selected asset pack.  <br /></td></tr>
+<tr class="separator:a16f723178f8636352e0338aa1aad67f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1151a5875a3c41c432732d284ea8beaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMinesweeper.html#a1151a5875a3c41c432732d284ea8beaf">addSoundEntities</a> (std::map&lt; std::string, <a class="el" href="structEntity.html">Entity</a> &gt; &amp;entities)</td></tr>
 <tr class="memdesc:a1151a5875a3c41c432732d284ea8beaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds sound entities to the entities map.  <br /></td></tr>
 <tr class="separator:a1151a5875a3c41c432732d284ea8beaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2023,6 +2029,33 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a5fd66fee340bcfbaf130bd8c45d5ca60" name="a5fd66fee340bcfbaf130bd8c45d5ca60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fd66fee340bcfbaf130bd8c45d5ca60">&#9670;&#160;</a></span>revealBombsEfficiently()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Minesweeper::revealBombsEfficiently </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Efficiently reveals all bombs on the board. </p>
+
+</div>
+</div>
 <a id="a01e0ee681d06ff6693c279ecc7e9adf2" name="a01e0ee681d06ff6693c279ecc7e9adf2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a01e0ee681d06ff6693c279ecc7e9adf2">&#9670;&#160;</a></span>revealCell()</h2>
 
@@ -2208,6 +2241,33 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a16f723178f8636352e0338aa1aad67f0" name="a16f723178f8636352e0338aa1aad67f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16f723178f8636352e0338aa1aad67f0">&#9670;&#160;</a></span>setSprite()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Minesweeper::setSprite </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the sprite path based on the selected asset pack. </p>
 
 </div>
 </div>

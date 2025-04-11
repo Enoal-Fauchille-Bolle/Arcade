@@ -18,10 +18,11 @@ var searchData=
   ['resethandle_15',['resetHandle',['../classDLLoader.html#a8d050400493abcb91e805d153c565ca0',1,'DLLoader']]],
   ['restypedef_2ecpp_16',['restypedef.cpp',['../restypedef_8cpp.html',1,'']]],
   ['revealbombs_17',['revealBombs',['../classMinesweeper.html#aee8d132e9d8261f4a25382be2b2467f4',1,'Minesweeper']]],
-  ['revealcell_18',['revealCell',['../classMinesweeper.html#a01e0ee681d06ff6693c279ecc7e9adf2',1,'Minesweeper']]],
-  ['rgb_19',['RGB',['../structEntity.html#a590d3b0a5cff7990a9a1d84fef002461',1,'Entity::RGB()'],['../structrenderObject.html#a0b072309f133b35aaa90c332ec86741b',1,'renderObject::RGB()']]],
-  ['rgbcolor_20',['RgbColor',['../structRgbColor.html',1,'']]],
-  ['right_21',['RIGHT',['../Snake_8hpp.html#a224b9163917ac32fc95a60d8c1eec3aaaec8379af7490bb9eaaf579cf17876f38',1,'Snake.hpp']]],
-  ['rotate_22',['rotate',['../structrenderObject.html#abbe88dff3597641c723d29d6f4935be7',1,'renderObject::rotate()'],['../structEntity.html#a3d51866d0c0cf1e8a77960e9ed50cf30',1,'Entity::rotate()']]],
-  ['run_23',['run',['../classCore.html#af968596fe136d8faebf8517de5411380',1,'Core']]]
+  ['revealbombsefficiently_18',['revealBombsEfficiently',['../classMinesweeper.html#a5fd66fee340bcfbaf130bd8c45d5ca60',1,'Minesweeper']]],
+  ['revealcell_19',['revealCell',['../classMinesweeper.html#a01e0ee681d06ff6693c279ecc7e9adf2',1,'Minesweeper']]],
+  ['rgb_20',['RGB',['../structEntity.html#a590d3b0a5cff7990a9a1d84fef002461',1,'Entity::RGB()'],['../structrenderObject.html#a0b072309f133b35aaa90c332ec86741b',1,'renderObject::RGB()']]],
+  ['rgbcolor_21',['RgbColor',['../structRgbColor.html',1,'']]],
+  ['right_22',['RIGHT',['../Snake_8hpp.html#a224b9163917ac32fc95a60d8c1eec3aaaec8379af7490bb9eaaf579cf17876f38',1,'Snake.hpp']]],
+  ['rotate_23',['rotate',['../structrenderObject.html#abbe88dff3597641c723d29d6f4935be7',1,'renderObject::rotate()'],['../structEntity.html#a3d51866d0c0cf1e8a77960e9ed50cf30',1,'Entity::rotate()']]],
+  ['run_24',['run',['../classCore.html#af968596fe136d8faebf8517de5411380',1,'Core']]]
 ];
