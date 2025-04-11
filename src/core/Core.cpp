@@ -23,6 +23,7 @@ Core::Core(std::string path)
     LibGetter libGetter = LibGetter();
 
     _displayLibs = libGetter.getDisplayLibs();
+    _gameLibs = libGetter.getGameLibs();
     if (load_display(path) != 0) {
         std::cerr << "Error loading display library" << std::endl;
         _running = false;
@@ -72,19 +73,24 @@ void Core::startEmergencyMenu(void)
             if (!newDisplay.empty()) {
                 delete_display();
                 if (load_display(newDisplay) == 1) {
-                    std::cerr << "Failed to load display library: " << newDisplay << std::endl;
+                    std::cerr
+                        << "Failed to load display library: " << newDisplay
+                        << std::endl;
                 }
             }
             newGamePath = _game->getNewLib();
             if (load_game(newGamePath) == 0) {
                 gameSelected = true;
             } else {
-                std::cerr << "Failed to load selected game: " << newGamePath << std::endl;
+                std::cerr << "Failed to load selected game: " << newGamePath
+                          << std::endl;
                 _game = std::make_unique<EmergencyMenu>();
             }
         }
     }
 }
+
+///////////////////////////// Quit Key Checking //////////////////////////////
 
 /**
  * @brief Checks if the QUIT event is present in the events vector.
@@ -93,9 +99,12 @@ void Core::startEmergencyMenu(void)
  */
 bool Core::checkQuit(std::vector<RawEvent> events)
 {
-    for (const auto &event : events) {
-        if (event.type == QUIT) {
+    for (auto it = events.begin(); it != events.end();) {
+        if (it->type == QUIT || (it->type == PRESS && it->key == QUIT_KEY)) {
+            it = events.erase(it);
             return true;
+        } else {
+            ++it;
         }
     }
     return false;
@@ -156,15 +165,88 @@ void Core::previousDisplayLibrary(void)
  */
 void Core::displayLibrarySwitching(std::vector<RawEvent> events)
 {
-    for (const auto &event : events) {
-        if (event.type == PRESS && event.key == KEYBOARD_F4) {
+    for (auto it = events.begin(); it != events.end();) {
+        if (it->type == PRESS && it->key == PREVIOUS_DISPLAY_KEY) {
             nextDisplayLibrary();
-        }
-        if (event.type == PRESS && event.key == KEYBOARD_F3) {
+            it = events.erase(it);
+        } else if (it->type == PRESS && it->key == NEXT_DISPLAY_KEY) {
             previousDisplayLibrary();
+            it = events.erase(it);
+        } else {
+            ++it;
         }
     }
 }
+
+///////////////////////// Game Library Switching Key /////////////////////////
+
+/**
+ * @brief Switches to the next game library.
+ * This function increments the selected game library index and loads
+ * the corresponding library. If it reaches the end of the list, it wraps
+ * around to the first library.
+ */
+void Core::nextGameLibrary(void)
+{
+    std::string newGamePath;
+
+    delete_game();
+    _selectedGameLib++;
+    if (_selectedGameLib >= _gameLibs.size()) {
+        _selectedGameLib = 0;
+    }
+    newGamePath = getGameLibPathFromIndex(_selectedGameLib);
+    if (load_game(newGamePath) == 1) {
+        std::cerr << "Failed to load game library: " << newGamePath
+                  << std::endl;
+    }
+}
+
+/**
+ * @brief Switches to the previous game library.
+ * This function decrements the selected game library index and loads
+ * the corresponding library. If it reaches the beginning of the list, it
+ * wraps around to the last library.
+ */
+void Core::previousGameLibrary(void)
+{
+    std::string newGamePath;
+
+    delete_game();
+    if (_selectedGameLib == 0) {
+        _selectedGameLib = _gameLibs.size() - 1;
+    } else {
+        _selectedGameLib--;
+    }
+    newGamePath = getGameLibPathFromIndex(_selectedGameLib);
+    if (load_game(newGamePath) == 1) {
+        std::cerr << "Failed to load game library: " << newGamePath
+                  << std::endl;
+    }
+}
+
+/**
+ * @brief Switches to the previous game library.
+ * This function decrements the selected game library index and loads
+ * the corresponding library. If it reaches the beginning of the list, it
+ * wraps around to the last library.
+ */
+void Core::gameLibrarySwitching(std::vector<RawEvent> events)
+{
+    for (auto it = events.begin(); it != events.end();) {
+        if (it->type == PRESS && it->key == PREVIOUS_GAME_KEY) {
+            nextGameLibrary();
+            it = events.erase(it);
+        } else if (it->type == PRESS && it->key == NEXT_GAME_KEY) {
+            previousGameLibrary();
+            it = events.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+//////////////////////////// Library Reloading Key ////////////////////////////
 
 /**
  * @brief Reloads the game library.
@@ -204,17 +286,55 @@ void Core::reloadDisplayLibrary(void)
  */
 void Core::libraryReloading(std::vector<RawEvent> events)
 {
-    for (const auto &event : events) {
-        if (event.type == PRESS && event.key == KEYBOARD_F5) {
+    for (auto it = events.begin(); it != events.end();) {
+        if (it->type == PRESS && it->key == RELOAD_LIBS_KEY) {
             reloadGameLibrary();
             reloadDisplayLibrary();
-        }
-        if (event.type == PRESS && event.key == KEYBOARD_F6) {
+            it = events.erase(it);
+        } else if (it->type == PRESS && it->key == RELOAD_GAME_LIB_KEY) {
             reloadGameLibrary();
-        }
-        if (event.type == PRESS && event.key == KEYBOARD_F7) {
+            it = events.erase(it);
+        } else if (it->type == PRESS && it->key == RELOAD_DISPLAY_LIB_KEY) {
             reloadDisplayLibrary();
+            it = events.erase(it);
+        } else {
+            ++it;
         }
+    }
+}
+
+/////////////////////////////// Go To Menu Key ///////////////////////////////
+
+/**
+ * @brief Checks if the GO_TO_MENU_KEY event is present in the events vector.
+ * @param events The vector of RawEvent objects to check.
+ * @return true if a GO_TO_MENU_KEY event is found, false otherwise.
+ */
+bool Core::checkGoToMenu(std::vector<RawEvent> events)
+{
+    for (auto it = events.begin(); it != events.end(); ++it) {
+        if (it->type == PRESS && it->key == GO_TO_MENU_KEY) {
+            events.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Switches to the menu game.
+ * This function deletes the current game library and loads the menu game
+ * library. If it fails to load the menu game, it starts the emergency
+ * menu.
+ */
+void Core::goToMenu(void)
+{
+    delete_game();
+    if (load_game("./lib/arcade_menu.so") == 1) {
+        std::cerr << "Failed to load menu game" << std::endl;
+        startEmergencyMenu();
+    }
+}
 
 ///////////////////////////////// Game Loop /////////////////////////////////
 
@@ -279,7 +399,10 @@ void Core::run()
             _running = false;
             break;
         }
+        if (checkGoToMenu(events))
+            goToMenu();
         displayLibrarySwitching(events);
+        gameLibrarySwitching(events);
         libraryReloading(events);
         _game->handleEvent(events);
         std::map<std::string, Entity> entities = _game->renderGame();
@@ -320,6 +443,7 @@ int Core::load_game(std::string path)
         _gameLoader = DLLoader<IGame>("GameEntryPoint");
         _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
         _currentGamePath = path;
+        _selectedGameLib = getGameLibIndexFromPath(path);
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Error loading game library: " << e.what() << std::endl;
@@ -498,6 +622,34 @@ size_t Core::getDisplayLibIndexFromPath(std::string path)
 {
     for (size_t i = 0; i < _displayLibs.size(); i++) {
         if (_displayLibs[i].path == path) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+/**
+ * @brief Gets the game library path from the index.
+ * @param index The index of the game library.
+ * @return The path of the game library.
+ */
+std::string Core::getGameLibPathFromIndex(size_t index)
+{
+    if (index >= _gameLibs.size()) {
+        return 0;
+    }
+    return _gameLibs[index].path;
+}
+
+/**
+ * @brief Gets the index of the game library from the path.
+ * @param path The path of the game library.
+ * @return The index of the game library.
+ */
+size_t Core::getGameLibIndexFromPath(std::string path)
+{
+    for (size_t i = 0; i < _gameLibs.size(); i++) {
+        if (_gameLibs[i].path == path) {
             return i;
         }
     }
