@@ -106,7 +106,33 @@ std::string Menu::getNewDisplay(void)
                : _displayLibs[_selectedDisplayLib].first.path;
 }
 
+/**
+ * @brief Get the name of the menu
+ *
+ * This function returns the name of the menu.
+ *
+ * @return std::string The name of the menu
+ */
+std::string Menu::getName(void)
+{
+    return _name;
+}
+
+/**
+ * @brief Set the username
+ *
+ * This function sets the username for the player.
+ *
+ * @param username The username to set
+ */
+void Menu::setUsername(std::string username)
+{
+    _username = username;
+}
+
 ////////////////////////////// Event Handling ///////////////////////////////
+
+//-------------------------------- Game Lib --------------------------------//
 
 /**
  * @brief Check if the mouse click is on a game library button
@@ -133,6 +159,8 @@ void Menu::checkGameClick(RawEvent event)
     }
 }
 
+//------------------------------ Display Lib ------------------------------//
+
 /**
  * @brief Check if the mouse click is on a display library button
  *
@@ -157,6 +185,8 @@ void Menu::checkDisplayClick(RawEvent event)
     }
 }
 
+//------------------------------ Start Button ------------------------------//
+
 /**
  * @brief Check if the mouse click is on the start button
  *
@@ -174,6 +204,8 @@ void Menu::checkStartButton(RawEvent event)
         _startGame = true;
     }
 }
+
+//----------------------------- Username Input -----------------------------//
 
 /**
  * @brief Check if the mouse click is on the username input field
@@ -197,22 +229,16 @@ void Menu::checkUsernameInputClick(RawEvent event)
 }
 
 /**
- * @brief Handle a left mouse button click event
+ * @brief Check if the username input is valid
  *
- * This function checks if the left mouse button was clicked on a
- * library button. If so, it updates the selected library and sets
- * the selectingLibType to either DISPLAY or GAME.
+ * This function checks if the username input is valid. If the
+ * backspace key is pressed, it removes the last character from the
+ * username. If the shift key is pressed, it sets the _shiftPressed
+ * variable to true. If a letter key is pressed, it adds the
+ * corresponding character to the username.
  *
- * @param event The event to handle
+ * @param event The event to check
  */
-void Menu::handleLeftClick(RawEvent event)
-{
-    checkGameClick(event);
-    checkDisplayClick(event);
-    checkStartButton(event);
-    checkUsernameInputClick(event);
-}
-
 void Menu::checkUsernameInputKeyboard(RawEvent event)
 {
     if (event.key == EventKey::KEYBOARD_BACKSPACE && !_username.empty()) {
@@ -279,6 +305,25 @@ void Menu::checkControlKey(RawEvent event)
     }
 }
 
+//-------------------------------- Handling --------------------------------//
+
+/**
+ * @brief Handle a left mouse button click event
+ *
+ * This function checks if the left mouse button was clicked on a
+ * library button. If so, it updates the selected library and sets
+ * the selectingLibType to either DISPLAY or GAME.
+ *
+ * @param event The event to handle
+ */
+void Menu::handleLeftClick(RawEvent event)
+{
+    checkGameClick(event);
+    checkDisplayClick(event);
+    checkStartButton(event);
+    checkUsernameInputClick(event);
+}
+
 /**
  * @brief Handle a single event
  *
@@ -316,6 +361,109 @@ void Menu::handleEvent(std::vector<RawEvent> events)
 ///////////////////////////////// Rendering /////////////////////////////////
 
 /**
+ * @brief Create an entity with standard parameters
+ *
+ * This function creates an Entity object with the specified shape,
+ * position, size, and sprite.
+ *
+ * @param shape The shape type for the entity
+ * @param x The x-coordinate of the entity
+ * @param y The y-coordinate of the entity
+ * @param cellWidth The width of the entity
+ * @param cellHeight The height of the entity
+ * @param offsetX The x offset to apply
+ * @param offsetY The y offset to apply
+ * @param sprite A map of display types to sprite strings
+ * @return Entity The created Entity object
+ */
+Entity Menu::createEntity(Shape shape,
+    int x,
+    int y,
+    int cellWidth,
+    int cellHeight,
+    int offsetX,
+    int offsetY,
+    std::map<DisplayType, std::string> sprite)
+{
+    Entity cell;
+
+    cell.type = shape;
+    cell.x = offsetX + x * cellWidth;
+    cell.y = offsetY + y * cellHeight;
+    cell.width = cellWidth;
+    cell.height = cellHeight;
+    cell.rotate = 0;
+    cell.RGB[0] = 255;
+    cell.RGB[1] = 255;
+    cell.RGB[2] = 255;
+    for (auto &it : sprite) {
+        cell.sprites[it.first] = it.second;
+    }
+    return cell;
+}
+
+/**
+ * @brief Set the color of an entity
+ *
+ * This function sets the RGB color of an entity.
+ *
+ * @param entity The entity to set the color for
+ * @param r The red component
+ * @param g The green component
+ * @param b The blue component
+ */
+void Menu::setEntityColor(Entity &entity, int r, int g, int b)
+{
+    entity.RGB[0] = r;
+    entity.RGB[1] = g;
+    entity.RGB[2] = b;
+}
+
+/**
+ * @brief Render the game menu
+ *
+ * This function creates a map of Entity objects representing the
+ * game menu. It sets the position, color, and text of each entity
+ * based on the selected libraries.
+ *
+ * @return std::map<EntityName, Entity> A map of Entity objects representing
+ * the game menu
+ */
+std::map<IGame::EntityName, Entity> Menu::renderGame(void)
+{
+    std::map<EntityName, Entity> entities;
+    std::map<EntityName, Entity> tempEntities;
+
+    renderTitle(entities);
+
+    renderDisplayTitle(entities);
+
+    tempEntities = renderLibs(DISPLAY);
+    for (const auto &pair : tempEntities) {
+        entities[pair.first] = pair.second;
+    }
+
+    renderGameTitle(entities);
+
+    tempEntities = renderLibs(GAME);
+    for (const auto &pair : tempEntities) {
+        entities[pair.first] = pair.second;
+    }
+
+    renderStartButton(entities);
+
+    renderBackground(entities);
+
+    renderUsernameInput(entities);
+
+    renderScoreboard(entities);
+
+    return entities;
+}
+
+//--------------------------------- Title ---------------------------------//
+
+/**
  * @brief Render the title of the menu
  *
  * This function creates an Entity object representing the title of
@@ -344,6 +492,8 @@ void Menu::renderTitle(std::map<EntityName, Entity> &entities)
     setEntityColor(titleFrame, 0, 0, 0);
     entities["B-arcadeMenu"] = titleFrame;
 }
+
+//----------------------------- Display Title -----------------------------//
 
 /**
  * @brief Render the display title
@@ -375,6 +525,8 @@ void Menu::renderDisplayTitle(std::map<EntityName, Entity> &entities)
     entities["B-displayMenu"] = displaysFrame;
 }
 
+//------------------------------ Game Title ------------------------------//
+
 /**
  * @brief Render the game title
  *
@@ -405,6 +557,8 @@ void Menu::renderGameTitle(std::map<EntityName, Entity> &entities)
     entities["B-gameMenu"] = gamesFrame;
 }
 
+//------------------------------- Libraries -------------------------------//
+
 /**
  * @brief Setup the button position for a library
  *
@@ -421,23 +575,6 @@ void Menu::setupLibButton(LibPos &libPos, int x, int y)
     libPos.second.y = y;
     libPos.second.width = libPos.first.name.length() * TEXT_WIDTH_MULTIPLIER;
     libPos.second.height = LIBS_HEIGHT;
-}
-
-/**
- * @brief Set the color of an entity
- *
- * This function sets the RGB color of an entity.
- *
- * @param entity The entity to set the color for
- * @param r The red component
- * @param g The green component
- * @param b The blue component
- */
-void Menu::setEntityColor(Entity &entity, int r, int g, int b)
-{
-    entity.RGB[0] = r;
-    entity.RGB[1] = g;
-    entity.RGB[2] = b;
 }
 
 /**
@@ -491,6 +628,8 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
     return entities;
 }
 
+//------------------------------ Start Button ------------------------------//
+
 /**
  * @brief Render the selected libraries
  *
@@ -524,6 +663,8 @@ void Menu::renderStartButton(std::map<EntityName, Entity> &entities)
     entities["B-startFrame"] = startFrame;
 }
 
+//------------------------------- Background -------------------------------//
+
 /**
  * @brief Render the background
  *
@@ -544,6 +685,17 @@ void Menu::renderBackground(std::map<EntityName, Entity> &entities)
     entities["A-background"] = background;
 }
 
+//----------------------------- Username Input -----------------------------//
+
+/**
+ * @brief Render the username input field
+ *
+ * This function creates an Entity object representing the username
+ * input field. It sets the position, color, and text of the input
+ * field.
+ *
+ * @return Entity The username input entity
+ */
 void Menu::renderUsernameInput(std::map<EntityName, Entity> &entities)
 {
     Entity startText;
@@ -576,6 +728,8 @@ void Menu::renderUsernameInput(std::map<EntityName, Entity> &entities)
     setEntityColor(usernameInputFrame, 0, 0, 0);
     entities["B-userInput"] = usernameInputFrame;
 }
+
+//------------------------------- Scoreboard -------------------------------//
 
 /**
  * @brief Get the content of the scoreboard
@@ -664,85 +818,7 @@ void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
     renderScoreboardContent(entities, content);
 }
 
-/**
- * @brief Render the game menu
- *
- * This function creates a map of Entity objects representing the
- * game menu. It sets the position, color, and text of each entity
- * based on the selected libraries.
- *
- * @return std::map<EntityName, Entity> A map of Entity objects representing
- * the game menu
- */
-std::map<IGame::EntityName, Entity> Menu::renderGame(void)
-{
-    std::map<EntityName, Entity> entities;
-    std::map<EntityName, Entity> tempEntities;
-
-    renderTitle(entities);
-
-    renderDisplayTitle(entities);
-
-    tempEntities = renderLibs(DISPLAY);
-    for (const auto &pair : tempEntities) {
-        entities[pair.first] = pair.second;
-    }
-
-    renderGameTitle(entities);
-
-    tempEntities = renderLibs(GAME);
-    for (const auto &pair : tempEntities) {
-        entities[pair.first] = pair.second;
-    }
-
-    renderStartButton(entities);
-
-    renderBackground(entities);
-
-    renderUsernameInput(entities);
-
-    renderScoreboard(entities);
-
-    return entities;
-}
-
-Entity Menu::createEntity(Shape shape,
-    int x,
-    int y,
-    int cellWidth,
-    int cellHeight,
-    int offsetX,
-    int offsetY,
-    std::map<DisplayType, std::string> sprite)
-{
-    Entity cell;
-
-    cell.type = shape;
-    cell.x = offsetX + x * cellWidth;
-    cell.y = offsetY + y * cellHeight;
-    cell.width = cellWidth;
-    cell.height = cellHeight;
-    cell.rotate = 0;
-    cell.RGB[0] = 255;
-    cell.RGB[1] = 255;
-    cell.RGB[2] = 255;
-    for (auto &it : sprite) {
-        cell.sprites[it.first] = it.second;
-    }
-    return cell;
-}
-
-/**
- * @brief Get the name of the menu
- *
- * This function returns the name of the menu.
- *
- * @return std::string The name of the menu
- */
-std::string Menu::getName(void)
-{
-    return _name;
-}
+///////////////////////////// Extern C Functions /////////////////////////////
 
 /**
  * @brief extern c

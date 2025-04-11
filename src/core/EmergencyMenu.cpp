@@ -97,6 +97,18 @@ std::string EmergencyMenu::getNewDisplay(void)
                : _displayLibs[_selectedDisplayLib].first.path;
 }
 
+/**
+ * @brief Set the username
+ *
+ * This function sets the username for the player.
+ *
+ * @param username The username to set
+ */
+void EmergencyMenu::setUsername(std::string username)
+{
+    (void)username;
+}
+
 ////////////////////////////// Event Handling ///////////////////////////////
 
 /**

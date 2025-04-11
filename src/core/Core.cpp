@@ -463,6 +463,7 @@ int Core::load_game(std::string path)
         _game = std::unique_ptr<IGame>(_gameLoader.getInstance(path));
         _currentGamePath = path;
         _selectedGameLib = getGameLibIndexFromPath(path);
+        _game->setUsername(_username);
         return 0;
     } catch (const std::exception &e) {
         std::cerr << "Error loading game library: " << e.what() << std::endl;

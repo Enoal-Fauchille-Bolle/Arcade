@@ -86,7 +86,7 @@ class Core {
         size_t _selectedGameLib = 0;
         std::string _currentGamePath = "";
         std::string _currentDisplayPath = "";
-        std::string _username = "Player";
+        std::string _username = "Username";
 };
 
 #endif /* !CORE_HPP_ */

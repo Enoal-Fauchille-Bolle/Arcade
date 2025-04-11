@@ -59,6 +59,7 @@ class Snake : public IGame {
         std::string getNewDisplay(void) override;
 
         std::string getName(void) override;
+        void setUsername(std::string username) final;
 
     protected:
     private:

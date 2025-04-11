@@ -1090,6 +1090,18 @@ std::string Minesweeper::getName(void)
 }
 
 /**
+ * @brief Set the username
+ *
+ * This function sets the username for the player.
+ *
+ * @param username The username to set
+ */
+void Minesweeper::setUsername(std::string username)
+{
+    _playerName = username;
+}
+
+/**
  * @brief Initializes the game board with given dimensions.
  *
  * @param width The width of the board.

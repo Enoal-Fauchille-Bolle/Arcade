@@ -46,6 +46,7 @@ class IGame {
         virtual std::map<EntityName, Entity> renderGame() = 0;
 
         virtual std::string getName(void) = 0;
+        virtual void setUsername(std::string username) = 0;
 
     protected:
     private:

@@ -75,6 +75,7 @@ class Menu : public IGame {
         void handleEvent(std::vector<RawEvent>) final;
 
         std::string getName(void) final;
+        void setUsername(std::string username) final;
 
         std::map<IGame::EntityName, Entity> renderGame() final;
 

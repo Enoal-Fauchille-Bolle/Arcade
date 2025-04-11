@@ -1089,6 +1089,18 @@ std::string Snake::getName(void)
 }
 
 /**
+ * @brief Set the username
+ *
+ * This function sets the username for the player.
+ *
+ * @param username The username to set
+ */
+void Snake::setUsername(std::string username)
+{
+    _playerName = username;
+}
+
+/**
  * @brief Get the new display
  *
  * @param success
