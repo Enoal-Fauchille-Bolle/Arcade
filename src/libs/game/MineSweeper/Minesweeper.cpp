@@ -325,7 +325,7 @@ void Minesweeper::resetGame()
     _smileyState = SMILEY;
 
     _sounds.clear();
-
+    _sounds.push_back("assets/music_minesweeper.mp3");
     _state = GAME;
 }
 
@@ -917,6 +917,7 @@ void Minesweeper::initBoard(int width, int height)
     _board.erase(_board.begin(), _board.end());
     _board.assign(height, std::vector<Cell>(width));
     _startTime = std::chrono::steady_clock::now();
+    _sounds.push_back("assets/music_minesweeper.mp3");
     _score.first = 0;
 }
 
@@ -1098,7 +1099,7 @@ bool Minesweeper::checkLose()
 
                 revealBombs();
                 _score.first += countFlaggedMines() * 200;
-                _sounds.push_back(_Sprite + "boom.ogg");
+                _sounds.push_back(_Sprite + "boom.mp3");
                 _state = GAME_LOSE;
                 _smileyState = LOSE;
                 return true;
