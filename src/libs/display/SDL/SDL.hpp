@@ -42,7 +42,10 @@ class SDL {
         void playBackgroundMusic(const renderObject& obj);
         void playSoundEffect(const renderObject& obj);
 
+        void setShader(SDL_Texture* texture);
+
     private:
+    
         SDL_Window* _window = nullptr;
         SDL_Renderer* _renderer = nullptr;
         std::vector<RawEvent> _event;
@@ -51,6 +54,7 @@ class SDL {
         bool _audioInitialized = false;
         Mix_Music* _currentMusic = nullptr;
         std::map<std::string, Mix_Chunk*> _soundCache;
+        int _shader = 0;
 };
 
 #endif /* !SDL_HPP_ */

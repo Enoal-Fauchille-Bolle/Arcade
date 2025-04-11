@@ -260,6 +260,16 @@ std::vector<RawEvent> SDL::pollEvent(void)
             _event.push_back(mouseEvent);
         }
     }
+    for (auto& evt : _event) {
+        if (evt.type == EventType::PRESS) {
+            if (evt.key == KEYBOARD_F12) {
+                _shader += 1;
+                if (_shader > 4) {
+                    _shader = 0;
+                }
+            }
+        }
+    }
     return _event;
 }
 
@@ -293,6 +303,28 @@ void SDL::destroyAll(void)
     SDL_Quit();
 }
 
+/***
+    * @brief Sets the shader for the given texture.
+    *
+    * This function applies a shader effect to the specified texture based on
+    * the current shader value. The shader value determines the color modulation
+    * applied to the texture.
+    *
+    * @param texture The SDL_Texture to apply the shader to.
+*/
+void SDL::setShader(SDL_Texture *texture)
+{
+    if (_shader == 1) {
+        SDL_SetTextureColorMod(texture, 255, 0, 0);
+    } else if (_shader == 2) {
+        SDL_SetTextureColorMod(texture, 0, 255, 0);
+    } else if (_shader == 3) {
+        SDL_SetTextureColorMod(texture, 0, 0, 255);
+    } else if (_shader == 4) {
+        SDL_SetTextureColorMod(texture, 255, 255, 0);
+    }
+}
+
 /**
  * @brief Draws a rectangle on the screen.
  *
@@ -323,6 +355,7 @@ void SDL::drawRectangle(renderObject obj)
             SDL_FreeSurface(surface);
             return;
         }
+        setShader(texture);
         SDL_Point center = {rect.w / 2, rect.h / 2};
         SDL_RenderCopyEx(_renderer, texture, nullptr, &rect, obj.rotate, &center, SDL_FLIP_NONE);
         SDL_DestroyTexture(texture);
