@@ -176,6 +176,27 @@ void Menu::checkStartButton(RawEvent event)
 }
 
 /**
+ * @brief Check if the mouse click is on the username input field
+ *
+ * This function checks if the mouse click event is within the bounds
+ * of the username input field. If so, it sets the _typingUsername
+ * variable to true.
+ *
+ * @param event The event to check
+ */
+void Menu::checkUsernameInputClick(RawEvent event)
+{
+    if (event.x >= USERNAME_INPUT_X - 105 &&
+        event.x <= (USERNAME_INPUT_X - 105) + 629 / 2 &&
+        event.y >= USERNAME_INPUT_Y - 20 &&
+        event.y <= (USERNAME_INPUT_Y - 20) + 197 / 2) {
+        _typingUsername = true;
+    } else {
+        _typingUsername = false;
+    }
+}
+
+/**
  * @brief Handle a left mouse button click event
  *
  * This function checks if the left mouse button was clicked on a
@@ -189,6 +210,73 @@ void Menu::handleLeftClick(RawEvent event)
     checkGameClick(event);
     checkDisplayClick(event);
     checkStartButton(event);
+    checkUsernameInputClick(event);
+}
+
+void Menu::checkUsernameInputKeyboard(RawEvent event)
+{
+    if (event.key == EventKey::KEYBOARD_BACKSPACE && !_username.empty()) {
+        if (!_controlPressed) {
+            _username.pop_back();
+        } else {
+            _username = "";
+        }
+        return;
+    }
+
+    if (event.key == EventKey::KEYBOARD_BACKSPACE) {
+        return;
+    }
+
+    if (event.key >= EventKey::KEYBOARD_A &&
+        event.key <= EventKey::KEYBOARD_Z) {
+        if (_username.length() < 8) {
+            char character = (_shiftPressed ? 'A' : 'a') +
+                             (static_cast<int>(event.key) -
+                                 static_cast<int>(EventKey::KEYBOARD_A));
+            _username += character;
+        }
+    }
+}
+
+/**
+ * @brief Check if the shift key is pressed
+ *
+ * This function checks if the shift key is pressed or released.
+ * If pressed, it sets the _shiftPressed variable to true. If
+ * released, it sets it to false.
+ *
+ * @param event The event to check
+ */
+void Menu::checkShiftKey(RawEvent event)
+{
+    if (event.type == PRESS &&
+        (event.key == KEYBOARD_LSHIFT || event.key == KEYBOARD_RSHIFT)) {
+        _shiftPressed = true;
+    } else if (event.type == RELEASE && (event.key == KEYBOARD_LSHIFT ||
+                                            event.key == KEYBOARD_RSHIFT)) {
+        _shiftPressed = false;
+    }
+}
+
+/**
+ * @brief Check if the control key is pressed
+ *
+ * This function checks if the control key is pressed or released.
+ * If pressed, it sets the _controlPressed variable to true. If
+ * released, it sets it to false.
+ *
+ * @param event The event to check
+ */
+void Menu::checkControlKey(RawEvent event)
+{
+    if (event.type == PRESS &&
+        (event.key == KEYBOARD_LCTRL || event.key == KEYBOARD_RCTRL)) {
+        _controlPressed = true;
+    } else if (event.type == RELEASE &&
+               (event.key == KEYBOARD_LCTRL || event.key == KEYBOARD_RCTRL)) {
+        _controlPressed = false;
+    }
 }
 
 /**
@@ -203,7 +291,11 @@ void Menu::handleOneEvent(RawEvent event)
 {
     if (event.type == PRESS && event.key == MOUSE_LEFT) {
         handleLeftClick(event);
+    } else if (event.type == PRESS) {
+        checkUsernameInputKeyboard(event);
     }
+    checkShiftKey(event);
+    checkControlKey(event);
 }
 
 /**
@@ -452,6 +544,39 @@ void Menu::renderBackground(std::map<EntityName, Entity> &entities)
     entities["A-background"] = background;
 }
 
+void Menu::renderUsernameInput(std::map<EntityName, Entity> &entities)
+{
+    Entity startText;
+    Entity usernameInputFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2,
+        197 / 2, USERNAME_INPUT_X - 105, USERNAME_INPUT_Y - 20,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL, std::string(ASSETS_DIR) + "button.png"}});
+    std::string username = _username;
+
+    startText.type = TEXT;
+    startText.x = USERNAME_INPUT_X - 70;
+    startText.y = USERNAME_INPUT_Y - 3;
+    startText.width = 50;
+    startText.height = 0;
+    startText.rotate = 0;
+    if (_typingUsername)
+        setEntityColor(startText, 255, 255, 255);
+    else
+        setEntityColor(startText, 180, 180, 180);
+    if (_typingUsername) {
+        static int blinkCount = 0;
+        blinkCount = (blinkCount + 1) % 60;
+        if (blinkCount < 30) {
+            username += "|";
+        }
+    }
+    startText.sprites[DisplayType::GRAPHICAL] = username;
+    startText.sprites[DisplayType::TERMINAL] = username;
+    entities["C-v"] = startText;
+    setEntityColor(usernameInputFrame, 0, 0, 0);
+    entities["B-userInput"] = usernameInputFrame;
+}
+
 /**
  * @brief Get the content of the scoreboard
  *
@@ -574,7 +699,7 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
 
     renderBackground(entities);
 
-    // renderUsernameInput(entities);
+    renderUsernameInput(entities);
 
     renderScoreboard(entities);
 

@@ -93,7 +93,11 @@ class Menu : public IGame {
         void checkGameClick(RawEvent event);
         void checkDisplayClick(RawEvent event);
         void checkStartButton(RawEvent event);
+        void checkUsernameInputClick(RawEvent event);
         void handleLeftClick(RawEvent event);
+        void checkUsernameInputKeyboard(RawEvent event);
+        void checkShiftKey(RawEvent event);
+        void checkControlKey(RawEvent event);
         void handleOneEvent(RawEvent event);
 
         // Rendering
@@ -125,8 +129,10 @@ class Menu : public IGame {
         size_t _selectedGameLib = 0;
         size_t _selectedDisplayLib = 0;
         bool _startGame;
-        std::string _username = "Player";
-        std::string _scoreboardContent = "";
+        std::string _username = "Username";
+        bool _typingUsername = false;
+        bool _shiftPressed = false;
+        bool _controlPressed = false;
         std::vector<std::string> _scoreboardContent;
         bool _reloadScoreboard = true;
 };
