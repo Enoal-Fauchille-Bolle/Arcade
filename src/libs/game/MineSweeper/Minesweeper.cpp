@@ -100,6 +100,19 @@ void Minesweeper::handleEvent(std::vector<RawEvent> events)
 }
 
 /**
+ * @brief Sets the sprite path based on the selected asset pack.
+ */
+void Minesweeper::setSprite()
+{
+    if (_assetPack == 0) {
+        _Sprite = "assets/Minesweeper_1/";
+    } else if (_assetPack == 1) {
+        _Sprite = "assets/M_2/";
+    }
+}
+
+
+/**
  * @brief Handles game events during gameplay.
  *
  * @param events The vector of RawEvent to be processed.
@@ -121,10 +134,24 @@ void Minesweeper::handleEventGame(std::vector<RawEvent> events)
             } else if (event.key == EventKey::MOUSE_RIGHT) {
                 handleRightClick(event);
             }
+            if (event.key == EventKey::KEYBOARD_F1) {
+                if (_assetPack == 1) {
+                    _assetPack = 0;
+                } else {
+                    _assetPack += 1;
+                }
+            }
+            if (event.key == EventKey::KEYBOARD_F2) {
+                if (_assetPack == 0) {
+                    _assetPack = 1;
+                } else {
+                    _assetPack -= 1;
+                }
+            }
         }
-    }
-
+    setSprite();
     checkTimeLimit();
+    }
 }
 
 /**
@@ -1131,10 +1158,9 @@ bool Minesweeper::checkLose()
         for (int x = 0; x < _width; x++) {
             if (_board[y][x].isMine && _board[y][x].isRevealed) {
                 _board[y][x].State = LOSER;
-
-                revealBombs();
-                _score.first += countFlaggedMines() * 200;
                 _sounds.push_back(_Sprite + "boom.mp3");
+                revealBombsEfficiently();
+                _score.first += countFlaggedMines() * 200;
                 _state = GAME_LOSE;
                 _smileyState = LOSE;
                 return true;
@@ -1142,6 +1168,23 @@ bool Minesweeper::checkLose()
         }
     }
     return false;
+}
+
+/**
+ * @brief Efficiently reveals all bombs on the board.
+ */
+void Minesweeper::revealBombsEfficiently()
+{
+    std::vector<std::pair<int, int>> bombPositions;    
+    for (int y = 0; y < _height; y++) {
+        for (int x = 0; x < _width; x++) {
+            if (_board[y][x].isMine && !_board[y][x].isRevealed)
+                bombPositions.push_back({x, y});
+        }
+    }    
+    for (const auto& [x, y] : bombPositions) {
+        _board[y][x].isRevealed = true;
+    }
 }
 
 /**

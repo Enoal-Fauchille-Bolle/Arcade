@@ -60,6 +60,7 @@ class Minesweeper : public IGame {
         void select_dificulty(int width, int height, int mines);
         bool checkLose();
         void revealBombs();
+        void revealBombsEfficiently();
 
         void addTimerEntity(std::map<std::string, Entity> &entities);
         void drawNumber(std::map<std::string, Entity> &entities, const std::string &idPrefix, int value, int startX, int startY, int digitWidth, int digitHeight);
@@ -79,6 +80,7 @@ class Minesweeper : public IGame {
                            int offsetX, int offsetY, std::map<DisplayType, std::string> sprite);
         Entity createTextEntity(const std::string &text, int x, int y, int size);
         Entity createBackgroundEntity(const std::string &spritePath);
+        void setSprite();
 
         // Board rendering methods
         void addSoundEntities(std::map<std::string, Entity> &entities);
@@ -169,6 +171,8 @@ class Minesweeper : public IGame {
 
         std::string _playerName = "Enter Name";
         bool _isNameInputActive = false;
+
+        int _assetPack = 0;
 };
 
 #endif /* !MINESWEEPER_HPP_ */
