@@ -593,7 +593,7 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
         for (int x = 0; x < gridWidth; ++x) {
             Entity entity;
             entity.type = Shape::RECTANGLE;
-            int offsetX = (1024 - (gridWidth * 38)) / 2;
+            int offsetX = (1024 - (gridWidth * 38));
             entity.x = x * 38 + offsetX;
             entity.y = y * 38;
             entity.width = 38;
@@ -709,7 +709,7 @@ void Snake::renderSnake(std::map<std::string, Entity>& entities)
         
         Entity entity;
         entity.type = Shape::RECTANGLE;
-        int offsetX = (1024 - (gridWidth * 38)) / 2;
+        int offsetX = (1024 - (gridWidth * 38));
         entity.x = x * 38 + offsetX;
         entity.y = y * 38;
         entity.width = 38;
@@ -743,10 +743,11 @@ std::map<std::string, Entity> Snake::renderGame()
         return domenu();
     }
     entities.clear();    
-    renderGridElements(entities);    
+    renderGridElements(entities);
+    std::string scoreString = "Score: " + std::to_string((int)_score.first);
+    entities["score_display"] = createTextEntity(scoreString, 10, 10, 30, 30, 255, 255, 255);
     renderSnake(entities);
-    if (gameOver) {
-        
+    if (gameOver) {   
         _sounds.push_back("assets/gameover.mp3");
     }
     for (size_t i = 0; i < _sounds.size(); i++) {
@@ -782,7 +783,7 @@ void Snake::handleMenuEvent(std::vector<RawEvent> events)
                 else if (event.x >= 1024 / 2 - 50 && event.x <= 1024 / 2 - 50 + 60  + 200 &&
                          event.y >= 768 / 2 + 75 && event.y <= 768 / 2 + 75 + 30 + 50) {
                     gameEnd = true;
-                } else if (event.x >= 1024 / 2 - 50 && event.x <= 1024 / 2 - 50 + 60 + 200 &&
+                } else if (event.x >= 1024 / 2 - 75 && event.x <= 1024 / 2 - 75 + 60 + 200 &&
                            event.y >= 768 / 2 - 100 && event.y <= 768 / 2 - 100 + 30 + 50) {
                     _typeName = true;
                 } else {
@@ -912,10 +913,10 @@ Entity Snake::createRectangleEntity(int x, int y, int width, int height, int r, 
  */
 void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
 {
-    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 200, 768 / 2 - 300, 
+    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 300, 
                                         100, 50, 255, 255, 255);
     
-    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 200, 768 / 2 - 295, 
+    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 295, 
                                                100, 50, 0, 0, 0);
 }
 
@@ -928,11 +929,12 @@ void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
  */
 void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
 {
-    entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 12, 
-                                               120, 60, 0, 0, 0, "", "");
-    
-    entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 85, 
-                                                   120, 60, 0, 0, 0, "", "");
+    entities = entities;
+    // entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 150, 768 / 2 + 12, 
+                                            //    120, 60, 0, 0, 0, "", "");
+    // 
+    // entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 150, 768 / 2 + 85, 
+                                                //    120, 60, 0, 0, 0, "", "");
 }
 
 /**
@@ -952,10 +954,10 @@ void Snake::addOptionEntities(std::map<std::string, Entity>& entities)
 
 void Snake::addInputBox(std::map<std::string, Entity>& entities)
 {
-    entities["input"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 - 100, 
-                                             200, 50, 0, 0, 0, "", "");
-    entities["input_text"] = createTextEntity(_playerName , 1024 / 2 - 50, 
-                                             768 / 2 - 100, 40, 40, 255, 255, 255);
+    entities["input"] = createRectangleEntity(1024 / 2 - 100, 768 / 2 - 100, 
+                                             250, 75, 255, 255, 255, "", "");
+    entities["input_text"] = createTextEntity(_playerName , 1024 / 2 - 100 + 12, 
+                                             768 / 2 - 100 + 12, 40, 40, 0, 0, 0);
 
 }
 
@@ -969,7 +971,7 @@ void Snake::addInputBox(std::map<std::string, Entity>& entities)
 void Snake::addBackgroundEntity(std::map<std::string, Entity>& entities)
 {
     entities["ZZZZZbackground"] = createRectangleEntity(0, 0, 1024, 768, 0, 0, 0, 
-                                                     " ", "assets/snake/wall.png");
+                                                     " ", "assets/snake/bg.jpg");
 }
 
 /**
@@ -992,7 +994,7 @@ void Snake::typeName(std::vector<RawEvent> events)
                 _typeName = false;
             } else {
                 if (event.key >= KEYBOARD_A && event.key <= KEYBOARD_Z) {
-                    char letter = 'a' + (event.key - KEYBOARD_A);
+                    char letter = 'A' + (event.key - KEYBOARD_A);
                     _playerName += letter;
                 }
             }

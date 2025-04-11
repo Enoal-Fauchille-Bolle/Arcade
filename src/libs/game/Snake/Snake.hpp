@@ -119,7 +119,7 @@ class Snake : public IGame {
         int assetPack = 0;
         float _animationProgress = 0.0f;
         std::chrono::steady_clock::time_point _lastFrameTime;
-        std::string _playerName = "Your Name";
+        std::string _playerName = "YOUR NAME";
         bool _typeName = false;
 };
 
