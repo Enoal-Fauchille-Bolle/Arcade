@@ -73,6 +73,7 @@ class Snake : public IGame {
         void setGridColor(Entity& entity, int r, int g, int b);
         void LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
         void LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
+        void LoadThirdAssetPack(int x, int y, Entity& entity, std::map<std::string, Entity>& entities);
         bool shouldSpawnFruit();
         bool shouldMoveSnake();
         void shouldIncreaseSpeed();
