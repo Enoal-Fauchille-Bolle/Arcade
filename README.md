@@ -61,7 +61,7 @@ Run the program by specifying the initial display library:
 - **F3**: Previous Display Lib
 - **F4**: Next Display Lib
 - **F5**: Reload Game & Display Lib
-- **F6**: Reload Game
+- **F6**: Reload Game Lib
 - **F7**: Reload Display Lib
 - **F8**: Next Display Lib
 - **F9**: Next Display Lib
