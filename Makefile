@@ -123,7 +123,7 @@ sfml: $(SFML_OBJ)
 		-l sfml-system -l sfml-audio
 	mv $(SFML_NAME) $(ROOT_LIBS)
 
-display: ncurses sdl sfml
+graphicals: ncurses sdl sfml
 
 
 menu: $(MENU_OBJ)
