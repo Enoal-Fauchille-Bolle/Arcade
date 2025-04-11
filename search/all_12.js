@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['r_0',['r',['../structRgbColor.html#aa6c2fac108029c79f7cc96fb6d34717f',1,'RgbColor']]],
+  ['rawevent_1',['RawEvent',['../structRawEvent.html',1,'']]],
+  ['read_2',['read',['../structcmd_8h.html#a9c7b76d5266903891c803132d51ccb90',1,'structcmd.h']]],
+  ['readme_2emd_3',['README.md',['../README_8md.html',1,'']]],
+  ['rectangle_4',['RECTANGLE',['../IType_8hpp.html#a55b506070847a13554f8b879c1bfb37cae552ab0a96c0384a6e918e726b7f6102',1,'IType.hpp']]],
+  ['relates_2ecpp_5',['relates.cpp',['../relates_8cpp.html',1,'']]],
+  ['release_6',['RELEASE',['../IType_8hpp.html#a2628ea8d12e8b2563c32f05dc7fff6faad590443978dc58d64aed5001f56efcdf',1,'IType.hpp']]],
+  ['reload_5fdisplay_5flib_5fkey_7',['RELOAD_DISPLAY_LIB_KEY',['../Core_8hpp.html#aec4babfd363c48da577abbfa57e8d7f7',1,'Core.hpp']]],
+  ['reload_5fgame_5flib_5fkey_8',['RELOAD_GAME_LIB_KEY',['../Core_8hpp.html#a67623f9e6d5f15837dca934030a66b4c',1,'Core.hpp']]],
+  ['reload_5flibs_5fkey_9',['RELOAD_LIBS_KEY',['../Core_8hpp.html#a7477ed05b4a0f7ddebed5e19e45f7fa4',1,'Core.hpp']]],
+  ['renderclear_10',['renderClear',['../classSDL.html#a2a0ded302929caef2368236965a08b09',1,'SDL']]],
+  ['rendergame_11',['renderGame',['../classIGame.html#a0149116cc5dc52852b64548c49c730f4',1,'IGame::renderGame()'],['../classSnake.html#a0fba93a7058fc1ed09a376bcc2480a1b',1,'Snake::renderGame()'],['../classMinesweeper.html#a13073d5e8382bd769941ae47e284cfcb',1,'Minesweeper::renderGame()'],['../classMenu.html#ab86ee4a793881153f3ea4595a8bd6329',1,'Menu::renderGame()'],['../classAGame.html#a29c3d7eeaa54bf7c31aeefe786856e46',1,'AGame::renderGame()'],['../classEmergencyMenu.html#a050c361c99a5fceac2688b0230ca8671',1,'EmergencyMenu::renderGame()']]],
+  ['renderobject_12',['renderObject',['../structrenderObject.html',1,'']]],
+  ['renderpresent_13',['renderPresent',['../classSDL.html#ad3a4d538255104f65bea313689bbd6a2',1,'SDL']]],
+  ['resetgame_14',['resetGame',['../classMinesweeper.html#a7a4a37a81753734caa8d2cc177acf685',1,'Minesweeper']]],
+  ['resethandle_15',['resetHandle',['../classDLLoader.html#a8d050400493abcb91e805d153c565ca0',1,'DLLoader']]],
+  ['restypedef_2ecpp_16',['restypedef.cpp',['../restypedef_8cpp.html',1,'']]],
+  ['revealbombs_17',['revealBombs',['../classMinesweeper.html#aee8d132e9d8261f4a25382be2b2467f4',1,'Minesweeper']]],
+  ['revealcell_18',['revealCell',['../classMinesweeper.html#a01e0ee681d06ff6693c279ecc7e9adf2',1,'Minesweeper']]],
+  ['rgb_19',['RGB',['../structEntity.html#a590d3b0a5cff7990a9a1d84fef002461',1,'Entity::RGB()'],['../structrenderObject.html#a0b072309f133b35aaa90c332ec86741b',1,'renderObject::RGB()']]],
+  ['rgbcolor_20',['RgbColor',['../structRgbColor.html',1,'']]],
+  ['right_21',['RIGHT',['../Snake_8hpp.html#a224b9163917ac32fc95a60d8c1eec3aaaec8379af7490bb9eaaf579cf17876f38',1,'Snake.hpp']]],
+  ['rotate_22',['rotate',['../structrenderObject.html#abbe88dff3597641c723d29d6f4935be7',1,'renderObject::rotate()'],['../structEntity.html#a3d51866d0c0cf1e8a77960e9ed50cf30',1,'Entity::rotate()']]],
+  ['run_23',['run',['../classCore.html#af968596fe136d8faebf8517de5411380',1,'Core']]]
+];
