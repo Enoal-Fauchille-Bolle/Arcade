@@ -121,29 +121,10 @@ std::string Snake::getNewLib(void)
  */
 void Snake::setDirection(std::vector<RawEvent> events)
 {
+    // Process non-movement keys (like F1 and F2)
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
             switch (event.key) {
-                case KEYBOARD_UP:
-                    if (direction != DOWN) {
-                        direction = UP;
-                    }
-                    break;
-                case KEYBOARD_DOWN:
-                    if (direction != UP) {
-                        direction = DOWN;
-                    }
-                    break;
-                case KEYBOARD_LEFT:
-                    if (direction != RIGHT) {
-                        direction = LEFT;
-                    }
-                    break;
-                case KEYBOARD_RIGHT:
-                    if (direction != LEFT) {
-                        direction = RIGHT;
-                    }
-                    break;
                 case KEYBOARD_F1:
                     if (assetPack == 0) {
                         assetPack = 2;
@@ -161,6 +142,15 @@ void Snake::setDirection(std::vector<RawEvent> events)
                 default:
                     break;
             }
+        }
+    }
+    
+    // Buffer movement events (UP, DOWN, LEFT, RIGHT)
+    for (const auto& event : events) {
+        if (event.type == EventType::PRESS &&
+            (event.key == KEYBOARD_UP || event.key == KEYBOARD_DOWN ||
+             event.key == KEYBOARD_LEFT || event.key == KEYBOARD_RIGHT)) {
+            _bufferedEvents.push(event);
         }
     }
 }
@@ -365,8 +355,33 @@ void Snake::eatFood()
  */
 void Snake::moveSnake()
 {
-    Position newHead = snake.body[0];
+    // Process one buffered movement event per snake cell move.
+    if (!_bufferedEvents.empty()) {
+        RawEvent buffered = _bufferedEvents.front();
+        _bufferedEvents.pop();
+        switch (buffered.key) {
+            case KEYBOARD_UP:
+                if (direction != DOWN)
+                    direction = UP;
+                break;
+            case KEYBOARD_DOWN:
+                if (direction != UP)
+                    direction = DOWN;
+                break;
+            case KEYBOARD_LEFT:
+                if (direction != RIGHT)
+                    direction = LEFT;
+                break;
+            case KEYBOARD_RIGHT:
+                if (direction != LEFT)
+                    direction = RIGHT;
+                break;
+            default:
+                break;
+        }
+    }
 
+    Position newHead = snake.body[0];
     switch (this->direction) {
         case UP:
             newHead.y--;
@@ -381,28 +396,40 @@ void Snake::moveSnake()
             newHead.x++;
             break;
     }
+
+    // Check for collision with grid bounds.
     if (newHead.x < 0 || newHead.x >= gridWidth || newHead.y < 0 || newHead.y >= gridHeight) {
         gameOver = true;
         return;
     }
-    if (grid[newHead.y][newHead.x].isWall || grid[newHead.y][newHead.x].isSnake) {
+    
+    // Added: Check for collision with walls.
+    if (grid[newHead.y][newHead.x].isWall) {
         gameOver = true;
         return;
     }
+    
+    // Check for collision with snake body.
+    if (grid[newHead.y][newHead.x].isSnake) {
+        gameOver = true;
+        return;
+    }
+
     bool foodEaten = grid[newHead.y][newHead.x].isFood;
+
+    // Insert new head.
     snake.body.insert(snake.body.begin(), newHead);
     grid[newHead.y][newHead.x].isSnake = true;
-    if (foodEaten) {
-        eatFood();
-        _sounds.push_back("assets/food.ogg");
-        if (snake.body.size() == static_cast<size_t>(gridWidth * gridHeight)) {
-            gameOver = true;
-            return;
-        }
-    } else {
+
+    if (!foodEaten) {
+        // Remove tail.
         Position tail = snake.body.back();
-        grid[tail.y][tail.x].isSnake = false;
         snake.body.pop_back();
+        grid[tail.y][tail.x].isSnake = false;
+    } else {
+        grid[newHead.y][newHead.x].isFood = false;
+        grid[newHead.y][newHead.x].isTimeFood = false;
+        eatFood();
     }
 }
 

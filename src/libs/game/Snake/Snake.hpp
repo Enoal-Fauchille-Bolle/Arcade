@@ -13,6 +13,7 @@
     #include <vector>
     #include "../interfaces/IGame.hpp"
     #include <chrono>
+    #include <queue>
 
     #define LIBRARY_NAME "Snake"
 
@@ -123,6 +124,7 @@ class Snake : public IGame {
         std::chrono::steady_clock::time_point _lastFrameTime;
         std::string _playerName = "YOUR NAME";
         bool _typeName = false;
+        std::queue<RawEvent> _bufferedEvents;
 };
 
 #endif /* !SNAKE_HPP_ */
