@@ -309,39 +309,35 @@ bool Snake::shouldSpawnFruit()
 }
 
 /**
- * @brief Generates food on the grid.
- *
- * This function generates food on the grid at a random position that is not
- * occupied by a wall, snake, or existing food. It also sets the type of food
- * (normal or time food) based on the timeFood parameter.
+ * @brief Generates food on the grid using an optimized algorithm.
  *
  * @param timeFood Indicates whether to generate time food.
  */
 void Snake::generateFood(bool timeFood)
 {
     int foodCount = 0;
-    for (int i = 0; i < gridHeight; ++i) {
-        for (int j = 0; j < gridWidth; ++j) {
-            if (grid[i][j].isFood) {
+    std::vector<std::pair<int, int>> emptyCells;
+    
+    for (int y = 0; y < gridHeight; ++y) {
+        for (int x = 0; x < gridWidth; ++x) {
+            if (grid[y][x].isFood) {
                 foodCount++;
+            } else if (!grid[y][x].isWall && !grid[y][x].isSnake) {
+                emptyCells.push_back({x, y});
             }
         }
     }
-    if (foodCount >= 3) {
+    
+    if (foodCount >= 3 || emptyCells.empty()) {
         return;
     }
-    int x = rand() % gridWidth;
-    int y = rand() % gridHeight;
-    while (grid[y][x].isWall || grid[y][x].isSnake || grid[y][x].isFood) {
-        x = rand() % gridWidth;
-        y = rand() % gridHeight;
-    }
-    if (timeFood) {
-        grid[y][x].isTimeFood = true;
-    } else {
-        grid[y][x].isTimeFood = false;
-    }
+    
+    int index = rand() % emptyCells.size();
+    int x = emptyCells[index].first;
+    int y = emptyCells[index].second;
+    
     grid[y][x].isFood = true;
+    grid[y][x].isTimeFood = timeFood;
 }
 
 /**
@@ -366,10 +362,6 @@ void Snake::eatFood()
 
 /**
  * @brief Moves the snake in the current direction.
- *
- * This function moves the snake in the current direction by updating its
- * position and checking for collisions with walls, itself, or food. It also
- * handles the game over state if necessary.
  */
 void Snake::moveSnake()
 {
@@ -402,7 +394,7 @@ void Snake::moveSnake()
     grid[newHead.y][newHead.x].isSnake = true;
     if (foodEaten) {
         eatFood();
-        _sounds.push_back("assets/food.mp3");
+        _sounds.push_back("assets/food.ogg");
         if (snake.body.size() == static_cast<size_t>(gridWidth * gridHeight)) {
             gameOver = true;
             return;
