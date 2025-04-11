@@ -6,9 +6,13 @@
 */
 
 #include "Core.hpp"
-#include "LibLoader.hpp"
-#include <fstream>
+
 #include <filesystem>
+#include <fstream>
+
+#include "LibLoader.hpp"
+
+///////////////////////// Constructor and Destructor /////////////////////////
 
 /**
  * @brief Constructor for the Core class.
@@ -37,6 +41,8 @@ Core::Core(std::string path)
 Core::~Core()
 {
 }
+
+/////////////////////////////// Emergency Menu ///////////////////////////////
 
 /**
  * @brief Starts the emergency menu if the game fails to load.
@@ -95,35 +101,7 @@ bool Core::checkQuit(std::vector<RawEvent> events)
     return false;
 }
 
-/**
- * @brief Renders the entities on the display.
- * @param entities A map of entity names to Entity objects to render.
- */
-void Core::renderEntities(std::map<std::string, Entity> entities)
-{
-    if (entities.size() > 0) {
-        _display->clear();
-        for (const auto &pair : entities) {
-            Entity val = pair.second;
-            renderObject obj;
-            obj.x = val.x;
-            obj.y = val.y;
-            obj.type = val.type;
-            obj.width = val.width;
-            obj.height = val.height;
-            obj.rotate = val.rotate;
-            if (val.sprites.find(_display->getDType()) == val.sprites.end()) {
-                continue;
-            }
-            obj.sprite = val.sprites.find(_display->getDType())->second;
-            obj.RGB[0] = val.RGB[0];
-            obj.RGB[1] = val.RGB[1];
-            obj.RGB[2] = val.RGB[2];
-            _display->drawObject(obj);
-        }
-        _display->display();
-    }
-}
+//////////////////////// Display Library Switching Key ////////////////////////
 
 /**
  * @brief Switches to the next display library.
@@ -142,7 +120,8 @@ void Core::nextDisplayLibrary(void)
     }
     newDisplayPath = getDisplayLibPathFromIndex(_selectedDisplayLib);
     if (load_display(newDisplayPath) == 1) {
-        std::cerr << "Failed to load display library: " << newDisplayPath << std::endl;
+        std::cerr << "Failed to load display library: " << newDisplayPath
+                  << std::endl;
     }
 }
 
@@ -164,7 +143,8 @@ void Core::previousDisplayLibrary(void)
     }
     newDisplayPath = getDisplayLibPathFromIndex(_selectedDisplayLib);
     if (load_display(newDisplayPath) == 1) {
-        std::cerr << "Failed to load display library: " << newDisplayPath << std::endl;
+        std::cerr << "Failed to load display library: " << newDisplayPath
+                  << std::endl;
     }
 }
 
@@ -196,7 +176,8 @@ void Core::reloadGameLibrary(void)
     delete_game();
     _gameLoader.resetHandle();
     if (load_game(_currentGamePath) == 1) {
-        std::cerr << "Failed to reload game library: " << _currentGamePath << std::endl;
+        std::cerr << "Failed to reload game library: " << _currentGamePath
+                  << std::endl;
         startEmergencyMenu();
     }
 }
@@ -211,7 +192,8 @@ void Core::reloadDisplayLibrary(void)
     delete_display();
     _graphicLoader.resetHandle();
     if (load_display(_currentDisplayPath) == 1) {
-        std::cerr << "Failed to reload game library: " << _currentDisplayPath << std::endl;
+        std::cerr << "Failed to reload game library: " << _currentDisplayPath
+                  << std::endl;
         startEmergencyMenu();
     }
 }
@@ -233,6 +215,36 @@ void Core::libraryReloading(std::vector<RawEvent> events)
         if (event.type == PRESS && event.key == KEYBOARD_F7) {
             reloadDisplayLibrary();
         }
+
+///////////////////////////////// Game Loop /////////////////////////////////
+
+/**
+ * @brief Renders the entities on the display.
+ * @param entities A map of entity names to Entity objects to render.
+ */
+void Core::renderEntities(std::map<std::string, Entity> entities)
+{
+    if (entities.size() > 0) {
+        _display->clear();
+        for (const auto &pair : entities) {
+            Entity val = pair.second;
+            renderObject obj;
+            obj.x = val.x;
+            obj.y = val.y;
+            obj.type = val.type;
+            obj.width = val.width;
+            obj.height = val.height;
+            obj.rotate = val.rotate;
+            if (val.sprites.find(_display->getDType()) == val.sprites.end()) {
+                continue;
+            }
+            obj.sprite = val.sprites.find(_display->getDType())->second;
+            obj.RGB[0] = val.RGB[0];
+            obj.RGB[1] = val.RGB[1];
+            obj.RGB[2] = val.RGB[2];
+            _display->drawObject(obj);
+        }
+        _display->display();
     }
 }
 
@@ -257,7 +269,8 @@ void Core::run()
             std::string newLib = _game->getNewLib();
             delete_game();
             if (load_game(newLib) == 1) {
-                std::cerr << "Failed to load selected game: " << newLib << std::endl;
+                std::cerr << "Failed to load selected game: " << newLib
+                          << std::endl;
                 startEmergencyMenu();
             }
         }
@@ -273,6 +286,8 @@ void Core::run()
         renderEntities(entities);
     }
 }
+
+////////////////////////////// Library Loading //////////////////////////////
 
 /**
  * @brief Loads the display library.
@@ -336,10 +351,12 @@ int Core::delete_game()
     return 0;
 }
 
+////////////////////////////// Score Management //////////////////////////////
+
 /**
  * @brief Creates the score directory if it doesn't exist.
  */
-void Core::createScoreDirectory() 
+void Core::createScoreDirectory()
 {
     if (!std::filesystem::exists("score")) {
         std::filesystem::create_directory("score");
@@ -351,23 +368,26 @@ void Core::createScoreDirectory()
  * @param fileName The name of the file to load scores from.
  * @return A vector containing pairs of scores and player names.
  */
-std::vector<std::pair<float, std::string>> Core::loadScoresFromFile(const std::string& fileName)
+std::vector<std::pair<float, std::string>> Core::loadScoresFromFile(
+    const std::string &fileName)
 {
     std::vector<std::pair<float, std::string>> scores;
-    
+
     if (!std::filesystem::exists(fileName)) {
         return scores;
     }
-    
+
     std::ifstream infile(fileName);
     if (infile.is_open()) {
         std::string line;
         while (std::getline(infile, line)) {
             size_t playerStart = line.find("Player: ");
             size_t scoreStart = line.find(" - Score: ");
-            
-            if (playerStart != std::string::npos && scoreStart != std::string::npos) {
-                std::string playerName = line.substr(playerStart + 8, scoreStart - (playerStart + 8));
+
+            if (playerStart != std::string::npos &&
+                scoreStart != std::string::npos) {
+                std::string playerName = line.substr(
+                    playerStart + 8, scoreStart - (playerStart + 8));
                 std::string scoreStr = line.substr(scoreStart + 10);
                 try {
                     float scoreValue = std::stof(scoreStr);
@@ -386,12 +406,13 @@ std::vector<std::pair<float, std::string>> Core::loadScoresFromFile(const std::s
  * @param scores The vector of current scores.
  * @param newScore The new score to add or update.
  */
-void Core::updatePlayerScore(std::vector<std::pair<float, std::string>>& scores, 
-                            const std::pair<float, std::string>& newScore)
+void Core::updatePlayerScore(
+    std::vector<std::pair<float, std::string>> &scores,
+    const std::pair<float, std::string> &newScore)
 {
     bool playerExists = false;
-    
-    for (auto& entry : scores) {
+
+    for (auto &entry : scores) {
         if (entry.second == newScore.second) {
             playerExists = true;
             if (newScore.first > entry.first) {
@@ -400,14 +421,13 @@ void Core::updatePlayerScore(std::vector<std::pair<float, std::string>>& scores,
             break;
         }
     }
-    
+
     if (!playerExists) {
         scores.push_back(newScore);
     }
-    
-    std::sort(scores.begin(), scores.end(), [](const auto &a, const auto &b) {
-        return a.first > b.first;
-    });
+
+    std::sort(scores.begin(), scores.end(),
+        [](const auto &a, const auto &b) { return a.first > b.first; });
 }
 
 /**
@@ -416,17 +436,19 @@ void Core::updatePlayerScore(std::vector<std::pair<float, std::string>>& scores,
  * @param scores The vector of scores to write.
  * @return true if successful, false otherwise.
  */
-bool Core::writeScoresToFile(const std::string& fileName, 
-                           const std::vector<std::pair<float, std::string>>& scores)
+bool Core::writeScoresToFile(const std::string &fileName,
+    const std::vector<std::pair<float, std::string>> &scores)
 {
     std::ofstream outfile(fileName, std::ios::trunc);
     if (!outfile.is_open()) {
-        std::cerr << "Unable to open score file for writing: " << fileName << std::endl;
+        std::cerr << "Unable to open score file for writing: " << fileName
+                  << std::endl;
         return false;
     }
-    
+
     for (const auto &entry : scores) {
-        outfile << "Player: " << entry.second << " - Score: " << entry.first << "\n";
+        outfile << "Player: " << entry.second << " - Score: " << entry.first
+                << "\n";
     }
     outfile.close();
     return true;
@@ -441,16 +463,18 @@ void Core::saveScore(std::pair<float, std::string> score)
     if (score.second.empty()) {
         return;
     }
-    
+
     std::string gameName = _game->getName();
     std::string fileName = "score/score_" + gameName + ".txt";
-    
+
     createScoreDirectory();
-    
+
     auto scores = loadScoresFromFile(fileName);
     updatePlayerScore(scores, score);
     writeScoresToFile(fileName, scores);
 }
+
+////////////////////// Display and Game Library Indexing //////////////////////
 
 /**
  * @brief Gets the display library path from the index.
