@@ -42,7 +42,7 @@ Menu::Menu()
  */
 bool Menu::isGameOver(void)
 {
-    return false;
+    return _startGame;
 }
 
 /**
@@ -56,7 +56,7 @@ bool Menu::isGameOver(void)
  */
 std::pair<float, std::string> Menu::getScore(void)
 {
-    return std::pair<float, std::string>(0, "0");
+    return std::pair<float, std::string>(0, _username);
 }
 
 /**
@@ -169,8 +169,7 @@ void Menu::checkStartButton(RawEvent event)
     if (event.x >= START_BUTTON_X - 105 &&
         event.x <= (START_BUTTON_X - 105) + 629 / 2 &&
         event.y >= START_BUTTON_Y - 20 &&
-        event.y <=
-            (START_BUTTON_Y - 20) + 197 / 2) {
+        event.y <= (START_BUTTON_Y - 20) + 197 / 2) {
         _startGame = true;
     }
 }
@@ -385,7 +384,7 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
         setupLibButton(libs[i], x, yPos);
         if (i == selectedLib) {
             prefix = " > ";
-            setEntityColor(libEntity, 0, 255, 0);
+            setEntityColor(libEntity, 0, 255, 255);
         } else {
             prefix = "   ";
             setEntityColor(libEntity, 180, 180, 180);
@@ -433,6 +432,91 @@ void Menu::renderStartButton(std::map<EntityName, Entity> &entities)
 }
 
 /**
+ * @brief Render the background
+ *
+ * This function creates an Entity object representing the background
+ * of the menu. It sets the position, color, and sprite of the
+ * background.
+ *
+ * @return Entity The background entity
+ */
+void Menu::renderBackground(std::map<EntityName, Entity> &entities)
+{
+    Entity background =
+        createEntity(Shape::RECTANGLE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0,
+            {{DisplayType::TERMINAL, " "},
+                {DisplayType::GRAPHICAL,
+                    std::string(ASSETS_DIR) + "background2.jpg"}});
+    setEntityColor(background, 0, 0, 0);
+    entities["A-background"] = background;
+}
+
+std::string Menu::getScoreboardContent(void)
+{
+    ScoreManager scoreManager;
+    std::string gameName = _gameLibs[_selectedGameLib].first.name;
+    std::string fileName = "score/score_" + gameName + ".txt";
+    std::vector<std::pair<float, std::string>> scores =
+        scoreManager.loadScoresFromFile(fileName);
+    std::string result = "";
+
+    for (size_t i = 0; i < scores.size(); i++) {
+        result += scores[i].second + ": " +
+                  std::to_string(static_cast<int>(scores[i].first)) + "\n";
+    }
+    if (result.empty()) {
+        result = "No scores available";
+    }
+    if (!result.empty() && result.back() == '\n') {
+        result.pop_back();
+    }
+    return result;
+}
+
+/**
+ * @brief Render the scoreboard
+ *
+ * This function creates an Entity object representing the scoreboard.
+ * It sets the position, color, and text of the scoreboard.
+ *
+ * @return Entity The scoreboard entity
+ */
+void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
+{
+    Entity scoreboardTitle;
+    Entity scoreboardContent;
+    std::string content = getScoreboardContent();
+    Entity scoreboardFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 2.4,
+        1380 / 2.4, SCOREBOARD_TITLE_X - 20, SCOREBOARD_TITLE_Y - 21,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL,
+                std::string(ASSETS_DIR) + "scoreboard.png"}});
+
+    scoreboardTitle.type = TEXT;
+    scoreboardTitle.x = SCOREBOARD_TITLE_X + 35;
+    scoreboardTitle.y = SCOREBOARD_TITLE_Y;
+    scoreboardTitle.width = 30;
+    scoreboardTitle.height = 0;
+    scoreboardTitle.rotate = 0;
+    setEntityColor(scoreboardTitle, 78, 200, 245);
+    scoreboardTitle.sprites[DisplayType::GRAPHICAL] = "Scoreboard";
+    scoreboardTitle.sprites[DisplayType::TERMINAL] = "Scoreboard";
+    entities["C-scoreboardTitle"] = scoreboardTitle;
+    setEntityColor(scoreboardFrame, 0, 0, 0);
+    entities["B-scoreboardMenu"] = scoreboardFrame;
+    scoreboardContent.type = TEXT;
+    scoreboardContent.x = SCOREBOARD_CONTENT_X;
+    scoreboardContent.y = SCOREBOARD_CONTENT_Y;
+    scoreboardContent.width = 20;
+    scoreboardContent.height = 0;
+    scoreboardContent.rotate = 0;
+    setEntityColor(scoreboardContent, 78, 200, 245);
+    scoreboardContent.sprites[DisplayType::GRAPHICAL] = content;
+    scoreboardContent.sprites[DisplayType::TERMINAL] = content;
+    entities["C-scoreboardContent"] = scoreboardContent;
+}
+
+/**
  * @brief Render the game menu
  *
  * This function creates a map of Entity objects representing the
@@ -448,6 +532,7 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
     std::map<EntityName, Entity> tempEntities;
 
     renderTitle(entities);
+
     renderDisplayTitle(entities);
 
     tempEntities = renderLibs(DISPLAY);
@@ -464,14 +549,11 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
 
     renderStartButton(entities);
 
-    // Background
-    Entity background =
-        createEntity(Shape::RECTANGLE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0,
-            {{DisplayType::TERMINAL, " "},
-                {DisplayType::GRAPHICAL,
-                    std::string(ASSETS_DIR) + "background.jpg"}});
-    setEntityColor(background, 0, 0, 0);
-    entities["A-background"] = background;
+    renderBackground(entities);
+
+    // renderUsernameInput(entities);
+
+    renderScoreboard(entities);
 
     return entities;
 }

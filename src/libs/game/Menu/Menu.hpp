@@ -12,9 +12,10 @@
     #include <map>
     #include <vector>
 
+    #include "../../../core/LibGetter.hpp"
+    #include "../../../core/ScoreManager.hpp"
     #include "../../../libs/display/interfaces/IDisplay.hpp"
     #include "../../../libs/game/interfaces/IGame.hpp"
-    #include "../../../core/LibGetter.hpp"
 
     #define LIBRARY_PATH "./lib/"
     #define SCREEN_WIDTH 1024
@@ -25,28 +26,34 @@
     #define ASSETS_DIR "./assets/menu/"
 
     #define ARCADE_TITLE_X 375
-    #define ARCADE_TITLE_Y 60
+    #define ARCADE_TITLE_Y 50
 
-    #define GAME_TITLE_X 600
-    #define GAME_TITLE_Y 220
+    #define DISPLAY_TITLE_X 70
+    #define DISPLAY_TITLE_Y 190
 
-    #define DISPLAY_TITLE_X 200
-    #define DISPLAY_TITLE_Y 220
+    #define GAME_TITLE_X 410
+    #define GAME_TITLE_Y 190
 
-    #define LIBS_HEIGHT_START 320
+    #define LIBS_HEIGHT_START 280
     #define LIBS_HEIGHT_THRESHOLD 45
     #define LIBS_HEIGHT 25
     #define LIBS_PADDING 10
 
     #define TEXT_WIDTH_MULTIPLIER 30
 
-    #define DISPLAY_LIB_X 200
-    #define GAME_LIB_X 600
+    #define DISPLAY_LIB_X 70
+    #define GAME_LIB_X 410
 
     #define START_BUTTON_X 480
     #define START_BUTTON_Y 660
     #define START_BUTTON_WIDTH 75
     #define START_BUTTON_HEIGHT 25
+
+    #define SCOREBOARD_TITLE_X 750
+    #define SCOREBOARD_TITLE_Y 190
+
+    #define SCOREBOARD_CONTENT_X 755
+    #define SCOREBOARD_CONTENT_Y 240
 
 class Menu : public IGame {
     public:
@@ -95,6 +102,10 @@ class Menu : public IGame {
         void setEntityColor(Entity &cell, int r, int g, int b);
         std::map<EntityName, Entity> renderLibs(LibType libType);
         void renderStartButton(std::map<EntityName, Entity> &entities);
+        void renderBackground(std::map<EntityName, Entity> &entities);
+        void renderUsernameInput(std::map<EntityName, Entity> &entities);
+        std::string getScoreboardContent(void);
+        void renderScoreboard(std::map<EntityName, Entity> &entities);
 
         Entity createEntity(Shape shape,
             int x,
@@ -110,6 +121,7 @@ class Menu : public IGame {
         size_t _selectedGameLib = 0;
         size_t _selectedDisplayLib = 0;
         bool _startGame;
+        std::string _username = "Player";
 };
 
 #endif /* !MENU_HPP_ */
