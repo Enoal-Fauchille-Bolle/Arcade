@@ -20,6 +20,8 @@ SNAKE_NAME = arcade_snake.so
 
 MINESWEEPER_NAME = arcade_minesweeper.so
 
+JUMPMAN_NAME = arcade_jumpman.so
+
 
 TESTS_NAME = unit_tests.out
 
