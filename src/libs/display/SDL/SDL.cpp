@@ -466,7 +466,7 @@ void SDL::playBackgroundMusic(const renderObject& obj)
         return;
     }
 
-    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 10);
     if (Mix_PlayMusic(_currentMusic, -1) == -1) {
         std::cerr << "Failed to play music: " << Mix_GetError() << std::endl;
     }
@@ -496,7 +496,7 @@ void SDL::playSoundEffect(const renderObject& obj)
         }
         _soundCache[obj.sprite] = chunk;
     }
-    Mix_VolumeChunk(_soundCache[obj.sprite], MIX_MAX_VOLUME / 2);
+    Mix_VolumeChunk(_soundCache[obj.sprite], MIX_MAX_VOLUME / 5);
     if (Mix_PlayChannel(-1, _soundCache[obj.sprite], 0) == -1) {
         std::cerr << "Failed to play sound effect: " << Mix_GetError() << std::endl;
     }
