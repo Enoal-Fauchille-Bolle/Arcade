@@ -95,11 +95,13 @@ std::string Menu::getNewLib(void)
 }
 
 /**
- * @brief Get the name of the menu
+ * @brief Get the name of the new display library
  *
- * This function returns the name of the menu.
+ * This function returns the name of the new display library based
+ * on the selected display library. If no display library is selected,
+ * it returns the first display library in the list.
  *
- * @return std::string The name of the menu
+ * @return std::string The name of the new display library
  */
 std::string Menu::getNewDisplay(void)
 {
@@ -269,13 +271,11 @@ void Menu::checkUsernameInputClick(RawEvent event)
 }
 
 /**
- * @brief Check if the username input is valid
+ * @brief Check if the keyboard input is valid for the username
  *
- * This function checks if the username input is valid. If the
- * backspace key is pressed, it removes the last character from the
- * username. If the shift key is pressed, it sets the _shiftPressed
- * variable to true. If a letter key is pressed, it adds the
- * corresponding character to the username.
+ * This function checks if the keyboard input event is valid for the
+ * username input. If so, it updates the _username variable and plays
+ * a sound effect.
  *
  * @param event The event to check
  */
@@ -669,15 +669,12 @@ std::map<IGame::EntityName, Entity> Menu::renderLibs(LibType libType)
 //------------------------------ Start Button ------------------------------//
 
 /**
- * @brief Render the selected libraries
+ * @brief Render the start button
  *
- * This function creates an Entity object representing the selected
- * libraries. It sets the position, color, and text of the selected
- * libraries.
+ * This function creates an Entity object representing the start
+ * button. It sets the position, color, and text of the start button.
  *
- * @param gameName The name of the game library
- * @param displayName The name of the display library
- * @return Entity The selected libraries entity
+ * @return Entity The start button entity
  */
 void Menu::renderStartButton(std::map<EntityName, Entity> &entities)
 {

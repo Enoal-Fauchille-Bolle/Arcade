@@ -48,6 +48,9 @@
     #define START_BUTTON_X 490
     #define START_BUTTON_Y 660
 
+    #define QUIT_BUTTON_X 870
+    #define QUIT_BUTTON_Y 33
+
     #define USERNAME_INPUT_X 140
     #define USERNAME_INPUT_Y 660
 
@@ -95,6 +98,7 @@ class Menu : public IGame {
         void checkGameClick(RawEvent event);
         void checkDisplayClick(RawEvent event);
         void checkStartButton(RawEvent event);
+        void checkQuitButton(RawEvent event);
         void checkUsernameInputClick(RawEvent event);
         void handleLeftClick(RawEvent event);
         void checkUsernameInputKeyboard(RawEvent event);
@@ -110,6 +114,7 @@ class Menu : public IGame {
         void setEntityColor(Entity &cell, int r, int g, int b);
         std::map<EntityName, Entity> renderLibs(LibType libType);
         void renderStartButton(std::map<EntityName, Entity> &entities);
+        void renderQuitButton(std::map<EntityName, Entity> &entities);
         void renderBackground(std::map<EntityName, Entity> &entities);
         void renderUsernameInput(std::map<EntityName, Entity> &entities);
         std::vector<std::string> getScoreboardContent(void);
@@ -139,6 +144,7 @@ class Menu : public IGame {
         std::vector<std::string> _scoreboardContent;
         bool _reloadScoreboard = true;
         std::vector<std::string> _sounds;
+        bool _quit = false;
 };
 
 #endif /* !MENU_HPP_ */
