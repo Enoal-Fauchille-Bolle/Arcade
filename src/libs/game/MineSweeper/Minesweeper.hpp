@@ -111,7 +111,7 @@ class Minesweeper : public IGame {
         void handleEventESC(std::vector<RawEvent> events);
 
         // Player name input handling
-        void handleNameInput(const RawEvent &event);
+        void handleNameInput(std::vector<RawEvent> events);
         void addNameInputEntity(std::map<std::string, Entity> &entities);
 
     private:

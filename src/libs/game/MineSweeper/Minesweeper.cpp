@@ -331,8 +331,8 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
                 _state = MENU;
             }
         }
-        else if (_isNameInputActive && event.type == EventType::PRESS) {
-            handleNameInput(event);
+        else if (_isNameInputActive) {
+            handleNameInput(events);
         }
     }
 }
@@ -342,25 +342,40 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
  *
  * @param event The keyboard event to process.
  */
-void Minesweeper::handleNameInput(const RawEvent &event)
+void Minesweeper::handleNameInput(std::vector<RawEvent> events)
 {
-    if (event.key == EventKey::KEYBOARD_BACKSPACE && !_playerName.empty()) {
-        _playerName.pop_back();
-        _sounds.push_back("assets/menu/keyboard-click4.ogg");
-        return;
-    }
+    static bool isShiftActive = false;
 
-    if (event.key == EventKey::KEYBOARD_BACKSPACE) {
-        _isNameInputActive = false;
-        return;
-    }
-
-    if (event.key >= EventKey::KEYBOARD_A && event.key <= EventKey::KEYBOARD_Z) {
-        if (_playerName.length() < 15) {
-            char character = 'A' + (static_cast<int>(event.key) - static_cast<int>(EventKey::KEYBOARD_A));
-            _playerName += character;
-            int randomNum = rand() % 3 + 1;
-            _sounds.push_back("assets/menu/keyboard-click" + std::to_string(randomNum) + ".ogg");
+    for (const auto &event : events) {
+        if (event.type == EventType::PRESS) {
+            if (event.key == EventKey::KEYBOARD_LSHIFT || event.key == EventKey::KEYBOARD_RSHIFT) {
+                isShiftActive = true;
+            }
+            if (event.key == EventKey::KEYBOARD_BACKSPACE && !_playerName.empty()) {
+                _playerName.pop_back();
+                _sounds.push_back("assets/menu/keyboard-click4.ogg");
+                return;
+            }
+            if (event.key == EventKey::KEYBOARD_BACKSPACE) {
+                _isNameInputActive = false;
+                return;
+            }
+            if (event.key >= EventKey::KEYBOARD_A && event.key <= EventKey::KEYBOARD_Z) {
+                if (_playerName.length() < 8) {
+                    char character;
+                    if (isShiftActive) {
+                        character = 'A' + (event.key - EventKey::KEYBOARD_A);
+                    } else {
+                        character = 'a' + (event.key - EventKey::KEYBOARD_A);
+                    }
+                    _playerName += character;
+                    int randomNum = rand() % 3 + 1;
+                    _sounds.push_back("assets/menu/keyboard-click" + std::to_string(randomNum) + ".ogg");
+                }
+            }
+        }
+        else if (event.type == EventType::RELEASE && (event.key == EventKey::KEYBOARD_LSHIFT || event.key == EventKey::KEYBOARD_RSHIFT)) {
+            isShiftActive = false;
         }
     }
 }
