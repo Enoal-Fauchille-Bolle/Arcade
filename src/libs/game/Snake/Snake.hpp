@@ -27,6 +27,7 @@ struct Cell {
     bool isFood = false;
     bool isTimeFood = false;
     bool isWall = false;
+    bool isTempFood = false;
     struct Position pos;
 };
 
@@ -69,7 +70,7 @@ class Snake : public IGame {
         void goLeft();
         void goRight();
         void moveSnake();
-        void generateFood(bool timeFood);
+        void generateFood(bool timeFood, bool isTempFood);
         void eatFood();
         void createGrid(int width, int height);
         void setGridColor(Entity& entity, int r, int g, int b);
@@ -104,7 +105,8 @@ class Snake : public IGame {
         void updateAnimationProgress();
         bool shouldShowMenu();
         void typeName(std::vector<RawEvent> events);
-        
+        void handleTempFood();
+
 
         std::vector<std::vector<Cell>> grid;
         std::pair<float, std::string> _score;
@@ -125,6 +127,9 @@ class Snake : public IGame {
         std::string _playerName = "YOUR NAME";
         bool _typeName = false;
         std::queue<RawEvent> _bufferedEvents;
+        int _fruitEat = 0;
+        int _specialFruitEat = 0;
+        int _specialFruitSpawn = 0;
 };
 
 #endif /* !SNAKE_HPP_ */

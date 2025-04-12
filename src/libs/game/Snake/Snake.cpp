@@ -50,7 +50,7 @@ void Snake::createGrid(int width, int height)
     for (const auto& segment : snake.body) {
         grid[segment.y][segment.x].isSnake = true;
     }
-    generateFood(false);
+    generateFood(false, false);
 }
 
 /**
@@ -121,7 +121,6 @@ std::string Snake::getNewLib(void)
  */
 void Snake::setDirection(std::vector<RawEvent> events)
 {
-    // Process non-movement keys (like F1 and F2)
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
             switch (event.key) {
@@ -144,8 +143,6 @@ void Snake::setDirection(std::vector<RawEvent> events)
             }
         }
     }
-    
-    // Buffer movement events (UP, DOWN, LEFT, RIGHT)
     for (const auto& event : events) {
         if (event.type == EventType::PRESS &&
             (event.key == KEYBOARD_UP || event.key == KEYBOARD_DOWN ||
@@ -245,7 +242,7 @@ void Snake::handleEvent(std::vector<RawEvent> events)
         return;
     }
     if (shouldSpawnFruit()) {
-        generateFood(true);
+        generateFood(true, false);
     }
     shouldIncreaseSpeed();
     setDirection(events);
@@ -298,16 +295,63 @@ bool Snake::shouldSpawnFruit()
     return false;
 }
 
+
+void Snake::handleTempFood()
+{
+    static auto lastTempFoodSpawnTime = std::chrono::steady_clock::now();
+    static bool tempFoodActive = false;
+    static auto tempFoodPlacedTime = std::chrono::steady_clock::now();
+    static int nextSpawnInterval = 15 + (rand() % 11);
+
+    auto currentTime = std::chrono::steady_clock::now();
+    bool tempFoodExists = false;
+    for (int y = 0; y < gridHeight && !tempFoodExists; ++y) {
+        for (int x = 0; x < gridWidth && !tempFoodExists; ++x) {
+            if (grid[y][x].isFood && grid[y][x].isTempFood) {
+                tempFoodExists = true;
+            }
+        }
+    }
+    if (tempFoodActive && !tempFoodExists) {
+        tempFoodActive = false;
+    }
+    if (tempFoodActive) {
+        auto tempFoodElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(
+            currentTime - tempFoodPlacedTime).count();
+        if (tempFoodElapsedTime >= 5) {
+            for (int y = 0; y < gridHeight; ++y) {
+                for (int x = 0; x < gridWidth; ++x) {
+                    if (grid[y][x].isFood && grid[y][x].isTempFood) {
+                        grid[y][x].isFood = false;
+                        grid[y][x].isTempFood = false;
+                    }
+                }
+            }
+            tempFoodActive = false;
+        }
+    }
+    auto elapsedSinceLastSpawn = std::chrono::duration_cast<std::chrono::seconds>(
+        currentTime - lastTempFoodSpawnTime).count();
+    if (!tempFoodActive && elapsedSinceLastSpawn >= nextSpawnInterval) {
+        generateFood(false, true);
+        _specialFruitSpawn += 1;
+        tempFoodActive = true;
+        tempFoodPlacedTime = currentTime;
+        lastTempFoodSpawnTime = currentTime;
+        nextSpawnInterval = 15 + (rand() % 11);
+    }
+}
+
 /**
  * @brief Generates food on the grid using an optimized algorithm.
  *
  * @param timeFood Indicates whether to generate time food.
  */
-void Snake::generateFood(bool timeFood)
+void Snake::generateFood(bool timeFood, bool isTempFood)
 {
     int foodCount = 0;
     std::vector<std::pair<int, int>> emptyCells;
-    
+
     for (int y = 0; y < gridHeight; ++y) {
         for (int x = 0; x < gridWidth; ++x) {
             if (grid[y][x].isFood) {
@@ -317,17 +361,15 @@ void Snake::generateFood(bool timeFood)
             }
         }
     }
-    
-    if (foodCount >= 3 || emptyCells.empty()) {
+    if ((foodCount >= 3 || emptyCells.empty()) && !isTempFood) {
         return;
     }
-    
     int index = rand() % emptyCells.size();
     int x = emptyCells[index].first;
     int y = emptyCells[index].second;
-    
     grid[y][x].isFood = true;
     grid[y][x].isTimeFood = timeFood;
+    grid[y][x].isTempFood = isTempFood;
 }
 
 /**
@@ -339,16 +381,23 @@ void Snake::generateFood(bool timeFood)
 void Snake::eatFood()
 {
     bool isTimeFood = grid[snake.body[0].y][snake.body[0].x].isTimeFood;
+    bool isTempFood = grid[snake.body[0].y][snake.body[0].x].isTempFood;
 
+    _fruitEat += 1;
     _score.first += 10;
+    if (isTempFood) {
+        _specialFruitEat += 1;
+        _score.first += 5;
+    }
     grid[snake.body[0].y][snake.body[0].x].isFood = false;
     grid[snake.body[0].y][snake.body[0].x].isTimeFood = false;
+    grid[snake.body[0].y][snake.body[0].x].isTempFood = false;
 
     _sounds.push_back("assets/food.ogg");
-    if (isTimeFood) {
+    if (isTimeFood || isTempFood) {
         return;
     }
-    generateFood(false);
+    generateFood(false, false);
 }
 
 /**
@@ -356,7 +405,6 @@ void Snake::eatFood()
  */
 void Snake::moveSnake()
 {
-    // Process one buffered movement event per snake cell move.
     if (!_bufferedEvents.empty()) {
         RawEvent buffered = _bufferedEvents.front();
         _bufferedEvents.pop();
@@ -381,7 +429,6 @@ void Snake::moveSnake()
                 break;
         }
     }
-
     Position newHead = snake.body[0];
     switch (this->direction) {
         case UP:
@@ -397,33 +444,23 @@ void Snake::moveSnake()
             newHead.x++;
             break;
     }
-
-    // Check for collision with grid bounds.
     if (newHead.x < 0 || newHead.x >= gridWidth || newHead.y < 0 || newHead.y >= gridHeight) {
         gameOver = true;
         return;
     }
-    
-    // Added: Check for collision with walls.
     if (grid[newHead.y][newHead.x].isWall) {
         gameOver = true;
         return;
     }
-    
-    // Check for collision with snake body.
     if (grid[newHead.y][newHead.x].isSnake) {
         gameOver = true;
         return;
     }
-
+    handleTempFood();
     bool foodEaten = grid[newHead.y][newHead.x].isFood;
-
-    // Insert new head.
     snake.body.insert(snake.body.begin(), newHead);
     grid[newHead.y][newHead.x].isSnake = true;
-
     if (!foodEaten) {
-        // Remove tail.
         Position tail = snake.body.back();
         snake.body.pop_back();
         grid[tail.y][tail.x].isSnake = false;
@@ -505,6 +542,11 @@ void Snake::LoadFirstAssetPack(int x, int y, Entity& entity, std::map<std::strin
         setGridColor(entity, 0, 255, 0);
         entity.sprites[DisplayType::TERMINAL] = "F";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/apple.png";
+        if (grid[y][x].isTempFood) {
+            setGridColor(entity, 255, 255, 0);
+            entity.sprites[DisplayType::TERMINAL] = "T";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/temp_apple.png";
+        }
     } else {
         entity.sprites[DisplayType::TERMINAL] = " ";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/snake/floor.png";
@@ -555,6 +597,11 @@ void Snake::LoadSecondAssetPack(int x, int y, Entity& entity, std::map<std::stri
         setGridColor(entity, 0, 255, 0);
         entity.sprites[DisplayType::TERMINAL] = "F";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_flag.jpg";
+        if (grid[y][x].isTempFood) {
+            setGridColor(entity, 255, 255, 0);
+            entity.sprites[DisplayType::TERMINAL] = "T";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_question.jpg";
+        }
     } else {
         entity.sprites[DisplayType::TERMINAL] = " ";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/Minesweeper_1/minesweeper_empty.jpg";
@@ -605,6 +652,11 @@ void Snake::LoadThirdAssetPack(int x, int y, Entity& entity, std::map<std::strin
         setGridColor(entity, 0, 255, 0);
         entity.sprites[DisplayType::TERMINAL] = "F";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/M_2/minesweeper_flag.jpg";
+        if (grid[y][x].isTempFood) {
+            setGridColor(entity, 255, 255, 0);
+            entity.sprites[DisplayType::TERMINAL] = "T";
+            entity.sprites[DisplayType::GRAPHICAL] = "assets/M_2/minesweeper_question.jpg";
+        }
     } else {
         entity.sprites[DisplayType::TERMINAL] = " ";
         entity.sprites[DisplayType::GRAPHICAL] = "assets/M_2/minesweeper_empty.jpg";
@@ -614,7 +666,7 @@ void Snake::LoadThirdAssetPack(int x, int y, Entity& entity, std::map<std::strin
 
 /**
  * @brief Updates the animation progress based on the game state.
- * 
+ *
  * Calculates how far along we are in the animation between moves based on
  * the time since the last move and the current frame rate.
  */
@@ -622,7 +674,7 @@ void Snake::updateAnimationProgress()
 {
     auto currentTime = std::chrono::steady_clock::now();
     _lastFrameTime = currentTime;
-    
+
     if (_gameStart && !gameOver) {
         int moveInterval = 1000 / _frameRate;
         auto timeSinceLastMove = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastMoveTime).count();
@@ -634,7 +686,7 @@ void Snake::updateAnimationProgress()
 
 /**
  * @brief Checks if the game should display the menu instead of gameplay.
- * 
+ *
  * @return true if the menu should be displayed, false otherwise
  */
 bool Snake::shouldShowMenu()
@@ -642,21 +694,18 @@ bool Snake::shouldShowMenu()
     if (gameOver && !_gameStart) {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
-    
     if ((!_gameStart || gameOver) && !(_gameStart && gameOver)) {
         return true;
     }
-    
     if (gameOver) {
         _gameStart = false;
     }
-    
     return false;
 }
 
 /**
  * @brief Renders the basic grid elements (walls, empty spaces, food).
- * 
+ *
  * @param entities The map of entities to which grid elements will be added.
  */
 void Snake::renderGridElements(std::map<std::string, Entity>& entities)
@@ -675,7 +724,6 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
 
             bool isSnake = grid[y][x].isSnake;
             grid[y][x].isSnake = false;
-            
             if (assetPack == 0) {
                 LoadFirstAssetPack(x, y, entity, entities);
             } else if (assetPack == 1) {
@@ -683,7 +731,6 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
             } else if (assetPack == 2) {
                 LoadThirdAssetPack(x, y, entity, entities);
             }
-            
             grid[y][x].isSnake = isSnake;
         }
     }
@@ -691,7 +738,7 @@ void Snake::renderGridElements(std::map<std::string, Entity>& entities)
 
 /**
  * @brief Applies animation to a snake segment.
- * 
+ *
  * @param entity The entity to animate.
  * @param segmentIndex The index of the segment in the snake body.
  */
@@ -713,14 +760,13 @@ void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
                 moveX = 1;
                 break;
         }
-        
         entity.x += static_cast<int>(moveX * 38 * _animationProgress);
         entity.y += static_cast<int>(moveY * 38 * _animationProgress);
     } else {
         int x = snake.body[segmentIndex].x;
         int y = snake.body[segmentIndex].y;
         int moveX = snake.body[segmentIndex-1].x - x;
-        int moveY = snake.body[segmentIndex-1].y - y;        
+        int moveY = snake.body[segmentIndex-1].y - y;
         if (moveX > 1) moveX = -1;
         if (moveX < -1) moveX = 1;
         if (moveY > 1) moveY = -1;
@@ -732,7 +778,7 @@ void Snake::applySnakeAnimation(Entity& entity, size_t segmentIndex)
 
 /**
  * @brief Configures appearance properties for a snake segment.
- * 
+ *
  * @param entity The entity to configure.
  * @param isHead Whether this segment is the snake's head.
  */
@@ -747,23 +793,21 @@ void Snake::configureSnakeSegment(Entity& entity, bool isHead)
             case LEFT:  entity.rotate = 90; break;
             case RIGHT: entity.rotate = 270; break;
         }
-        
         if (assetPack == 0) {
-            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ?
                 "assets/snake/dead_head.png" : "assets/snake/head.png";
         } else {
-            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ?
                 "assets/Minesweeper_1/minesweeper_3.jpg" : "assets/Minesweeper_1/minesweeper_1.jpg";
         }
     } else {
         setGridColor(entity, 0, 255, 255);
         entity.sprites[DisplayType::TERMINAL] = "S";
-        
         if (assetPack == 0) {
-            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ?
                 "assets/snake/dead_snake.png" : "assets/snake/snake.png";
         } else {
-            entity.sprites[DisplayType::GRAPHICAL] = gameOver ? 
+            entity.sprites[DisplayType::GRAPHICAL] = gameOver ?
                 "assets/Minesweeper_1/minesweeper_4.jpg" : "assets/Minesweeper_1/minesweeper_2.jpg";
         }
     }
@@ -771,7 +815,7 @@ void Snake::configureSnakeSegment(Entity& entity, bool isHead)
 
 /**
  * @brief Renders the snake with animation effects.
- * 
+ *
  * @param entities The map of entities to which snake elements will be added.
  */
 void Snake::renderSnake(std::map<std::string, Entity>& entities)
@@ -780,7 +824,7 @@ void Snake::renderSnake(std::map<std::string, Entity>& entities)
         int x = snake.body[i].x;
         int y = snake.body[i].y;
         bool isHead = (i == 0);
-        
+
         Entity entity;
         entity.type = Shape::RECTANGLE;
         int offsetX = (1024 - (gridWidth * 38));
@@ -812,16 +856,20 @@ std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
 
-    updateAnimationProgress();    
+    updateAnimationProgress();
     if (shouldShowMenu()) {
         return domenu();
     }
-    entities.clear();    
+    entities.clear();
     renderGridElements(entities);
     std::string scoreString = "Score: " + std::to_string((int)_score.first);
     entities["score_display"] = createTextEntity(scoreString, 10, 10, 30, 30, 255, 255, 255);
+    entities["FruitEaten_display"] = createTextEntity("Fruit eaten: " + std::to_string(_fruitEat), 10, 50, 30, 30, 255, 255, 255);
+    entities["SpecialFruitEaten_display"] = createTextEntity("Special fruit eaten: " + std::to_string(_specialFruitEat), 10, 90, 30, 30, 255, 255, 255);
+    entities["SpecialFruitSpawn_display"] = createTextEntity("Special fruit spawn: " + std::to_string(_specialFruitSpawn), 10, 130, 30, 30, 255, 255, 255);
+    entities["playerName_display"] = createTextEntity("Player: " + _score.second, 10, 170, 30, 30, 255, 255, 255);
     renderSnake(entities);
-    if (gameOver) {   
+    if (gameOver) {
         _sounds.push_back("assets/gameover.mp3");
     }
     for (size_t i = 0; i < _sounds.size(); i++) {
@@ -889,6 +937,7 @@ void Snake::resetGrid()
     direction = UP;
     _score.first = 0;
     _score.second = "\0";
+    _fruitEat = 0;
     setFrameRate(false, false, true);
     createGrid(gridWidth, gridHeight);
 }
@@ -914,7 +963,7 @@ void Snake::resetGrid()
  * @return Entity The created entity.
  */
 Entity Snake::createEntity(Shape type, int x, int y, int width, int height, int r, int g, int b,
-                          const std::string& terminalSprite, const std::string& graphicalSprite, 
+                          const std::string& terminalSprite, const std::string& graphicalSprite,
                           int rotate, const std::string& id)
 {
     Entity entity;
@@ -949,7 +998,7 @@ Entity Snake::createEntity(Shape type, int x, int y, int width, int height, int 
  * @param b The blue component of the color.
  * @return Entity The created text entity.
  */
-Entity Snake::createTextEntity(const std::string& text, int x, int y, int width, int height, 
+Entity Snake::createTextEntity(const std::string& text, int x, int y, int width, int height,
                               int r, int g, int b)
 {
     return createEntity(Shape::TEXT, x, y, width, height, r, g, b, text, text);
@@ -987,10 +1036,10 @@ Entity Snake::createRectangleEntity(int x, int y, int width, int height, int r, 
  */
 void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
 {
-    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 300, 
+    entities["title"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 300,
                                         100, 50, 255, 255, 255);
-    
-    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 295, 
+
+    entities["title_shadow"] = createTextEntity("Snake Game", 1024 / 2 - 250, 768 / 2 - 295,
                                                100, 50, 0, 0, 0);
 }
 
@@ -1003,12 +1052,11 @@ void Snake::addTitleEntities(std::map<std::string, Entity>& entities)
  */
 void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
 {
-    entities = entities;
-    // entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 150, 768 / 2 + 12, 
-                                            //    120, 60, 0, 0, 0, "", "");
-    // 
-    // entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 150, 768 / 2 + 85, 
-                                                //    120, 60, 0, 0, 0, "", "");
+    entities["ZZbutton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 12,
+                                               120, 60, 0, 0, 0, "", "");
+
+    entities["ZZquitButton"] = createRectangleEntity(1024 / 2 - 50, 768 / 2 + 85,
+                                                   120, 60, 0, 0, 0, "", "");
 }
 
 /**
@@ -1020,17 +1068,17 @@ void Snake::addButtonEntities(std::map<std::string, Entity>& entities)
  */
 void Snake::addOptionEntities(std::map<std::string, Entity>& entities)
 {
-    entities["play"] = createTextEntity("Play", 1024 / 2 - 50, 768 / 2, 
+    entities["play"] = createTextEntity("Play", 1024 / 2 - 50, 768 / 2,
                                        60, 30, 255, 255, 255);
-    entities["quit"] = createTextEntity("Quit", 1024 / 2 - 50, 768 / 2 + 75, 
+    entities["quit"] = createTextEntity("Quit", 1024 / 2 - 50, 768 / 2 + 75,
                                        60, 30, 255, 255, 255);
 }
 
 void Snake::addInputBox(std::map<std::string, Entity>& entities)
 {
-    entities["input"] = createRectangleEntity(1024 / 2 - 100, 768 / 2 - 100, 
+    entities["input"] = createRectangleEntity(1024 / 2 - 100, 768 / 2 - 100,
                                              250, 75, 255, 255, 255, "", "");
-    entities["input_text"] = createTextEntity(_playerName , 1024 / 2 - 100 + 12, 
+    entities["input_text"] = createTextEntity(_playerName , 1024 / 2 - 100 + 12,
                                              768 / 2 - 100 + 12, 40, 40, 0, 0, 0);
 
 }
@@ -1044,7 +1092,7 @@ void Snake::addInputBox(std::map<std::string, Entity>& entities)
  */
 void Snake::addBackgroundEntity(std::map<std::string, Entity>& entities)
 {
-    entities["ZZZZZbackground"] = createRectangleEntity(0, 0, 1024, 768, 0, 0, 0, 
+    entities["ZZZZZbackground"] = createRectangleEntity(0, 0, 1024, 768, 0, 0, 0,
                                                      " ", "assets/snake/bg.jpg");
 }
 
@@ -1088,7 +1136,7 @@ void Snake::typeName(std::vector<RawEvent> events)
 std::map<std::string, Entity> Snake::domenu()
 {
     std::map<std::string, Entity> entities;
-    
+
     if (gameOver) {
         _gameStart = false;
     }
