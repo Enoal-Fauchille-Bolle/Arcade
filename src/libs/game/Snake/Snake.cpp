@@ -938,8 +938,10 @@ void Snake::handleMenuEvent(std::vector<RawEvent> events)
                 } else if (event.x >= 1024 / 2 - 75 && event.x <= 1024 / 2 - 75 + 60 + 200 &&
                            event.y >= 768 / 2 - 100 && event.y <= 768 / 2 - 100 + 30 + 50) {
                     _typeName = true;
+                    _sounds.push_back("assets/menu/keyboard-enter.ogg");
                 } else {
                     _typeName = false;
+                    _sounds.push_back("assets/menu/keyboard-leave.ogg");
                 }
             }
         }
@@ -1144,12 +1146,22 @@ void Snake::typeName(std::vector<RawEvent> events)
                 if (!_playerName.empty()) {
                     _playerName.pop_back();
                 }
+                _sounds.push_back("assets/menu/keyboard-click4.ogg");
             } else if (event.key == KEYBOARD_ENTER) {
                 _typeName = false;
+                _sounds.push_back("assets/menu/keyboard-enter.ogg");
             } else {
                 if (event.key >= KEYBOARD_A && event.key <= KEYBOARD_Z) {
                     char letter = 'A' + (event.key - KEYBOARD_A);
                     _playerName += letter;
+                    int randomNum = rand() % 3;
+                    if (randomNum == 0) {
+                        _sounds.push_back("assets/menu/keyboard-click1.ogg");
+                    } else if (randomNum == 1) {
+                        _sounds.push_back("assets/menu/keyboard-click2.ogg");
+                    } else if (randomNum == 2) {
+                        _sounds.push_back("assets/menu/keyboard-click3.ogg");
+                    }
                 }
             }
         }
@@ -1181,6 +1193,13 @@ std::map<std::string, Entity> Snake::domenu()
     addOptionEntities(entities);
     addInputBox(entities);
 
+    for (size_t i = 0; i < _sounds.size(); i++) {
+        Entity sound;
+        sound = createEntity(Shape::MUSIC, 0, 0, 0, 0, 0, 0, 0,
+                          _sounds[i], _sounds[i]);
+        entities["Sound" + std::to_string(i)] = sound;
+    }
+    _sounds.clear();
     return entities;
 }
 
