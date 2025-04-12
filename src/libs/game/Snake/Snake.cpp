@@ -864,9 +864,13 @@ std::map<std::string, Entity> Snake::renderGame()
     static auto playStartTime = std::chrono::steady_clock::now();
     static bool clockRunning = false;
 
-    updateAnimationProgress();
 
-    if (!shouldShowMenu()) {
+    entities.clear();
+    updateAnimationProgress();
+    if (gameOver && _gameStart) {
+        _sounds.push_back("assets/gameover.mp3");
+    }
+    if (_gameStart) {
         if (!clockRunning) {
             playStartTime = std::chrono::steady_clock::now();
             clockRunning = true;
@@ -881,7 +885,6 @@ std::map<std::string, Entity> Snake::renderGame()
     if (shouldShowMenu()) {
         return domenu();
     }
-    entities.clear();
     renderGridElements(entities);
     std::string scoreString = "Score: " + std::to_string((int)_score.first);
     entities["Score_display"] = createTextEntity(scoreString, 20, 10, 20, 20, 255, 255, 255);
@@ -890,23 +893,20 @@ std::map<std::string, Entity> Snake::renderGame()
     entities["SpecialFruitSpawn_display"] = createTextEntity("Special fruit spawn: " + std::to_string(_specialFruitSpawn), 20, 130, 20, 20, 255, 255, 255);
     entities["PlayerName_display"] = createTextEntity("Player: " + _score.second, 20, 170, 20, 20, 255, 255, 255);
     entities["Background"] = createEntity(Shape::RECTANGLE, 0, 0, 263, 768, 0, 0, 0,
-                          "assets/snake/bg2.png", "assets/snake/bg2.png");
-    entities["Temp_Apple_icon"] = createEntity(Shape::RECTANGLE, 0, 95, 20, 20, 0, 0, 0,
-                          "assets/snake/temp_apple.png", "assets/snake/temp_apple.png");
-    entities["Temp_Apple_icon"] = createEntity(Shape::RECTANGLE, 0, 135, 20, 20, 0, 0, 0,
-                          "assets/snake/temp_apple.png", "assets/snake/temp_apple.png");
-    entities["TApple_icon"] = createEntity(Shape::RECTANGLE, 0, 55, 20, 20, 0, 0, 0,
-                          "assets/snake/apple.png", "assets/snake/apple.png");
+                          " ", "assets/snake/bg2.png");
+    entities["Temp_Apple_icon1"] = createEntity(Shape::RECTANGLE, 0, 90, 20, 20, 0, 0, 0,
+                          "🍎", "assets/snake/temp_apple.png");
+    entities["Temp_Apple_icon2"] = createEntity(Shape::RECTANGLE, 0, 135, 20, 20, 0, 0, 0,
+                          "🍎", "assets/snake/temp_apple.png");
+    entities["TApple_icon"] = createEntity(Shape::RECTANGLE, 0, 50, 20, 20, 0, 0, 0,
+                          "🍎", "assets/snake/apple.png");
     entities["PlayTime_display"] = createTextEntity("Play time: " + std::to_string(_PlayTime) + "s", 20, 210, 20, 20, 255, 255, 255);
     renderSnake(entities);
-    if (gameOver) {
-        _sounds.push_back("assets/gameover.mp3");
-    }
     for (size_t i = 0; i < _sounds.size(); i++) {
         Entity sound;
         sound = createEntity(Shape::MUSIC, 0, 0, 0, 0, 0, 0, 0,
                           _sounds[i], _sounds[i]);
-        entities["sound" + std::to_string(i)] = sound;
+        entities["Sound" + std::to_string(i)] = sound;
     }
     _sounds.clear();
     return entities;
