@@ -61,6 +61,9 @@ MINESWEEPER_SRC = \
 SNAKE_SRC = \
 		$(SRCDIR)libs/game/Snake/Snake.cpp	\
 
+JUMPMAN_SRC = \
+		$(SRCDIR)libs/game/Jumpman/Jumpman.cpp	\
+
 
 TESTS_SRC = \
 
@@ -84,6 +87,7 @@ SFML_OBJ = $(SFML_SRC:.cpp=.o)
 MENU_OBJ = $(MENU_SRC:.cpp=.o)
 MINESWEEPER_OBJ = $(MINESWEEPER_SRC:.cpp=.o)
 SNAKE_OBJ = $(SNAKE_SRC:.cpp=.o)
+JUMPMAN_OBJ = $(JUMPMAN_SRC:.cpp=.o)
 
 DEP	=	$(CORE_SRC:.cpp=.d)	\
 		$(NCURSES_SRC:.cpp=.d)	\
@@ -92,6 +96,7 @@ DEP	=	$(CORE_SRC:.cpp=.d)	\
 		$(MENU_SRC:.cpp=.d)	\
 		$(MINESWEEPER_SRC:.cpp=.d)	\
 		$(SNAKE_SRC:.cpp=.d)	\
+		$(JUMPMAN_SRC:.cpp=.d)	\
 		$(MAIN:.cpp=.d)
 
 CORE_OBJ = $(CORE_SRC:.cpp=.o)
@@ -140,7 +145,11 @@ minesweeper: $(MINESWEEPER_OBJ)
 	$(CC) -o $(MINESWEEPER_NAME) $^ $(LDFLAGS)
 	mv $(MINESWEEPER_NAME) $(ROOT_LIBS)
 
-games: menu snake minesweeper
+jumpman: $(JUMPMAN_OBJ)
+	$(CC) -o $(JUMPMAN_NAME) $^ $(LDFLAGS)
+	mv $(JUMPMAN_NAME) $(ROOT_LIBS)
+
+games: menu snake minesweeper jumpman
 
 
 core: $(CORE_OBJ) $(MAIN:.cpp=.o)
