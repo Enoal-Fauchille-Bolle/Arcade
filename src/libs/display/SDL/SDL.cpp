@@ -258,6 +258,24 @@ std::vector<RawEvent> SDL::pollEvent(void)
             mouseEvent.x = event.button.x;
             mouseEvent.y = event.button.y;
             _event.push_back(mouseEvent);
+        } else if (event.type == SDL_KEYUP) {
+            RawEvent keyEvent;
+            keyEvent.type = EventType::RELEASE;
+            auto it = eventTypeMap.find(event.key.keysym.sym);
+            if (it != eventTypeMap.end()) {
+                keyEvent.key = it->second;
+            }
+            _event.push_back(keyEvent);
+        } else if (event.type == SDL_MOUSEBUTTONUP) {
+            RawEvent mouseEvent;
+            mouseEvent.type = EventType::RELEASE;
+            auto it = eventTypeMap.find(event.button.button);
+            if (it != eventTypeMap.end()) {
+                mouseEvent.key = it->second;
+            }
+            mouseEvent.x = event.button.x;
+            mouseEvent.y = event.button.y;
+            _event.push_back(mouseEvent);
         }
     }
     for (auto& evt : _event) {
