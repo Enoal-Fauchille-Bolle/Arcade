@@ -298,9 +298,11 @@ void Minesweeper::handleEventMenu(std::vector<RawEvent> events)
             if (event.x >= nameX && event.x <= nameX + nameW &&
                 event.y >= nameY && event.y <= nameY + nameH) {
                 _isNameInputActive = true;
+                _sounds.push_back("assets/menu/keyboard-enter.ogg");
                 continue;
             } else {
                 _isNameInputActive = false;
+                _sounds.push_back("assets/menu/keyboard-leave.ogg");
             }
 
             if (event.x >= playX && event.x <= playX + playW &&
@@ -344,6 +346,7 @@ void Minesweeper::handleNameInput(const RawEvent &event)
 {
     if (event.key == EventKey::KEYBOARD_BACKSPACE && !_playerName.empty()) {
         _playerName.pop_back();
+        _sounds.push_back("assets/menu/keyboard-click4.ogg");
         return;
     }
 
@@ -356,6 +359,8 @@ void Minesweeper::handleNameInput(const RawEvent &event)
         if (_playerName.length() < 15) {
             char character = 'A' + (static_cast<int>(event.key) - static_cast<int>(EventKey::KEYBOARD_A));
             _playerName += character;
+            int randomNum = rand() % 3 + 1;
+            _sounds.push_back("assets/menu/keyboard-click" + std::to_string(randomNum) + ".ogg");
         }
     }
 }
