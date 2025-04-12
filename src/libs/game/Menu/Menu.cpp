@@ -287,6 +287,7 @@ void Menu::checkUsernameInputKeyboard(RawEvent event)
         } else {
             _username = "";
         }
+        _sounds.push_back(std::string(ASSETS_DIR) + "keyboard-click4.ogg");
         return;
     }
 
