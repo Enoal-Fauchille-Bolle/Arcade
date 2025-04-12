@@ -1140,8 +1140,13 @@ void Snake::addBackgroundEntity(std::map<std::string, Entity>& entities)
  */
 void Snake::typeName(std::vector<RawEvent> events)
 {
+    static bool shiftActive = false;
+
     for (const auto& event : events) {
         if (event.type == EventType::PRESS) {
+            if (event.key == KEYBOARD_LSHIFT || event.key == KEYBOARD_RSHIFT) {
+                shiftActive = true;
+            }
             if (event.key == KEYBOARD_BACKSPACE) {
                 if (!_playerName.empty()) {
                     _playerName.pop_back();
@@ -1151,9 +1156,17 @@ void Snake::typeName(std::vector<RawEvent> events)
                 _typeName = false;
                 _sounds.push_back("assets/menu/keyboard-enter.ogg");
             } else {
+                _sounds.push_back("assets/menu/keyboard-click4.ogg");
                 if (event.key >= KEYBOARD_A && event.key <= KEYBOARD_Z) {
-                    char letter = 'A' + (event.key - KEYBOARD_A);
-                    _playerName += letter;
+                    char letter;
+                    if (shiftActive) {
+                        letter = 'A' + (event.key - KEYBOARD_A);
+                    } else {
+                        letter = 'a' + (event.key - KEYBOARD_A);
+                    }
+                    if (_playerName.size() < 8) {
+                        _playerName += letter;
+                    }
                     int randomNum = rand() % 3;
                     if (randomNum == 0) {
                         _sounds.push_back("assets/menu/keyboard-click1.ogg");
@@ -1164,6 +1177,8 @@ void Snake::typeName(std::vector<RawEvent> events)
                     }
                 }
             }
+        } else if (event.type == EventType::RELEASE && (event.key == KEYBOARD_LSHIFT || event.key == KEYBOARD_RSHIFT)) {
+            shiftActive = false;
         }
     }
 }
