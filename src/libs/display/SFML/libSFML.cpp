@@ -343,6 +343,9 @@ void libSFML::drawMusic(renderObject obj)
             backgroundMusic.stop();
             isBackgroundMusicPlaying = false;
         }
+        if (obj.sprite.empty()) {
+            return;
+        }
         playSoundEffect(obj.sprite, soundBufferCache, soundEffects);
     } 
     else {
