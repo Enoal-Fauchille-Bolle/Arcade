@@ -11,6 +11,7 @@
     #include <iostream>
     #include <map>
     #include <vector>
+    #include <cstdlib>
 
     #include "../../../core/LibGetter.hpp"
     #include "../../../core/ScoreManager.hpp"

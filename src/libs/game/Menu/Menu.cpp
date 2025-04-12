@@ -232,12 +232,12 @@ void Menu::checkUsernameInputClick(RawEvent event)
         event.y >= USERNAME_INPUT_Y - 20 &&
         event.y <= (USERNAME_INPUT_Y - 20) + 197 / 2) {
         if (!_typingUsername) {
-            _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+            _sounds.push_back(std::string(ASSETS_DIR) + "keyboard-enter.ogg");
         }
         _typingUsername = true;
     } else {
         if (_typingUsername) {
-            _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+            _sounds.push_back(std::string(ASSETS_DIR) + "keyboard-leave.ogg");
         }
         _typingUsername = false;
     }
@@ -276,6 +276,9 @@ void Menu::checkUsernameInputKeyboard(RawEvent event)
                              (static_cast<int>(event.key) -
                                  static_cast<int>(EventKey::KEYBOARD_A));
             _username += character;
+            int randomNum = rand() % 3 + 1;
+            _sounds.push_back(std::string(ASSETS_DIR) + "keyboard-click" +
+                              std::to_string(randomNum) + ".ogg");
         }
     }
 }
