@@ -407,6 +407,10 @@ void Core::run()
         if (_game->isGameEnd()) {
             std::string newLib = _game->getNewLib();
             delete_game();
+            if (newLib.empty()) {
+                _running = false;
+                break;
+            }
             if (load_game(newLib) == 1) {
                 std::cerr << "Failed to load selected game: " << newLib
                           << std::endl;

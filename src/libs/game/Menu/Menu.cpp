@@ -86,6 +86,9 @@ bool Menu::isGameEnd(void)
  */
 std::string Menu::getNewLib(void)
 {
+    if (_quit) {
+        return "";
+    }
     return (_selectedGameLib >= _gameLibs.size())
                ? _gameLibs[0].first.path
                : _gameLibs[_selectedGameLib].first.path;
@@ -214,6 +217,28 @@ void Menu::checkStartButton(RawEvent event)
     }
 }
 
+//------------------------------ Quit Button ------------------------------//
+
+/**
+ * @brief Check if the mouse click is on the quit button
+ *
+ * This function checks if the mouse click event is within the bounds
+ * of the quit button. If so, it sets the _quit variable to true.
+ *
+ * @param event The event to check
+ */
+void Menu::checkQuitButton(RawEvent event)
+{
+    if (event.x >= QUIT_BUTTON_X - 75 &&
+        event.x <= (QUIT_BUTTON_X - 75) + 629 / 3 &&
+        event.y >= QUIT_BUTTON_Y - 8 &&
+        event.y <= (QUIT_BUTTON_Y - 8) + 197 / 3) {
+        _sounds.push_back("");
+        _quit = true;
+        _startGame = true;
+    }
+}
+
 //----------------------------- Username Input -----------------------------//
 
 /**
@@ -339,6 +364,7 @@ void Menu::handleLeftClick(RawEvent event)
     checkGameClick(event);
     checkDisplayClick(event);
     checkStartButton(event);
+    checkQuitButton(event);
     checkUsernameInputClick(event);
 }
 
@@ -464,6 +490,7 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
         entities[pair.first] = pair.second;
     }
     renderStartButton(entities);
+    renderQuitButton(entities);
     renderBackground(entities);
     renderUsernameInput(entities);
     renderScoreboard(entities);
@@ -671,6 +698,39 @@ void Menu::renderStartButton(std::map<EntityName, Entity> &entities)
     entities["C-startText"] = startText;
     setEntityColor(startFrame, 0, 0, 0);
     entities["B-startFrame"] = startFrame;
+}
+
+//------------------------------ Quit Button ------------------------------//
+
+/**
+ * @brief Render the quit button
+ *
+ * This function creates an Entity object representing the quit
+ * button. It sets the position, color, and text of the quit button.
+ *
+ * @return Entity The quit button entity
+ */
+void Menu::renderQuitButton(std::map<EntityName, Entity> &entities)
+{
+    Entity quitText;
+    Entity quitFrame = createEntity(Shape::RECTANGLE, 0, 0, 629 / 3, 197 / 3,
+        QUIT_BUTTON_X - 75, QUIT_BUTTON_Y - 8,
+        {{DisplayType::TERMINAL, ""},
+            {DisplayType::GRAPHICAL,
+                std::string(ASSETS_DIR) + "button-red.png"}});
+
+    quitText.type = TEXT;
+    quitText.x = QUIT_BUTTON_X - 5;
+    quitText.y = QUIT_BUTTON_Y;
+    quitText.width = 40;
+    quitText.height = 0;
+    quitText.rotate = 0;
+    setEntityColor(quitText, 255, 136, 129);
+    quitText.sprites[DisplayType::GRAPHICAL] = "Quit";
+    quitText.sprites[DisplayType::TERMINAL] = "Quit";
+    entities["C-quitText"] = quitText;
+    setEntityColor(quitFrame, 0, 0, 0);
+    entities["B-quitFrame"] = quitFrame;
 }
 
 //------------------------------- Background -------------------------------//
