@@ -29,6 +29,7 @@ Menu::Menu()
     for (size_t i = 0; i < displayLibs.size(); i++) {
         _displayLibs.push_back({displayLibs[i], {0, 0, 0, 0}});
     }
+    _sounds.push_back("assets/music_menu.ogg");
 }
 
 /**
@@ -152,6 +153,9 @@ void Menu::checkGameClick(RawEvent event)
             event.y <= (_gameLibs[i].second.y + 15) + LIBS_PADDING &&
             event.y >= (_gameLibs[i].second.y + 15) -
                            _gameLibs[i].second.height - LIBS_PADDING) {
+            if (_selectedGameLib != i) {
+                _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+            }
             _selectedGameLib = i;
             _reloadScoreboard = true;
             return;
@@ -179,6 +183,9 @@ void Menu::checkDisplayClick(RawEvent event)
             event.y <= (_displayLibs[i].second.y + 15) + LIBS_PADDING &&
             event.y >= (_displayLibs[i].second.y + 15) -
                            _displayLibs[i].second.height - LIBS_PADDING) {
+            if (_selectedDisplayLib != i) {
+                _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+            }
             _selectedDisplayLib = i;
             return;
         }
@@ -202,6 +209,8 @@ void Menu::checkStartButton(RawEvent event)
         event.y >= START_BUTTON_Y - 20 &&
         event.y <= (START_BUTTON_Y - 20) + 197 / 2) {
         _startGame = true;
+        _sounds.push_back("");
+        _sounds.push_back(std::string(ASSETS_DIR) + "start.ogg");
     }
 }
 
@@ -222,8 +231,14 @@ void Menu::checkUsernameInputClick(RawEvent event)
         event.x <= (USERNAME_INPUT_X - 105) + 629 / 2 &&
         event.y >= USERNAME_INPUT_Y - 20 &&
         event.y <= (USERNAME_INPUT_Y - 20) + 197 / 2) {
+        if (!_typingUsername) {
+            _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+        }
         _typingUsername = true;
     } else {
+        if (_typingUsername) {
+            _sounds.push_back(std::string(ASSETS_DIR) + "click2.ogg");
+        }
         _typingUsername = false;
     }
 }
@@ -435,29 +450,21 @@ std::map<IGame::EntityName, Entity> Menu::renderGame(void)
     std::map<EntityName, Entity> tempEntities;
 
     renderTitle(entities);
-
     renderDisplayTitle(entities);
-
     tempEntities = renderLibs(DISPLAY);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-
     renderGameTitle(entities);
-
     tempEntities = renderLibs(GAME);
     for (const auto &pair : tempEntities) {
         entities[pair.first] = pair.second;
     }
-
     renderStartButton(entities);
-
     renderBackground(entities);
-
     renderUsernameInput(entities);
-
     renderScoreboard(entities);
-
+    addSoundEntities(entities);
     return entities;
 }
 
@@ -816,6 +823,28 @@ void Menu::renderScoreboard(std::map<EntityName, Entity> &entities)
     setEntityColor(scoreboardFrame, 0, 0, 0);
     entities["B-scoreboardMenu"] = scoreboardFrame;
     renderScoreboardContent(entities, content);
+}
+
+//--------------------------------- Sounds ---------------------------------//
+
+/**
+ * @brief Add sound entities to the map
+ *
+ * This function creates Entity objects representing sound effects
+ * and adds them to the entities map. It clears the _sounds vector
+ * after adding the entities.
+ *
+ * @param entities The map of entities to add the sound entities to
+ */
+void Menu::addSoundEntities(std::map<std::string, Entity> &entities)
+{
+    for (size_t i = 0; i < _sounds.size(); i++) {
+        Entity sound = createEntity(Shape::MUSIC, 0, 0, 0, 0, 0, 0,
+            {{DisplayType::TERMINAL, " "},
+                {DisplayType::GRAPHICAL, _sounds[i]}});
+        entities["sound" + std::to_string(i)] = sound;
+    }
+    _sounds.clear();
 }
 
 ///////////////////////////// Extern C Functions /////////////////////////////

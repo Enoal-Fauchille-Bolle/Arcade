@@ -115,6 +115,7 @@ class Menu : public IGame {
         void renderScoreboardContent(std::map<EntityName, Entity> &entities,
             std::vector<std::string> content);
         void renderScoreboard(std::map<EntityName, Entity> &entities);
+        void addSoundEntities(std::map<std::string, Entity> &entities);
 
         Entity createEntity(Shape shape,
             int x,
@@ -136,6 +137,7 @@ class Menu : public IGame {
         bool _controlPressed = false;
         std::vector<std::string> _scoreboardContent;
         bool _reloadScoreboard = true;
+        std::vector<std::string> _sounds;
 };
 
 #endif /* !MENU_HPP_ */
