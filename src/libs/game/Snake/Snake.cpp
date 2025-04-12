@@ -284,6 +284,9 @@ bool Snake::shouldMoveSnake(void)
  */
 bool Snake::shouldSpawnFruit()
 {
+    if (_PlayTime < 5) {
+        return false;
+    }
     static auto lastFruitSpawnTime = std::chrono::steady_clock::now();
     auto currentTime = std::chrono::steady_clock::now();
     auto fruitSpawnElapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - lastFruitSpawnTime).count();
@@ -298,6 +301,9 @@ bool Snake::shouldSpawnFruit()
 
 void Snake::handleTempFood()
 {
+    if (_PlayTime < 15) {
+        return;
+    }
     static auto lastTempFoodSpawnTime = std::chrono::steady_clock::now();
     static bool tempFoodActive = false;
     static auto tempFoodPlacedTime = std::chrono::steady_clock::now();
@@ -855,19 +861,43 @@ void Snake::renderSnake(std::map<std::string, Entity>& entities)
 std::map<std::string, Entity> Snake::renderGame()
 {
     std::map<std::string, Entity> entities;
+    static auto playStartTime = std::chrono::steady_clock::now();
+    static bool clockRunning = false;
 
     updateAnimationProgress();
+
+    if (!shouldShowMenu()) {
+        if (!clockRunning) {
+            playStartTime = std::chrono::steady_clock::now();
+            clockRunning = true;
+        } else {
+            auto currentTime = std::chrono::steady_clock::now();
+            _PlayTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - playStartTime).count();
+        }
+    } else {
+        clockRunning = false;
+        _PlayTime = 0;
+    }
     if (shouldShowMenu()) {
         return domenu();
     }
     entities.clear();
     renderGridElements(entities);
     std::string scoreString = "Score: " + std::to_string((int)_score.first);
-    entities["score_display"] = createTextEntity(scoreString, 10, 10, 30, 30, 255, 255, 255);
-    entities["FruitEaten_display"] = createTextEntity("Fruit eaten: " + std::to_string(_fruitEat), 10, 50, 30, 30, 255, 255, 255);
-    entities["SpecialFruitEaten_display"] = createTextEntity("Special fruit eaten: " + std::to_string(_specialFruitEat), 10, 90, 30, 30, 255, 255, 255);
-    entities["SpecialFruitSpawn_display"] = createTextEntity("Special fruit spawn: " + std::to_string(_specialFruitSpawn), 10, 130, 30, 30, 255, 255, 255);
-    entities["playerName_display"] = createTextEntity("Player: " + _score.second, 10, 170, 30, 30, 255, 255, 255);
+    entities["Score_display"] = createTextEntity(scoreString, 20, 10, 20, 20, 255, 255, 255);
+    entities["FruitEaten_display"] = createTextEntity("Fruit eaten: " + std::to_string(_fruitEat), 20, 50, 20, 20, 255, 255, 255);
+    entities["SpecialFruitEaten_display"] = createTextEntity("Special fruit eaten: " + std::to_string(_specialFruitEat), 20, 90, 20, 20, 255, 255, 255);
+    entities["SpecialFruitSpawn_display"] = createTextEntity("Special fruit spawn: " + std::to_string(_specialFruitSpawn), 20, 130, 20, 20, 255, 255, 255);
+    entities["PlayerName_display"] = createTextEntity("Player: " + _score.second, 20, 170, 20, 20, 255, 255, 255);
+    entities["Background"] = createEntity(Shape::RECTANGLE, 0, 0, 263, 768, 0, 0, 0,
+                          "assets/snake/bg2.png", "assets/snake/bg2.png");
+    entities["Temp_Apple_icon"] = createEntity(Shape::RECTANGLE, 0, 95, 20, 20, 0, 0, 0,
+                          "assets/snake/temp_apple.png", "assets/snake/temp_apple.png");
+    entities["Temp_Apple_icon"] = createEntity(Shape::RECTANGLE, 0, 135, 20, 20, 0, 0, 0,
+                          "assets/snake/temp_apple.png", "assets/snake/temp_apple.png");
+    entities["TApple_icon"] = createEntity(Shape::RECTANGLE, 0, 55, 20, 20, 0, 0, 0,
+                          "assets/snake/apple.png", "assets/snake/apple.png");
+    entities["PlayTime_display"] = createTextEntity("Play time: " + std::to_string(_PlayTime) + "s", 20, 210, 20, 20, 255, 255, 255);
     renderSnake(entities);
     if (gameOver) {
         _sounds.push_back("assets/gameover.mp3");
@@ -938,6 +968,8 @@ void Snake::resetGrid()
     _score.first = 0;
     _score.second = "\0";
     _fruitEat = 0;
+    _specialFruitEat = 0;
+    _specialFruitSpawn = 0;
     setFrameRate(false, false, true);
     createGrid(gridWidth, gridHeight);
 }

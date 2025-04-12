@@ -130,6 +130,7 @@ class Snake : public IGame {
         int _fruitEat = 0;
         int _specialFruitEat = 0;
         int _specialFruitSpawn = 0;
+        size_t _PlayTime = 0;
 };
 
 #endif /* !SNAKE_HPP_ */
