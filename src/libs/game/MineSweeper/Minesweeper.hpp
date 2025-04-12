@@ -148,6 +148,8 @@ class Minesweeper : public IGame {
 
         GameState _state = MENU;
 
+        bool _isEesterEgg = false;
+
         int _width;
         int _height;
         int _mines;

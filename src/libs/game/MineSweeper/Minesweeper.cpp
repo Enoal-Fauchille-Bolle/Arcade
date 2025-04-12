@@ -145,6 +145,12 @@ void Minesweeper::handleEventGame(std::vector<RawEvent> events)
                     resetGame();
                     return;
                 }
+                int logoWidth = 40, logoHeight = 40;
+                int logoX = 20, logoY = 350;
+                if (event.x >= logoX && event.x <= logoX + logoWidth &&
+                    event.y >= logoY && event.y <= logoY + logoHeight) {
+                    _isEesterEgg = !_isEesterEgg;
+                }
                 handleLeftClick(event);
             } else if (event.key == EventKey::MOUSE_RIGHT) {
                 handleRightClick(event);
@@ -679,6 +685,17 @@ std::map<std::string, Entity> Minesweeper::printBoard()
     std::map<std::string, Entity> entities;
     addCellEntities(entities);
     addGameUIElements(entities);
+
+    if (_isEesterEgg == true) {
+        static int loop = 0;
+        loop++;
+        if (loop >= 360) {
+            loop = 0;
+        }
+        for (auto &entity : entities) {
+            entities[entity.first].rotate = loop;
+        }
+    }
     return entities;
 }
 
