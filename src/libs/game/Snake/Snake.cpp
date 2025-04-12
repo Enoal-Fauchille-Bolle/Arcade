@@ -344,6 +344,7 @@ void Snake::eatFood()
     grid[snake.body[0].y][snake.body[0].x].isFood = false;
     grid[snake.body[0].y][snake.body[0].x].isTimeFood = false;
 
+    _sounds.push_back("assets/food.ogg");
     if (isTimeFood) {
         return;
     }
@@ -427,8 +428,6 @@ void Snake::moveSnake()
         snake.body.pop_back();
         grid[tail.y][tail.x].isSnake = false;
     } else {
-        grid[newHead.y][newHead.x].isFood = false;
-        grid[newHead.y][newHead.x].isTimeFood = false;
         eatFood();
     }
 }
