@@ -10,7 +10,8 @@
 
 enum LibType {
     GAME,
-    DISPLAY
+    DISPLAY,
+    UNKNOW = -1
 };
 
 enum DisplayType {
